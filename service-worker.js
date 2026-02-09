@@ -1,4 +1,4 @@
-const CACHE_NAME = 'running-v1.0.11';
+const CACHE_NAME = 'running-v1.0.12';
 const urlsToCache = [
   './',
   './index.html',
@@ -8,8 +8,8 @@ const urlsToCache = [
   './icon-192.png',
   './icon-512.png',
   './data/sessions.json',
-  './sessions.json',
-  './version.json'
+  './sessions.json'
+  // version.json NO se cachea para que la comprobación de versión siempre obtenga la actual
 ];
 
 // Instalación del Service Worker
@@ -39,30 +39,26 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Estrategia: Cache First, luego Network
+// Estrategia: Cache First, excepto version.json (siempre red)
 self.addEventListener('fetch', (event) => {
+  if (event.request.url.includes('version.json')) {
+    // version.json: siempre desde la red, no usar ni guardar en caché
+    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Cache hit - devolver respuesta
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).then(
-          (response) => {
-            // Verificar si recibimos una respuesta válida
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-            // Clonar la respuesta
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
+        if (response) return response;
+        return fetch(event.request).then((response) => {
+          if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-        );
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          return response;
+        });
       })
   );
 });

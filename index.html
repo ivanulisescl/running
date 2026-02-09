@@ -19,7 +19,7 @@
             </div>
             <p class="subtitle">Gestiona tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.11</span>
+                <span id="currentVersion">v1.0.12</span>
             </div>
             <div class="header-actions">
                 <button id="newSessionBtn" class="btn-header">Nueva sesión</button>
@@ -41,6 +41,9 @@
                 <input type="file" id="garminFile" accept=".tcx,.gpx,.csv" style="display: none;" multiple>
                 <button type="button" id="importGarminBtnMenu" class="menu-item">
                     <span>📥</span> Importar desde Garmin
+                </button>
+                <button type="button" id="resetFromRepoBtn" class="menu-item">
+                    <span>🔄</span> Resetear (traer último JSON del repositorio)
                 </button>
             </div>
         </header>

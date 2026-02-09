@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.11'; // Versión actual de la app
+let currentAppVersion = '1.0.12'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
@@ -612,6 +612,55 @@ function setupClearButton() {
     });
 }
 
+// Traer el último JSON del repositorio y reemplazar datos locales (botón Resetear)
+function resetFromRepository() {
+    const syncStatus = document.getElementById('syncStatus');
+    if (syncStatus) {
+        syncStatus.style.display = 'block';
+        syncStatus.innerHTML = '<p style="color: var(--primary-color);">Buscando último JSON en el repositorio...</p>';
+    }
+    const cacheBust = '?t=' + Date.now();
+    const opts = { cache: 'no-store' };
+
+    fetch('./data/sessions.json' + cacheBust, opts)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (Array.isArray(data)) return data;
+            return fetch('./sessions.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
+        })
+        .then(data => {
+            if (!Array.isArray(data)) {
+                if (syncStatus) {
+                    syncStatus.style.display = 'block';
+                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ No se encontró JSON en el repositorio o está vacío.</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+                }
+                return;
+            }
+            sessions = data.map(s => {
+                if (s.equipo === undefined) s.equipo = '';
+                return s;
+            });
+            saveSessions();
+            renderSessions();
+            renderEquipmentList();
+            updateStats();
+            updateEquipmentSelect();
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Resetear hecho. Se han cargado ' + sessions.length + ' sesión(es) del repositorio.</p>';
+                setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+            }
+        })
+        .catch(err => {
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error al obtener el JSON: ' + (err.message || 'Revisa la conexión') + '</p>';
+                setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+            }
+        });
+}
+
 // Cargar sesiones desde data/sessions.json o sessions.json del proyecto (sincronización)
 function loadSessionsFromProject() {
     // Intentar cargar desde data/sessions.json primero
@@ -736,6 +785,14 @@ function setupSync() {
         document.getElementById('menuDropdown').style.display = 'none';
         importInput.click();
     });
+
+    const resetFromRepoBtn = document.getElementById('resetFromRepoBtn');
+    if (resetFromRepoBtn) {
+        resetFromRepoBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            resetFromRepository();
+        });
+    }
 
     importInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -1782,8 +1839,8 @@ function setupVersionCheck() {
     // Mostrar versión actual
     versionElement.textContent = `v${currentAppVersion}`;
 
-    // Verificar versión desde el servidor y actualizar automáticamente si hay nueva
-    fetch('./version.json?' + Date.now())
+    // Verificar versión desde el servidor (sin caché para no recibir 1.0.10 viejo)
+    fetch('./version.json?' + Date.now(), { cache: 'no-store' })
         .then(res => res.ok ? res.json() : null)
         .then(versionData => {
             if (!versionData || !versionData.version) return;
@@ -1806,7 +1863,7 @@ function setupVersionCheck() {
 
     // Verificar periódicamente (cada hora) y actualizar automáticamente si hay nueva versión
     setInterval(() => {
-        fetch('./version.json?' + Date.now())
+        fetch('./version.json?' + Date.now(), { cache: 'no-store' })
             .then(res => res.ok ? res.json() : null)
             .then(versionData => {
                 if (versionData && versionData.version) {
