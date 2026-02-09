@@ -19,12 +19,13 @@
             </div>
             <p class="subtitle">Gestiona tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.9</span>
+                <span id="currentVersion">v1.0.10</span>
             </div>
             <div class="header-actions">
                 <button id="newSessionBtn" class="btn-header">Nueva sesión</button>
                 <button id="statsBtn" class="btn-header">Estadísticas</button>
                 <button id="historyBtn" class="btn-header">Historial</button>
+                <button id="equipmentBtn" class="btn-header">Equipo</button>
                 <button id="menuBtn" class="btn-options">Opciones</button>
             </div>
             
@@ -101,6 +102,16 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="equipo">Equipo</label>
+                        <select id="equipo">
+                            <option value="">Sin especificar</option>
+                            <option value="Asics Gel Nimbus 25 Negras">Asics Gel Nimbus 25 Negras</option>
+                            <option value="Asics Gel Nimbus 26 Azules">Asics Gel Nimbus 26 Azules</option>
+                            <option value="Hokka Bondi 9 Grises">Hokka Bondi 9 Grises</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="notes">Descripción</label>
                         <textarea id="notes" rows="3" placeholder="Lugar por donde se hizo el entrenamiento"></textarea>
                     </div>
@@ -171,6 +182,20 @@
             <!-- Mensajes de estado (ocultos por defecto) -->
             <div id="syncStatus" class="status-message" style="display: none;"></div>
             <div id="importStatus" class="status-message" style="display: none;"></div>
+
+            <!-- Sección de Equipos -->
+            <section id="equipmentSection" class="card">
+                <h2>Equipos</h2>
+                <div class="equipment-container">
+                    <div id="equipmentList" class="equipment-list-grid">
+                        <!-- Los equipos se cargarán dinámicamente -->
+                    </div>
+                    <div class="add-equipment-form">
+                        <input type="text" id="newEquipmentInput" placeholder="Nombre del nuevo equipo" class="equipment-input">
+                        <button id="addEquipmentBtn" class="btn btn-primary btn-small">Añadir Equipo</button>
+                    </div>
+                </div>
+            </section>
 
             <!-- Lista de sesiones -->
             <section id="historySection" class="card">

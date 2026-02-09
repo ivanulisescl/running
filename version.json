@@ -1,5 +1,5 @@
 {
-  "version": "1.0.9",
+  "version": "1.0.10",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -20,6 +20,10 @@
     "Mejora navegación: botones Estadísticas e Historial en header para navegación rápida",
     "Mejora diseño: botón Opciones con estilo consistente, layout mejorado del header",
     "Nueva funcionalidad: filtros de período en estadísticas (Todo, 1 semana, 1 mes, 1 año)",
-    "Nueva funcionalidad: 5 gráficas interactivas en estadísticas (distancia, frecuencia, tipos, ritmo, desnivel)"
+    "Nueva funcionalidad: 5 gráficas interactivas en estadísticas (distancia, frecuencia, tipos, ritmo, desnivel)",
+    "Mejora: botones del header en grid 2x2",
+    "Sección Equipos con tarjetas (marca, modelo, color, km, actividades, estado)",
+    "Campo Equipo en formulario y gestión (añadir, estado Activo/Retirado/Activo por defecto)",
+    "Kilómetros y Actividades por equipo calculados desde sesiones"
   ]
 }

@@ -1,18 +1,21 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.9'; // Versión actual de la app
+let currentAppVersion = '1.0.10'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
+let equipmentList = []; // Lista de equipos disponibles
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
+    loadEquipment();
     loadSessions();
     loadSessionsFromProject();
     setupForm();
     setupNewSessionButton();
     setupNavigationButtons();
     setupStatsFilters();
+    setupEquipmentSection();
     setupClearButton();
     setupMenu();
     setupSync();
@@ -23,6 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setTodayDate();
     updateSubmitButton();
 });
+
+// Hacer deleteEquipment y updateEquipment disponibles globalmente para onclick
+window.deleteEquipment = function(index) {
+    const eq = equipmentList[index];
+    const name = eq ? getEquipmentName(eq) : '';
+    if (confirm(`¿Estás seguro de que quieres eliminar "${name}"?`)) {
+        equipmentList.splice(index, 1);
+        saveEquipment();
+        renderEquipmentList();
+        updateEquipmentSelect();
+    }
+};
+window.updateEquipment = function(index, field, value) {
+    updateEquipment(index, field, value);
+};
 
 // Establecer fecha de hoy por defecto
 function setTodayDate() {
@@ -65,17 +83,26 @@ function setupNewSessionButton() {
         // Mostrar formulario
         sessionFormSection.style.display = 'block';
         
+    // Establecer equipo por defecto desde localStorage
+    const selectedEquipment = localStorage.getItem('selectedEquipment') || '';
+    const equipoField = document.getElementById('equipo');
+    if (equipoField) {
+        equipoField.value = selectedEquipment;
+    }
+        
         // Scroll al formulario
         sessionFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 }
 
-// Configurar botones de navegación (Estadísticas e Historial)
+// Configurar botones de navegación (Estadísticas, Historial y Equipo)
 function setupNavigationButtons() {
     const statsBtn = document.getElementById('statsBtn');
     const historyBtn = document.getElementById('historyBtn');
+    const equipmentBtn = document.getElementById('equipmentBtn');
     const statsSection = document.getElementById('statsSection');
     const historySection = document.getElementById('historySection');
+    const equipmentSection = document.getElementById('equipmentSection');
     
     if (statsBtn && statsSection) {
         statsBtn.addEventListener('click', () => {
@@ -87,6 +114,231 @@ function setupNavigationButtons() {
         historyBtn.addEventListener('click', () => {
             historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
+    }
+    
+    if (equipmentBtn && equipmentSection) {
+        equipmentBtn.addEventListener('click', () => {
+            equipmentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+}
+
+// Estados posibles de un equipo
+const EQUIPO_ESTADOS = ['Activo', 'Retirado', 'Activo por defecto'];
+
+// Cargar equipos desde localStorage
+function loadEquipment() {
+    const saved = localStorage.getItem('runningEquipment');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        // Migrar formato antiguo (array de strings) a nuevo (array de objetos)
+        equipmentList = parsed.map(item => {
+            if (typeof item === 'string') {
+                const name = item;
+                let estado = 'Activo';
+                if (name.startsWith('Asics')) estado = 'Retirado';
+                if (name.startsWith('Hokka')) estado = 'Activo por defecto';
+                return { name, kilometros: 0, estado };
+            }
+            if (item.kilometros === undefined || typeof item.kilometros !== 'number') item.kilometros = 0;
+            if (!item.estado) item.estado = 'Activo';
+            return item;
+        });
+        saveEquipment();
+    } else {
+        // Equipos iniciales por defecto
+        equipmentList = [
+            { name: 'Asics Gel Nimbus 25 Negras', kilometros: 0, estado: 'Retirado' },
+            { name: 'Asics Gel Nimbus 26 Azules', kilometros: 0, estado: 'Retirado' },
+            { name: 'Hokka Bondi 9 Grises', kilometros: 0, estado: 'Activo por defecto' }
+        ];
+        saveEquipment();
+    }
+}
+
+// Guardar equipos en localStorage
+function saveEquipment() {
+    localStorage.setItem('runningEquipment', JSON.stringify(equipmentList));
+}
+
+// Configurar sección de equipos
+function setupEquipmentSection() {
+    renderEquipmentList();
+    updateEquipmentSelect();
+    
+    // Si no hay equipo seleccionado, usar "Activo por defecto"
+    if (!localStorage.getItem('selectedEquipment')) {
+        const defaultEq = equipmentList.find(eq => typeof eq === 'object' && eq.estado === 'Activo por defecto');
+        if (defaultEq) localStorage.setItem('selectedEquipment', getEquipmentName(defaultEq));
+    }
+    
+    const addBtn = document.getElementById('addEquipmentBtn');
+    const input = document.getElementById('newEquipmentInput');
+    
+    if (addBtn && input) {
+        addBtn.addEventListener('click', () => {
+            addNewEquipment();
+        });
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addNewEquipment();
+            }
+        });
+    }
+}
+
+// Añadir nuevo equipo
+function addNewEquipment() {
+    const input = document.getElementById('newEquipmentInput');
+    const equipmentName = input.value.trim();
+    
+    if (!equipmentName) {
+        alert('Por favor ingresa un nombre para el equipo');
+        return;
+    }
+    
+    if (equipmentList.some(eq => getEquipmentName(eq) === equipmentName)) {
+        alert('Este equipo ya existe');
+        return;
+    }
+    
+    equipmentList.push({ name: equipmentName, kilometros: 0, estado: 'Activo' });
+    saveEquipment();
+    renderEquipmentList();
+    updateEquipmentSelect();
+    
+    input.value = '';
+}
+
+function getEquipmentName(eq) {
+    return typeof eq === 'string' ? eq : eq.name;
+}
+
+
+// Parsear información del equipo desde el nombre
+function parseEquipmentInfo(equipmentName) {
+    // Formato esperado: "Marca Modelo Color" o "Marca Modelo Número Color"
+    // Ejemplos: "Asics Gel Nimbus 25 Negras", "Hokka Bondi 9 Grises"
+    const parts = equipmentName.trim().split(/\s+/);
+    
+    if (parts.length < 3) {
+        // Si no tiene suficiente información, devolver todo como nombre
+        return {
+            marca: parts[0] || '',
+            modelo: parts.slice(1).join(' ') || '',
+            color: ''
+        };
+    }
+    
+    // La marca suele ser la primera palabra
+    const marca = parts[0];
+    
+    // El color suele ser la última palabra
+    const color = parts[parts.length - 1];
+    
+    // El modelo es todo lo que está en medio
+    const modelo = parts.slice(1, parts.length - 1).join(' ');
+    
+    return { marca, modelo, color };
+}
+
+// Calcular kilómetros y actividades de un equipo desde las sesiones
+function getEquipmentStatsFromSessions(equipmentName) {
+    const matchingSessions = sessions.filter(s => (s.equipo || '').trim() === equipmentName.trim());
+    const kilometros = matchingSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
+    const actividades = matchingSessions.length;
+    return { kilometros, actividades };
+}
+
+// Actualizar un equipo (solo estado; kilómetros y actividades se calculan desde sesiones)
+function updateEquipment(index, field, value) {
+    if (index < 0 || index >= equipmentList.length) return;
+    const eq = equipmentList[index];
+    if (typeof eq === 'string') {
+        equipmentList[index] = { name: eq, kilometros: 0, estado: 'Activo' };
+    }
+    const item = equipmentList[index];
+    if (field === 'estado') item.estado = value;
+    saveEquipment();
+    updateEquipmentSelect();
+}
+
+// Renderizar lista de equipos
+function renderEquipmentList() {
+    const container = document.getElementById('equipmentList');
+    if (!container) return;
+    
+    if (equipmentList.length === 0) {
+        container.innerHTML = '<p class="empty-state">No hay equipos registrados. Añade tu primer equipo.</p>';
+        return;
+    }
+    
+    container.innerHTML = equipmentList.map((equipment, index) => {
+        const name = getEquipmentName(equipment);
+        const stats = getEquipmentStatsFromSessions(name);
+        const estado = typeof equipment === 'object' ? (equipment.estado || 'Activo') : 'Activo';
+        const info = parseEquipmentInfo(name);
+        const estadoOptions = EQUIPO_ESTADOS.map(e => 
+            `<option value="${escapeHtml(e)}" ${e === estado ? 'selected' : ''}>${escapeHtml(e)}</option>`
+        ).join('');
+        return `
+            <div class="equipment-card">
+                <div class="equipment-card-header">
+                    <h3 class="equipment-marca">${escapeHtml(info.marca)}</h3>
+                    <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
+                </div>
+                <div class="equipment-card-body">
+                    <div class="equipment-modelo">${escapeHtml(info.modelo)}</div>
+                    ${info.color ? `<div class="equipment-color">
+                        <span class="color-label">Color:</span>
+                        <span class="color-value">${escapeHtml(info.color)}</span>
+                    </div>` : ''}
+                    <div class="equipment-stats-row">
+                        <div class="equipment-stat">
+                            <span class="equipment-stat-label">Kilómetros:</span>
+                            <span class="equipment-stat-value">${stats.kilometros.toFixed(1)}</span>
+                        </div>
+                        <div class="equipment-stat">
+                            <span class="equipment-stat-label">Actividades:</span>
+                            <span class="equipment-stat-value">${stats.actividades}</span>
+                        </div>
+                    </div>
+                    <div class="equipment-estado">
+                        <span class="estado-label">Estado:</span>
+                        <select class="equipment-estado-select" onchange="updateEquipment(${index}, 'estado', this.value)">
+                            ${estadoOptions}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Actualizar select de equipos en el formulario
+function updateEquipmentSelect() {
+    const select = document.getElementById('equipo');
+    if (!select) return;
+    
+    const currentValue = select.value;
+    
+    select.innerHTML = '<option value="">Sin especificar</option>';
+    
+    equipmentList.forEach(equipment => {
+        const name = getEquipmentName(equipment);
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+    
+    if (currentValue && equipmentList.some(eq => getEquipmentName(eq) === currentValue)) {
+        select.value = currentValue;
+    } else {
+        // Seleccionar "Activo por defecto" si existe
+        const defaultEq = equipmentList.find(eq => typeof eq === 'object' && eq.estado === 'Activo por defecto');
+        if (defaultEq) select.value = getEquipmentName(defaultEq);
     }
 }
 
@@ -146,6 +398,7 @@ function addSession() {
     const timeMinutes = parseInt(document.getElementById('timeMinutes').value) || 0;
     const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
     const type = document.getElementById('type').value;
+    const equipo = document.getElementById('equipo').value;
     const notes = document.getElementById('notes').value.trim();
     const elevationGain = parseFloat(document.getElementById('elevationGain').value) || 0;
     const elevationLoss = parseFloat(document.getElementById('elevationLoss').value) || 0;
@@ -192,10 +445,12 @@ function addSession() {
                 type,
                 notes,
                 elevationGain,
-                elevationLoss
+                elevationLoss,
+                equipo: equipo || '' // Usar el equipo del formulario
             };
             saveSessions();
             renderSessions();
+            renderEquipmentList();
             updateStats();
             resetForm();
             editingSessionId = null;
@@ -220,12 +475,19 @@ function addSession() {
             notes,
             elevationGain,
             elevationLoss,
+            equipo: equipo || '', // Campo para el equipo utilizado
             createdAt: new Date().toISOString()
         };
+        
+        // Guardar el equipo seleccionado para próximas sesiones
+        if (equipo) {
+            localStorage.setItem('selectedEquipment', equipo);
+        }
 
         sessions.push(session);
         saveSessions();
         renderSessions();
+        renderEquipmentList();
         updateStats();
         resetForm();
         
@@ -249,6 +511,12 @@ function resetForm() {
     // Limpiar campos de desnivel
     document.getElementById('elevationGain').value = '';
     document.getElementById('elevationLoss').value = '';
+    // Establecer equipo por defecto desde localStorage
+    const selectedEquipment = localStorage.getItem('selectedEquipment') || '';
+    const equipoField = document.getElementById('equipo');
+    if (equipoField) {
+        equipoField.value = selectedEquipment;
+    }
     editingSessionId = null;
     updateSubmitButton();
     // Ocultar formulario después de guardar
@@ -278,6 +546,7 @@ function editSession(id) {
     document.getElementById('date').value = session.date;
     document.getElementById('distance').value = session.distance;
     document.getElementById('type').value = session.type;
+    document.getElementById('equipo').value = session.equipo || '';
     document.getElementById('notes').value = session.notes || '';
     document.getElementById('elevationGain').value = session.elevationGain || '';
     document.getElementById('elevationLoss').value = session.elevationLoss || '';
@@ -324,6 +593,7 @@ function deleteSession(id) {
         }
         saveSessions();
         renderSessions();
+        renderEquipmentList();
         updateStats();
     }
 }
@@ -336,6 +606,7 @@ function setupClearButton() {
             sessions = [];
             saveSessions();
             renderSessions();
+            renderEquipmentList();
             updateStats();
         }
     });
@@ -369,6 +640,8 @@ function mergeSessions(externalSessions) {
     
     externalSessions.forEach(session => {
         if (session.id != null && !existingIds.has(session.id)) {
+            // Asegurar que el campo equipo exista
+            if (session.equipo === undefined) session.equipo = '';
             sessions.push(session);
             existingIds.add(session.id);
             merged = true;
@@ -378,10 +651,12 @@ function mergeSessions(externalSessions) {
     if (merged) {
         saveSessions();
         renderSessions();
+        renderEquipmentList();
         updateStats();
         console.log(`✅ ${merged ? externalSessions.length : 0} sesiones cargadas desde el proyecto`);
     }
 }
+
 
 // Configurar menú desplegable
 function setupMenu() {
@@ -399,6 +674,7 @@ function setupMenu() {
     menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
+        
         const currentDisplay = menuDropdown.style.display;
         const computedDisplay = window.getComputedStyle(menuDropdown).display;
         const isVisible = currentDisplay === 'block' || computedDisplay === 'block';
@@ -482,6 +758,7 @@ function setupSync() {
             if (added > 0) {
                 saveSessions();
                 renderSessions();
+                renderEquipmentList();
                 updateStats();
             }
                 syncStatus.style.display = 'block';
@@ -553,6 +830,7 @@ function setupGarminImport() {
         if (importedCount > 0) {
             saveSessions();
             renderSessions();
+            renderEquipmentList();
             updateStats();
             importStatus.style.display = 'block';
             importStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ ${importedCount} sesión(es) importada(s) correctamente${errorCount > 0 ? `. ${errorCount} archivo(s) con errores.` : ''}</p>`;
@@ -704,7 +982,8 @@ function parseGarminCSV(fileContent) {
             type,
             notes,
             elevationGain,
-            elevationLoss
+            elevationLoss,
+            equipo: ''
         });
     }
 
@@ -1466,6 +1745,8 @@ function loadSessions() {
             // Asegurar que los desniveles existan
             if (session.elevationGain === undefined) session.elevationGain = 0;
             if (session.elevationLoss === undefined) session.elevationLoss = 0;
+            // Asegurar que el campo equipo exista
+            if (session.equipo === undefined) session.equipo = '';
             return session;
         });
         saveSessions(); // Guardar datos migrados
