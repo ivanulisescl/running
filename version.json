@@ -1,9 +1,10 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
     "Importación desde Garmin Connect (TCX, GPX, CSV)",
-    "Sincronización entre dispositivos con JSON"
+    "Sincronización entre dispositivos con JSON",
+    "Mejora: carga automática mejorada de sessions.json desde raíz y data/"
   ]
 }

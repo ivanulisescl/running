@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.0'; // Versión actual de la app
+let currentAppVersion = '1.0.1'; // Versión actual de la app
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
