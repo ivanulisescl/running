@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.10'; // Versión actual de la app
+let currentAppVersion = '1.0.11'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
@@ -1286,7 +1286,11 @@ function renderSessions() {
                     </div>
                     ` : ''}
                 </div>
-                ${session.notes ? `<div class="session-notes">${escapeHtml(session.notes)}</div>` : ''}
+                ${(session.notes || session.equipo) ? `
+                <div class="session-notes-row">
+                    ${session.notes ? `<span class="session-notes">${escapeHtml(session.notes)}</span>` : '<span class="session-notes"></span>'}
+                    ${session.equipo ? `<span class="session-equipo">${escapeHtml(session.equipo)}</span>` : ''}
+                </div>` : ''}
                 <div class="session-actions">
                     <button class="edit-btn" onclick="editSession(${session.id})">Editar</button>
                     <button class="delete-btn" onclick="deleteSession(${session.id})">Eliminar</button>

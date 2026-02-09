@@ -1,5 +1,5 @@
 {
-  "version": "1.0.10",
+  "version": "1.0.11",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -24,6 +24,8 @@
     "Mejora: botones del header en grid 2x2",
     "Sección Equipos con tarjetas (marca, modelo, color, km, actividades, estado)",
     "Campo Equipo en formulario y gestión (añadir, estado Activo/Retirado/Activo por defecto)",
-    "Kilómetros y Actividades por equipo calculados desde sesiones"
+    "Kilómetros y Actividades por equipo calculados desde sesiones",
+    "Campo Equipo en historial (misma línea que descripción)",
+    "sessions.json: equipos por antigüedad (105 Asics negras, 112 azules, resto Hokka)"
   ]
 }

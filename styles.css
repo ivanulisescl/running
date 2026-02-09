@@ -799,13 +799,29 @@ header h1 {
     color: var(--text-primary);
 }
 
-.session-notes {
+.session-notes-row {
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.session-notes {
+    flex: 1;
     color: var(--text-secondary);
     font-size: 0.9em;
     font-style: italic;
+    min-width: 0;
+}
+
+.session-equipo {
+    flex-shrink: 0;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    opacity: 0.85;
 }
 
 .session-actions {
