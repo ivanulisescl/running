@@ -8,6 +8,7 @@ const urlsToCache = [
   './icon-192.png',
   './icon-512.png',
   './data/sessions.json',
+  './sessions.json',
   './version.json'
 ];
 

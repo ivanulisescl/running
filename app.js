@@ -161,28 +161,46 @@ function setupClearButton() {
     });
 }
 
-// Cargar sesiones desde data/sessions.json del proyecto (sincronización)
+// Cargar sesiones desde data/sessions.json o sessions.json del proyecto (sincronización)
 function loadSessionsFromProject() {
-    fetch('./data/sessions.json')
+    // Intentar cargar desde data/sessions.json primero
+    fetch('./data/sessions.json?' + Date.now())
         .then(res => res.ok ? res.json() : null)
         .then(data => {
-            if (!Array.isArray(data) || data.length === 0) return;
-            const existingIds = new Set(sessions.map(s => s.id));
-            let merged = false;
-            data.forEach(session => {
-                if (session.id != null && !existingIds.has(session.id)) {
-                    sessions.push(session);
-                    existingIds.add(session.id);
-                    merged = true;
-                }
-            });
-            if (merged) {
-                saveSessions();
-                renderSessions();
-                updateStats();
+            if (Array.isArray(data) && data.length > 0) {
+                mergeSessions(data);
+            }
+            // También intentar cargar desde sessions.json en la raíz
+            return fetch('./sessions.json?' + Date.now());
+        })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (Array.isArray(data) && data.length > 0) {
+                mergeSessions(data);
             }
         })
         .catch(() => {});
+}
+
+// Fusionar sesiones desde un array externo
+function mergeSessions(externalSessions) {
+    const existingIds = new Set(sessions.map(s => s.id));
+    let merged = false;
+    
+    externalSessions.forEach(session => {
+        if (session.id != null && !existingIds.has(session.id)) {
+            sessions.push(session);
+            existingIds.add(session.id);
+            merged = true;
+        }
+    });
+    
+    if (merged) {
+        saveSessions();
+        renderSessions();
+        updateStats();
+        console.log(`✅ ${merged ? externalSessions.length : 0} sesiones cargadas desde el proyecto`);
+    }
 }
 
 // Configurar exportar/importar JSON para sincronización
