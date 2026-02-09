@@ -15,13 +15,16 @@
         <header>
             <div class="header-top">
                 <h1>Running</h1>
-                <button id="menuBtn" class="menu-btn" aria-label="Menú">
-                    <span class="menu-icon">⋮</span>
-                </button>
+                <div class="header-buttons">
+                    <button id="newSessionBtn" class="btn-new-session">Nueva sesión</button>
+                    <button id="menuBtn" class="menu-btn" aria-label="Menú">
+                        <span class="menu-icon">⋮</span>
+                    </button>
+                </div>
             </div>
             <p class="subtitle">Controla tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.6</span>
+                <span id="currentVersion">v1.0.7</span>
             </div>
             
             <!-- Menú desplegable -->
@@ -42,7 +45,7 @@
 
         <main>
             <!-- Formulario para agregar sesión -->
-            <section class="card">
+            <section id="sessionFormSection" class="card" style="display: none;">
                 <h2>Nueva Sesión</h2>
                 <form id="sessionForm">
                     <div class="form-row">
@@ -97,8 +100,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="notes">Notas (opcional)</label>
-                        <textarea id="notes" rows="3" placeholder="Cómo te sentiste, condiciones del clima, etc."></textarea>
+                        <label for="notes">Descripción</label>
+                        <textarea id="notes" rows="3" placeholder="Lugar por donde se hizo el entrenamiento"></textarea>
                     </div>
                     
                     <button type="submit" class="btn btn-primary">Guardar Sesión</button>

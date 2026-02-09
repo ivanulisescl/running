@@ -1,12 +1,14 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.6'; // Versión actual de la app
+let currentAppVersion = '1.0.7'; // Versión actual de la app
+let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
     loadSessions();
     loadSessionsFromProject();
     setupForm();
+    setupNewSessionButton();
     setupClearButton();
     setupMenu();
     setupSync();
@@ -15,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPWA();
     setupVersionCheck();
     setTodayDate();
+    updateSubmitButton();
 });
 
 // Establecer fecha de hoy por defecto
@@ -31,6 +34,44 @@ function setupForm() {
         e.preventDefault();
         addSession();
     });
+}
+
+// Configurar botón "Nueva sesión"
+function setupNewSessionButton() {
+    const newSessionBtn = document.getElementById('newSessionBtn');
+    const sessionFormSection = document.getElementById('sessionFormSection');
+    
+    if (!newSessionBtn || !sessionFormSection) return;
+    
+    newSessionBtn.addEventListener('click', () => {
+        // Si está editando, cancelar edición
+        if (editingSessionId !== null) {
+            editingSessionId = null;
+            resetForm();
+        }
+        
+        // Mostrar formulario
+        sessionFormSection.style.display = 'block';
+        
+        // Scroll al formulario
+        sessionFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+
+// Mostrar formulario (para usar desde editSession)
+function showSessionForm() {
+    const sessionFormSection = document.getElementById('sessionFormSection');
+    if (sessionFormSection) {
+        sessionFormSection.style.display = 'block';
+    }
+}
+
+// Ocultar formulario
+function hideSessionForm() {
+    const sessionFormSection = document.getElementById('sessionFormSection');
+    if (sessionFormSection) {
+        sessionFormSection.style.display = 'none';
+    }
 }
 
 // Convertir tiempo hh:mm:ss a minutos
@@ -58,7 +99,7 @@ function validateTimeFormat(timeString) {
     return pattern.test(timeString);
 }
 
-// Agregar nueva sesión
+// Agregar nueva sesión o actualizar sesión existente
 function addSession() {
     const date = document.getElementById('date').value;
     const distance = parseFloat(document.getElementById('distance').value);
@@ -99,31 +140,63 @@ function addSession() {
     const timeString = `${String(timeHours).padStart(2, '0')}:${String(timeMinutes).padStart(2, '0')}:${String(timeSeconds).padStart(2, '0')}`;
     const timeInMinutes = timeToMinutes(timeString);
 
-    const session = {
-        id: Date.now(),
-        date,
-        distance,
-        time: timeString, // Guardar en formato hh:mm:ss
-        timeInMinutes, // Guardar también en minutos para cálculos
-        type,
-        notes,
-        elevationGain,
-        elevationLoss,
-        createdAt: new Date().toISOString()
-    };
+    if (editingSessionId !== null) {
+        // Actualizar sesión existente
+        const sessionIndex = sessions.findIndex(s => s.id === editingSessionId);
+        if (sessionIndex !== -1) {
+            sessions[sessionIndex] = {
+                ...sessions[sessionIndex],
+                date,
+                distance,
+                time: timeString,
+                timeInMinutes,
+                type,
+                notes,
+                elevationGain,
+                elevationLoss
+            };
+            saveSessions();
+            renderSessions();
+            updateStats();
+            resetForm();
+            editingSessionId = null;
+            updateSubmitButton();
+            
+            // Feedback visual
+            const form = document.getElementById('sessionForm');
+            form.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                form.style.transform = 'scale(1)';
+            }, 200);
+        }
+    } else {
+        // Crear nueva sesión
+        const session = {
+            id: Date.now(),
+            date,
+            distance,
+            time: timeString, // Guardar en formato hh:mm:ss
+            timeInMinutes, // Guardar también en minutos para cálculos
+            type,
+            notes,
+            elevationGain,
+            elevationLoss,
+            createdAt: new Date().toISOString()
+        };
 
-    sessions.push(session);
-    saveSessions();
-    renderSessions();
-    updateStats();
-    resetForm();
-    
-    // Feedback visual
-    const form = document.getElementById('sessionForm');
-    form.style.transform = 'scale(0.98)';
-    setTimeout(() => {
-        form.style.transform = 'scale(1)';
-    }, 200);
+        sessions.push(session);
+        saveSessions();
+        renderSessions();
+        updateStats();
+        resetForm();
+        
+        // Feedback visual
+        const form = document.getElementById('sessionForm');
+        form.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            form.style.transform = 'scale(1)';
+        }, 200);
+    }
 }
 
 // Resetear formulario
@@ -137,12 +210,79 @@ function resetForm() {
     // Limpiar campos de desnivel
     document.getElementById('elevationGain').value = '';
     document.getElementById('elevationLoss').value = '';
+    editingSessionId = null;
+    updateSubmitButton();
+    // Ocultar formulario después de guardar
+    hideSessionForm();
+}
+
+// Actualizar texto del botón de submit según si está editando o creando
+function updateSubmitButton() {
+    const submitBtn = document.querySelector('#sessionForm button[type="submit"]');
+    if (submitBtn) {
+        if (editingSessionId !== null) {
+            submitBtn.textContent = 'Guardar Cambios';
+            submitBtn.classList.add('btn-editing');
+        } else {
+            submitBtn.textContent = 'Guardar Sesión';
+            submitBtn.classList.remove('btn-editing');
+        }
+    }
+}
+
+// Editar sesión
+function editSession(id) {
+    const session = sessions.find(s => s.id === id);
+    if (!session) return;
+
+    // Cargar datos en el formulario
+    document.getElementById('date').value = session.date;
+    document.getElementById('distance').value = session.distance;
+    document.getElementById('type').value = session.type;
+    document.getElementById('notes').value = session.notes || '';
+    document.getElementById('elevationGain').value = session.elevationGain || '';
+    document.getElementById('elevationLoss').value = session.elevationLoss || '';
+
+    // Parsear tiempo hh:mm:ss a horas, minutos, segundos
+    const timeParts = session.time.split(':');
+    if (timeParts.length === 3) {
+        document.getElementById('timeHours').value = parseInt(timeParts[0]) || 0;
+        document.getElementById('timeMinutes').value = parseInt(timeParts[1]) || 0;
+        document.getElementById('timeSeconds').value = parseInt(timeParts[2]) || 0;
+    } else {
+        // Fallback para datos antiguos
+        const minutes = session.timeInMinutes || session.time || 0;
+        const hours = Math.floor(minutes / 60);
+        const mins = Math.floor(minutes % 60);
+        const secs = Math.round((minutes % 1) * 60);
+        document.getElementById('timeHours').value = hours;
+        document.getElementById('timeMinutes').value = mins;
+        document.getElementById('timeSeconds').value = secs;
+    }
+
+    // Establecer modo edición
+    editingSessionId = id;
+    updateSubmitButton();
+    
+    // Mostrar formulario
+    showSessionForm();
+
+    // Scroll al formulario
+    const sessionFormSection = document.getElementById('sessionFormSection');
+    if (sessionFormSection) {
+        sessionFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // Eliminar sesión
 function deleteSession(id) {
     if (confirm('¿Estás seguro de que quieres eliminar esta sesión?')) {
         sessions = sessions.filter(session => session.id !== id);
+        // Si se estaba editando esta sesión, cancelar edición
+        if (editingSessionId === id) {
+            editingSessionId = null;
+            resetForm();
+        }
         saveSessions();
         renderSessions();
         updateStats();
@@ -777,10 +917,31 @@ function renderSessions() {
             'ritmo-carrera': 'Ritmo carrera'
         };
 
+        // Extraer la primera palabra de las notas como lugar
+        // Si contiene ":", tomar la primera palabra después de ":"
+        // Si no contiene ":", tomar la primera palabra
+        let location = '';
+        if (session.notes && session.notes.trim()) {
+            const notes = session.notes.trim();
+            if (notes.includes(':')) {
+                // Para sesiones importadas: tomar primera palabra después de ":"
+                const afterColon = notes.split(':')[1].trim();
+                if (afterColon) {
+                    location = afterColon.split(/\s+/)[0];
+                }
+            } else {
+                // Para sesiones manuales: tomar primera palabra
+                location = notes.split(/\s+/)[0];
+            }
+        }
+
         return `
             <div class="session-item">
                 <div class="session-header">
-                    <span class="session-date">${formattedDate}</span>
+                    <div class="session-header-left">
+                        <span class="session-date">${formattedDate}</span>
+                        ${location ? `<span class="session-location">📍 ${escapeHtml(location)}</span>` : ''}
+                    </div>
                     <span class="session-type">${typeLabels[session.type] || session.type}</span>
                 </div>
                 <div class="session-details">
@@ -808,7 +969,10 @@ function renderSessions() {
                     ` : ''}
                 </div>
                 ${session.notes ? `<div class="session-notes">${escapeHtml(session.notes)}</div>` : ''}
-                <button class="delete-btn" onclick="deleteSession(${session.id})">Eliminar</button>
+                <div class="session-actions">
+                    <button class="edit-btn" onclick="editSession(${session.id})">Editar</button>
+                    <button class="delete-btn" onclick="deleteSession(${session.id})">Eliminar</button>
+                </div>
             </div>
         `;
     }).join('');

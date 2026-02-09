@@ -1,5 +1,5 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -11,6 +11,10 @@
     "Mejoras de diseño responsive: campos en la misma fila en móvil",
     "Correcciones: menú funcional en PC, alineación de campos en móvil, estadísticas sin desbordamiento",
     "Correcciones adicionales: menú mejorado, altura uniforme de campos fecha/distancia",
-    "Mejora UX: etiquetas h/m/s dentro de los inputs de tiempo, posicionadas a la derecha"
+    "Mejora UX: etiquetas h/m/s dentro de los inputs de tiempo, posicionadas a la derecha",
+    "Nueva funcionalidad: mostrar lugar destacado en historial de sesiones (primera palabra de descripción)",
+    "Nueva funcionalidad: botón Editar para modificar sesiones existentes",
+    "Mejora UX: botón Nueva sesión en header, formulario colapsable",
+    "Cambio: campo Notas renombrado a Descripción con placeholder mejorado"
   ]
 }
