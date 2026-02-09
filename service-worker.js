@@ -1,10 +1,12 @@
-const CACHE_NAME = 'running-tracker-v1';
+const CACHE_NAME = 'running-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // Instalación del Service Worker

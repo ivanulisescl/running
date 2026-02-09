@@ -17,45 +17,19 @@
         function drawIcon(canvas, size) {
             const ctx = canvas.getContext('2d');
             
-            // Fondo
+            // Fondo con gradiente
             const gradient = ctx.createLinearGradient(0, 0, size, size);
             gradient.addColorStop(0, '#4A90E2');
             gradient.addColorStop(1, '#50C878');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, size, size);
             
-            // Dibujar figura de corredor simple
+            // Texto "Running"
             ctx.fillStyle = 'white';
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = size / 20;
-            
-            // Cabeza (círculo)
-            const headRadius = size / 8;
-            ctx.beginPath();
-            ctx.arc(size / 2, size / 3, headRadius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Cuerpo (línea)
-            ctx.beginPath();
-            ctx.moveTo(size / 2, size / 3 + headRadius);
-            ctx.lineTo(size / 2, size / 2 + size / 6);
-            ctx.stroke();
-            
-            // Brazos
-            ctx.beginPath();
-            ctx.moveTo(size / 2, size / 2);
-            ctx.lineTo(size / 2 - size / 6, size / 2 + size / 12);
-            ctx.moveTo(size / 2, size / 2);
-            ctx.lineTo(size / 2 + size / 6, size / 2 + size / 12);
-            ctx.stroke();
-            
-            // Piernas corriendo
-            ctx.beginPath();
-            ctx.moveTo(size / 2, size / 2 + size / 6);
-            ctx.lineTo(size / 2 - size / 8, size * 0.75);
-            ctx.moveTo(size / 2, size / 2 + size / 6);
-            ctx.lineTo(size / 2 + size / 8, size * 0.75);
-            ctx.stroke();
+            ctx.font = `bold ${size / 4}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Running', size / 2, size / 2);
         }
         
         function downloadIcons() {
