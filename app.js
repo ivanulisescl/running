@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.3'; // Versión actual de la app
+let currentAppVersion = '1.0.4'; // Versión actual de la app
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -209,17 +209,27 @@ function setupMenu() {
     const menuBtn = document.getElementById('menuBtn');
     const menuDropdown = document.getElementById('menuDropdown');
     
+    if (!menuBtn || !menuDropdown) return;
+    
     menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isVisible = menuDropdown.style.display === 'block';
+        e.preventDefault();
+        const isVisible = menuDropdown.style.display === 'block' || menuDropdown.style.display === '';
         menuDropdown.style.display = isVisible ? 'none' : 'block';
     });
     
     // Cerrar menú al hacer clic fuera
     document.addEventListener('click', (e) => {
-        if (!menuDropdown.contains(e.target) && e.target !== menuBtn) {
-            menuDropdown.style.display = 'none';
+        if (menuDropdown && menuBtn) {
+            if (!menuDropdown.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) {
+                menuDropdown.style.display = 'none';
+            }
         }
+    });
+    
+    // Prevenir que el menú se cierre al hacer clic dentro
+    menuDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
     });
 }
 

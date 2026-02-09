@@ -37,6 +37,7 @@ header {
     margin-bottom: 30px;
     padding: 20px 0;
     position: relative;
+    z-index: 100;
 }
 
 .header-top {
@@ -65,18 +66,23 @@ header h1 {
     padding: 10px;
     font-size: 1.5em;
     color: var(--text-primary);
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 44px;
     height: 44px;
     border-radius: 50%;
+    z-index: 10;
 }
 
 .menu-btn:hover {
     background: var(--background);
     color: var(--primary-color);
+}
+
+.menu-btn:active {
+    transform: translateY(-50%) scale(0.95);
 }
 
 .menu-icon {
@@ -87,16 +93,16 @@ header h1 {
 
 .menu-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 10px);
     right: 0;
     background: var(--card-background);
     border-radius: 12px;
     box-shadow: var(--shadow-hover);
     min-width: 220px;
-    z-index: 1000;
-    margin-top: 10px;
+    z-index: 1001;
     overflow: hidden;
     animation: slideDown 0.2s ease;
+    border: 1px solid var(--border-color);
 }
 
 @keyframes slideDown {
@@ -237,6 +243,19 @@ header h1 {
     transition: border-color 0.3s ease;
     background: var(--card-background);
     color: var(--text-primary);
+    box-sizing: border-box;
+    min-height: 44px;
+    height: 44px;
+}
+
+.form-group input[type="date"] {
+    height: 44px;
+    line-height: 1.2;
+}
+
+.form-group textarea {
+    height: auto;
+    min-height: 80px;
 }
 
 .form-group small {
@@ -362,17 +381,26 @@ header h1 {
     background: rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     backdrop-filter: blur(10px);
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .stat-value {
     font-size: 2em;
     font-weight: bold;
     margin-bottom: 5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.2;
 }
 
 .stat-label {
     font-size: 0.9em;
     opacity: 0.9;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .sessions-list {
@@ -483,6 +511,19 @@ header h1 {
     
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .stat-item {
+        padding: 12px 8px;
+    }
+    
+    .stat-value {
+        font-size: 1.6em;
+    }
+    
+    .stat-label {
+        font-size: 0.8em;
     }
     
     .session-details {
@@ -494,13 +535,29 @@ header h1 {
         gap: 8px;
     }
     
+    .form-row .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
     .form-row .form-group input {
         font-size: 0.95em;
         padding: 10px 8px;
+        height: 42px;
+        min-height: 42px;
+        line-height: 1.2;
+    }
+    
+    .form-row .form-group input[type="date"] {
+        height: 42px;
+        min-height: 42px;
     }
     
     .form-row .form-group label {
         font-size: 0.85em;
+        margin-bottom: 6px;
+        line-height: 1.2;
     }
     
     .time-inputs {

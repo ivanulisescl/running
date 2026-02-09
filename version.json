@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -8,6 +8,7 @@
     "Mejora: carga automática mejorada de sessions.json desde raíz y data/",
     "Actualización automática: la app se actualiza automáticamente sin notificaciones",
     "Menú de tres puntos con opciones de importar/exportar",
-    "Mejoras de diseño responsive: campos en la misma fila en móvil"
+    "Mejoras de diseño responsive: campos en la misma fila en móvil",
+    "Correcciones: menú funcional en PC, alineación de campos en móvil, estadísticas sin desbordamiento"
   ]
 }
