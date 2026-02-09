@@ -539,17 +539,6 @@
     "id": 1770637973884.7996
   },
   {
-    "date": "2025-09-03",
-    "distance": 6,
-    "time": "00:29:37",
-    "timeInMinutes": 29.616666666666667,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Colunga Casa-La Espasa",
-    "elevationGain": 39,
-    "elevationLoss": 42,
-    "id": 1770637973884.1956
-  },
-  {
     "date": "2025-09-02",
     "distance": 8,
     "time": "00:41:18",
@@ -1265,17 +1254,6 @@
     "id": 1770637973884.368
   },
   {
-    "date": "2025-03-20",
-    "distance": 6.5,
-    "time": "00:31:50",
-    "timeInMinutes": 31.833333333333332,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
-    "elevationGain": 86,
-    "elevationLoss": 80,
-    "id": 1770637973884.0125
-  },
-  {
     "date": "2025-03-18",
     "distance": 6.51,
     "time": "00:32:11",
@@ -1296,17 +1274,6 @@
     "elevationGain": 113,
     "elevationLoss": 96,
     "id": 1770637973884.82
-  },
-  {
-    "date": "2025-03-14",
-    "distance": 7.01,
-    "time": "00:33:37",
-    "timeInMinutes": 33.61666666666667,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Casa-Camocha",
-    "elevationGain": 119,
-    "elevationLoss": 86,
-    "id": 1770637973884.5952
   },
   {
     "date": "2025-03-10",
@@ -1408,17 +1375,6 @@
     "id": 1770637973884.9167
   },
   {
-    "date": "2025-02-08",
-    "distance": 6.01,
-    "time": "00:29:20",
-    "timeInMinutes": 29.333333333333332,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Colunga Casa-Espasa",
-    "elevationGain": 57,
-    "elevationLoss": 41,
-    "id": 1770637973884.701
-  },
-  {
     "date": "2025-02-05",
     "distance": 6.01,
     "time": "00:29:36",
@@ -1450,17 +1406,6 @@
     "elevationGain": 29,
     "elevationLoss": 31,
     "id": 1770637973884.5295
-  },
-  {
-    "date": "2025-01-30",
-    "distance": 3.02,
-    "time": "00:15:01",
-    "timeInMinutes": 15.016666666666667,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Carrera",
-    "elevationGain": 27,
-    "elevationLoss": 11,
-    "id": 1770637973884.2507
   },
   {
     "date": "2025-01-30",
@@ -1516,17 +1461,6 @@
     "elevationGain": 28,
     "elevationLoss": 25,
     "id": 1770637973884.4644
-  },
-  {
-    "date": "2025-01-12",
-    "distance": 6.01,
-    "time": "00:30:28",
-    "timeInMinutes": 30.466666666666665,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
-    "elevationGain": 81,
-    "elevationLoss": 68,
-    "id": 1770637973884.9897
   },
   {
     "date": "2025-01-06",
@@ -1648,17 +1582,6 @@
     "elevationGain": 195,
     "elevationLoss": 197,
     "id": 1770637973884.0325
-  },
-  {
-    "date": "2024-11-24",
-    "distance": 11.96,
-    "time": "00:56:17",
-    "timeInMinutes": 56.28333333333333,
-    "type": "ritmo-carrera",
-    "notes": "Importado desde Garmin Connect: 12km Villa de Gijón",
-    "elevationGain": 54,
-    "elevationLoss": 66,
-    "id": 1770637973884.609
   },
   {
     "date": "2024-11-22",
@@ -1857,17 +1780,6 @@
     "elevationGain": 27,
     "elevationLoss": 35,
     "id": 1770637973884.5532
-  },
-  {
-    "date": "2024-10-07",
-    "distance": 6.01,
-    "time": "00:30:01",
-    "timeInMinutes": 30.016666666666666,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
-    "elevationGain": 78,
-    "elevationLoss": 86,
-    "id": 1770637973884.011
   },
   {
     "date": "2024-10-06",
@@ -2167,17 +2079,6 @@
     "id": 1770637973884.9849
   },
   {
-    "date": "2024-05-27",
-    "distance": 9,
-    "time": "00:42:59",
-    "timeInMinutes": 42.983333333333334,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Casa-Náutico",
-    "elevationGain": 0,
-    "elevationLoss": 0,
-    "id": 1770637973884.6208
-  },
-  {
     "date": "2024-05-24",
     "distance": 7.01,
     "time": "00:34:59",
@@ -2442,17 +2343,6 @@
     "id": 1770637973884.9138
   },
   {
-    "date": "2024-02-07",
-    "distance": 8.11,
-    "time": "00:37:56",
-    "timeInMinutes": 37.93333333333333,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Grupo-Poniente",
-    "elevationGain": 17,
-    "elevationLoss": 18,
-    "id": 1770637973884.1113
-  },
-  {
     "date": "2024-02-05",
     "distance": 8.1,
     "time": "00:38:45",
@@ -2572,17 +2462,6 @@
     "elevationGain": 210,
     "elevationLoss": 145,
     "id": 1770637973884.7593
-  },
-  {
-    "date": "2024-01-11",
-    "distance": 6.41,
-    "time": "00:32:24",
-    "timeInMinutes": 32.4,
-    "type": "rodaje",
-    "notes": "Importado desde Garmin Connect: Gijón Casa-Pericones",
-    "elevationGain": 148,
-    "elevationLoss": 139,
-    "id": 1770637973884.8547
   },
   {
     "date": "2024-01-09",
@@ -3100,5 +2979,126 @@
     "elevationGain": 37,
     "elevationLoss": 26,
     "id": 1770637973885.2537
+  },
+  {
+    "date": "2025-09-03",
+    "distance": 6,
+    "time": "00:29:37",
+    "timeInMinutes": 29.616666666666667,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Colunga Casa-La Espasa",
+    "elevationGain": 39,
+    "elevationLoss": 42,
+    "id": 1770640037741.5464
+  },
+  {
+    "date": "2025-03-20",
+    "distance": 6.5,
+    "time": "00:31:50",
+    "timeInMinutes": 31.833333333333332,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
+    "elevationGain": 86,
+    "elevationLoss": 80,
+    "id": 1770640037741.2585
+  },
+  {
+    "date": "2025-03-14",
+    "distance": 7.01,
+    "time": "00:33:37",
+    "timeInMinutes": 33.61666666666667,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Casa-Camocha",
+    "elevationGain": 119,
+    "elevationLoss": 86,
+    "id": 1770640037741.3892
+  },
+  {
+    "date": "2025-02-08",
+    "distance": 6.01,
+    "time": "00:29:20",
+    "timeInMinutes": 29.333333333333332,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Colunga Casa-Espasa",
+    "elevationGain": 57,
+    "elevationLoss": 41,
+    "id": 1770640037741.8984
+  },
+  {
+    "date": "2025-01-30",
+    "distance": 3.02,
+    "time": "00:15:01",
+    "timeInMinutes": 15.016666666666667,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Carrera",
+    "elevationGain": 27,
+    "elevationLoss": 11,
+    "id": 1770640037741.0713
+  },
+  {
+    "date": "2025-01-12",
+    "distance": 6.01,
+    "time": "00:30:28",
+    "timeInMinutes": 30.466666666666665,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
+    "elevationGain": 81,
+    "elevationLoss": 68,
+    "id": 1770640037741.6707
+  },
+  {
+    "date": "2024-11-24",
+    "distance": 11.96,
+    "time": "00:56:17",
+    "timeInMinutes": 56.28333333333333,
+    "type": "ritmo-carrera",
+    "notes": "Importado desde Garmin Connect: 12km Villa de Gijón",
+    "elevationGain": 54,
+    "elevationLoss": 66,
+    "id": 1770640037741.041
+  },
+  {
+    "date": "2024-10-07",
+    "distance": 6.01,
+    "time": "00:30:01",
+    "timeInMinutes": 30.016666666666666,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
+    "elevationGain": 78,
+    "elevationLoss": 86,
+    "id": 1770640037741.06
+  },
+  {
+    "date": "2024-05-27",
+    "distance": 9,
+    "time": "00:42:59",
+    "timeInMinutes": 42.983333333333334,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Casa-Náutico",
+    "elevationGain": 0,
+    "elevationLoss": 0,
+    "id": 1770640037741.7012
+  },
+  {
+    "date": "2024-02-07",
+    "distance": 8.11,
+    "time": "00:37:56",
+    "timeInMinutes": 37.93333333333333,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Grupo-Poniente",
+    "elevationGain": 17,
+    "elevationLoss": 18,
+    "id": 1770640037741.236
+  },
+  {
+    "date": "2024-01-11",
+    "distance": 6.41,
+    "time": "00:32:24",
+    "timeInMinutes": 32.4,
+    "type": "rodaje",
+    "notes": "Importado desde Garmin Connect: Gijón Casa-Pericones",
+    "elevationGain": 148,
+    "elevationLoss": 139,
+    "id": 1770640037741.3965
   }
 ]
