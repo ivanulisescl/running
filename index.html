@@ -9,6 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="icon-192.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -18,7 +19,7 @@
             </div>
             <p class="subtitle">Gestiona tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.8</span>
+                <span id="currentVersion">v1.0.9</span>
             </div>
             <div class="header-actions">
                 <button id="newSessionBtn" class="btn-header">Nueva sesión</button>
@@ -114,6 +115,12 @@
             <!-- Estadísticas -->
             <section id="statsSection" class="card stats">
                 <h2>Estadísticas</h2>
+                <div class="stats-filters">
+                    <button class="stats-filter-btn active" data-period="all">Todo</button>
+                    <button class="stats-filter-btn" data-period="week">1 semana</button>
+                    <button class="stats-filter-btn" data-period="month">1 mes</button>
+                    <button class="stats-filter-btn" data-period="year">1 año</button>
+                </div>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-value" id="totalSessions">0</div>
@@ -130,6 +137,33 @@
                     <div class="stat-item">
                         <div class="stat-value" id="avgPace">--</div>
                         <div class="stat-label">Ritmo (min/km)</div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <h3>Evolución de Distancia</h3>
+                        <canvas id="distanceChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <h3>Frecuencia de Sesiones</h3>
+                        <canvas id="frequencyChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <h3>Tipos de Entrenamiento</h3>
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <h3>Evolución del Ritmo</h3>
+                        <canvas id="paceChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <h3>Desnivel Acumulado</h3>
+                        <canvas id="elevationChart"></canvas>
                     </div>
                 </div>
             </section>

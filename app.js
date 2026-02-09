@@ -1,7 +1,9 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.8'; // Versión actual de la app
+let currentAppVersion = '1.0.9'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
+let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
+let charts = {}; // Objeto para almacenar las instancias de las gráficas
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupForm();
     setupNewSessionButton();
     setupNavigationButtons();
+    setupStatsFilters();
     setupClearButton();
     setupMenu();
     setupSync();
@@ -1014,13 +1017,67 @@ function renderSessions() {
     }).join('');
 }
 
+// Filtrar sesiones por período
+function filterSessionsByPeriod(period) {
+    if (period === 'all') {
+        return sessions;
+    }
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let startDate;
+    
+    switch (period) {
+        case 'week':
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 7);
+            break;
+        case 'month':
+            startDate = new Date(today);
+            startDate.setMonth(today.getMonth() - 1);
+            break;
+        case 'year':
+            startDate = new Date(today);
+            startDate.setFullYear(today.getFullYear() - 1);
+            break;
+        default:
+            return sessions;
+    }
+    
+    return sessions.filter(session => {
+        const sessionDate = new Date(session.date + 'T00:00:00');
+        return sessionDate >= startDate && sessionDate <= today;
+    });
+}
+
+// Configurar filtros de estadísticas
+function setupStatsFilters() {
+    const filterButtons = document.querySelectorAll('.stats-filter-btn');
+    
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remover clase active de todos los botones
+            filterButtons.forEach(b => b.classList.remove('active'));
+            // Añadir clase active al botón clickeado
+            btn.classList.add('active');
+            // Actualizar período actual
+            currentStatsPeriod = btn.getAttribute('data-period');
+            // Actualizar estadísticas
+            updateStats();
+        });
+    });
+}
+
 // Actualizar estadísticas
 function updateStats() {
-    const totalSessions = sessions.length;
-    const totalDistance = sessions.reduce((sum, s) => sum + s.distance, 0);
+    // Filtrar sesiones según el período seleccionado
+    const filteredSessions = filterSessionsByPeriod(currentStatsPeriod);
+    
+    const totalSessions = filteredSessions.length;
+    const totalDistance = filteredSessions.reduce((sum, s) => sum + s.distance, 0);
     
     // Calcular tiempo total en minutos (compatibilidad con datos antiguos)
-    const totalTimeInMinutes = sessions.reduce((sum, s) => {
+    const totalTimeInMinutes = filteredSessions.reduce((sum, s) => {
         if (s.timeInMinutes) return sum + s.timeInMinutes;
         if (typeof s.time === 'string') return sum + timeToMinutes(s.time);
         return sum + s.time;
@@ -1033,6 +1090,343 @@ function updateStats() {
     document.getElementById('totalDistance').textContent = totalDistance.toFixed(1);
     document.getElementById('totalTime').textContent = totalTimeFormatted;
     document.getElementById('avgPace').textContent = avgPace;
+    
+    // Actualizar gráficas
+    updateCharts(filteredSessions);
+}
+
+// Actualizar todas las gráficas
+function updateCharts(filteredSessions) {
+    updateDistanceChart(filteredSessions);
+    updateFrequencyChart(filteredSessions);
+    updateTypeChart(filteredSessions);
+    updatePaceChart(filteredSessions);
+    updateElevationChart(filteredSessions);
+}
+
+// Gráfica de evolución de distancia
+function updateDistanceChart(sessions) {
+    const ctx = document.getElementById('distanceChart');
+    if (!ctx) return;
+    
+    // Ordenar sesiones por fecha
+    const sortedSessions = [...sessions].sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    const labels = sortedSessions.map(s => {
+        const date = new Date(s.date + 'T00:00:00');
+        return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+    });
+    
+    const distances = sortedSessions.map(s => s.distance);
+    
+    // Calcular distancia acumulada
+    let accumulated = 0;
+    const accumulatedDistances = distances.map(d => {
+        accumulated += d;
+        return accumulated;
+    });
+    
+    if (charts.distanceChart) {
+        charts.distanceChart.destroy();
+    }
+    
+    charts.distanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Distancia por sesión (km)',
+                data: distances,
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Distancia acumulada (km)',
+                data: accumulatedDistances,
+                borderColor: 'rgba(255, 255, 255, 0.6)',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                tension: 0.4,
+                borderDash: [5, 5]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'white' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de frecuencia de sesiones
+function updateFrequencyChart(sessions) {
+    const ctx = document.getElementById('frequencyChart');
+    if (!ctx) return;
+    
+    // Agrupar por semana o mes según el período
+    const period = currentStatsPeriod === 'week' ? 'week' : 'month';
+    const grouped = {};
+    
+    sessions.forEach(session => {
+        const date = new Date(session.date + 'T00:00:00');
+        let key;
+        
+        if (period === 'week') {
+            const weekStart = new Date(date);
+            weekStart.setDate(date.getDate() - date.getDay());
+            key = weekStart.toISOString().split('T')[0];
+        } else {
+            key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+        
+        grouped[key] = (grouped[key] || 0) + 1;
+    });
+    
+    const labels = Object.keys(grouped).sort().map(key => {
+        const date = new Date(key + (period === 'week' ? 'T00:00:00' : '-01T00:00:00'));
+        if (period === 'week') {
+            return `Sem ${date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}`;
+        } else {
+            return date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+        }
+    });
+    
+    const frequencies = labels.map(label => {
+        const key = Object.keys(grouped).sort()[labels.indexOf(label)];
+        return grouped[key];
+    });
+    
+    if (charts.frequencyChart) {
+        charts.frequencyChart.destroy();
+    }
+    
+    charts.frequencyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sesiones',
+                data: frequencies,
+                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: 'white', stepSize: 1 },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de tipos de entrenamiento (pie chart)
+function updateTypeChart(sessions) {
+    const ctx = document.getElementById('typeChart');
+    if (!ctx) return;
+    
+    const typeCounts = {
+        'rodaje': 0,
+        'series': 0,
+        'tirada-larga': 0,
+        'ritmo-carrera': 0
+    };
+    
+    sessions.forEach(session => {
+        if (typeCounts.hasOwnProperty(session.type)) {
+            typeCounts[session.type]++;
+        }
+    });
+    
+    const labels = ['Rodaje', 'Series', 'Tirada larga', 'Ritmo carrera'];
+    const data = [
+        typeCounts['rodaje'],
+        typeCounts['series'],
+        typeCounts['tirada-larga'],
+        typeCounts['ritmo-carrera']
+    ];
+    
+    if (charts.typeChart) {
+        charts.typeChart.destroy();
+    }
+    
+    charts.typeChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 255, 255, 0.8)',
+                    'rgba(255, 255, 255, 0.6)',
+                    'rgba(255, 255, 255, 0.4)',
+                    'rgba(255, 255, 255, 0.2)'
+                ],
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: 'white', padding: 15 }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de evolución del ritmo
+function updatePaceChart(sessions) {
+    const ctx = document.getElementById('paceChart');
+    if (!ctx) return;
+    
+    // Ordenar sesiones por fecha
+    const sortedSessions = [...sessions].sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    const labels = sortedSessions.map(s => {
+        const date = new Date(s.date + 'T00:00:00');
+        return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+    });
+    
+    const paces = sortedSessions.map(s => {
+        const timeInMinutes = s.timeInMinutes || (typeof s.time === 'string' ? timeToMinutes(s.time) : s.time);
+        return s.distance > 0 ? (timeInMinutes / s.distance).toFixed(2) : null;
+    }).filter(p => p !== null);
+    
+    const validLabels = labels.filter((_, i) => sortedSessions[i].distance > 0);
+    
+    if (charts.paceChart) {
+        charts.paceChart.destroy();
+    }
+    
+    charts.paceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: validLabels,
+            datasets: [{
+                label: 'Ritmo (min/km)',
+                data: paces,
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'white' }
+                }
+            },
+            scales: {
+                y: {
+                    reverse: true, // Menor ritmo es mejor, así que invertimos el eje
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de desnivel acumulado
+function updateElevationChart(sessions) {
+    const ctx = document.getElementById('elevationChart');
+    if (!ctx) return;
+    
+    // Ordenar sesiones por fecha
+    const sortedSessions = [...sessions].sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    const labels = sortedSessions.map(s => {
+        const date = new Date(s.date + 'T00:00:00');
+        return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+    });
+    
+    const elevationGain = sortedSessions.map(s => s.elevationGain || 0);
+    const elevationLoss = sortedSessions.map(s => s.elevationLoss || 0);
+    
+    if (charts.elevationChart) {
+        charts.elevationChart.destroy();
+    }
+    
+    charts.elevationChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Desnivel + (m)',
+                data: elevationGain,
+                backgroundColor: 'rgba(80, 200, 120, 0.6)',
+                borderColor: 'rgba(80, 200, 120, 0.9)',
+                borderWidth: 2
+            }, {
+                label: 'Desnivel - (m)',
+                data: elevationLoss.map(v => -v), // Negativo para mostrar hacia abajo
+                backgroundColor: 'rgba(231, 76, 60, 0.6)',
+                borderColor: 'rgba(231, 76, 60, 0.9)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'white' }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
 }
 
 // Formatear fecha

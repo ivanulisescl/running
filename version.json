@@ -1,5 +1,5 @@
 {
-  "version": "1.0.8",
+  "version": "1.0.9",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -18,6 +18,8 @@
     "Cambio: campo Notas renombrado a Descripción con placeholder mejorado",
     "Mejora UX: botón Cancelar en formulario para cerrar sin guardar",
     "Mejora navegación: botones Estadísticas e Historial en header para navegación rápida",
-    "Mejora diseño: botón Opciones con estilo consistente, layout mejorado del header"
+    "Mejora diseño: botón Opciones con estilo consistente, layout mejorado del header",
+    "Nueva funcionalidad: filtros de período en estadísticas (Todo, 1 semana, 1 mes, 1 año)",
+    "Nueva funcionalidad: 5 gráficas interactivas en estadísticas (distancia, frecuencia, tipos, ritmo, desnivel)"
   ]
 }
