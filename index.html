@@ -103,6 +103,39 @@
                 </div>
             </section>
 
+            <!-- Sincronización (JSON en el proyecto) -->
+            <section class="card">
+                <h2>Sincronizar dispositivos</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.9em;">
+                    Los datos se guardan en <code>data/sessions.json</code> en el proyecto. Exporta para guardar ahí (o en la nube) e importa en otro dispositivo para sincronizar.
+                </p>
+                <div class="import-section sync-buttons">
+                    <button type="button" id="exportJsonBtn" class="btn btn-primary" style="width: auto;">
+                        📤 Exportar a JSON
+                    </button>
+                    <input type="file" id="importJsonFile" accept=".json" style="display: none;">
+                    <button type="button" id="importJsonBtn" class="btn btn-primary" style="width: auto;">
+                        📥 Importar desde JSON
+                    </button>
+                    <div id="syncStatus" style="margin-top: 10px; display: none;"></div>
+                </div>
+            </section>
+
+            <!-- Importar desde Garmin -->
+            <section class="card">
+                <h2>Importar desde Garmin Connect</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.9em;">
+                    Exporta tus actividades desde Garmin Connect como archivo TCX, GPX o CSV (Activities.csv) e impórtalas aquí.
+                </p>
+                <div class="import-section">
+                    <input type="file" id="garminFile" accept=".tcx,.gpx,.csv" style="display: none;" multiple>
+                    <button type="button" id="importBtn" class="btn btn-primary" style="width: auto; display: inline-block;">
+                        📥 Seleccionar archivos TCX / GPX / CSV
+                    </button>
+                    <div id="importStatus" style="margin-top: 10px; display: none;"></div>
+                </div>
+            </section>
+
             <!-- Lista de sesiones -->
             <section class="card">
                 <div class="section-header">

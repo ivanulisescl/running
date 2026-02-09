@@ -4,8 +4,11 @@ let sessions = [];
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
     loadSessions();
+    loadSessionsFromProject();
     setupForm();
     setupClearButton();
+    setupSync();
+    setupGarminImport();
     updateStats();
     setupPWA();
     setTodayDate();
@@ -154,6 +157,504 @@ function setupClearButton() {
             updateStats();
         }
     });
+}
+
+// Cargar sesiones desde data/sessions.json del proyecto (sincronización)
+function loadSessionsFromProject() {
+    fetch('./data/sessions.json')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (!Array.isArray(data) || data.length === 0) return;
+            const existingIds = new Set(sessions.map(s => s.id));
+            let merged = false;
+            data.forEach(session => {
+                if (session.id != null && !existingIds.has(session.id)) {
+                    sessions.push(session);
+                    existingIds.add(session.id);
+                    merged = true;
+                }
+            });
+            if (merged) {
+                saveSessions();
+                renderSessions();
+                updateStats();
+            }
+        })
+        .catch(() => {});
+}
+
+// Configurar exportar/importar JSON para sincronización
+function setupSync() {
+    const exportBtn = document.getElementById('exportJsonBtn');
+    const importBtn = document.getElementById('importJsonBtn');
+    const importInput = document.getElementById('importJsonFile');
+    const syncStatus = document.getElementById('syncStatus');
+
+    exportBtn.addEventListener('click', () => {
+        const data = JSON.stringify(sessions, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sessions.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        syncStatus.style.display = 'block';
+        syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Descargado. Guarda el archivo en <code>data/sessions.json</code> del proyecto y haz commit para sincronizar.</p>';
+    });
+
+    importBtn.addEventListener('click', () => importInput.click());
+
+    importInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        syncStatus.style.display = 'block';
+        syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando...</p>';
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            if (!Array.isArray(data)) throw new Error('El JSON debe ser un array de sesiones');
+            const existingIds = new Set(sessions.map(s => s.id));
+            let added = 0;
+            data.forEach(session => {
+                if (session.id != null && !existingIds.has(session.id)) {
+                    sessions.push(session);
+                    existingIds.add(session.id);
+                    added++;
+                }
+            });
+            if (added > 0) {
+                saveSessions();
+                renderSessions();
+                updateStats();
+            }
+            syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ ${added} sesión(es) importada(s) desde el JSON.</p>`;
+        } catch (err) {
+            syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error al leer el JSON: ${err.message}</p>`;
+        }
+        importInput.value = '';
+    });
+}
+
+// Configurar importación desde Garmin Connect
+function setupGarminImport() {
+    const importBtn = document.getElementById('importBtn');
+    const fileInput = document.getElementById('garminFile');
+    const importStatus = document.getElementById('importStatus');
+
+    importBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        importStatus.style.display = 'block';
+        importStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando archivos...</p>';
+
+        let importedCount = 0;
+        let errorCount = 0;
+
+        for (const file of files) {
+            try {
+                const text = await file.text();
+                const isCsv = file.name.toLowerCase().endsWith('.csv');
+                const importedSessions = isCsv ? parseGarminCSV(text) : parseGarminFile(text, file.name);
+                
+                if (importedSessions.length > 0) {
+                    importedSessions.forEach(session => {
+                        // Verificar si ya existe una sesión con la misma fecha y distancia similar
+                        const exists = sessions.some(s => 
+                            s.date === session.date && 
+                            Math.abs(s.distance - session.distance) < 0.1
+                        );
+                        
+                        if (!exists) {
+                            session.id = Date.now() + Math.random();
+                            sessions.push(session);
+                            importedCount++;
+                        }
+                    });
+                } else {
+                    errorCount++;
+                }
+            } catch (error) {
+                console.error('Error procesando archivo:', error);
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0) {
+            saveSessions();
+            renderSessions();
+            updateStats();
+            importStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ ${importedCount} sesión(es) importada(s) correctamente${errorCount > 0 ? `. ${errorCount} archivo(s) con errores.` : ''}</p>`;
+        } else {
+            importStatus.innerHTML = `<p style="color: var(--danger-color);">❌ No se pudieron importar sesiones. Verifica que los archivos sean TCX, GPX o CSV (Activities.csv) válidos de Garmin Connect.</p>`;
+        }
+
+        // Limpiar el input
+        fileInput.value = '';
+    });
+}
+
+// Parsear archivo TCX o GPX de Garmin
+function parseGarminFile(fileContent, fileName) {
+    const sessions = [];
+    
+    try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(fileContent, 'text/xml');
+        
+        // Verificar errores de parsing
+        const parserError = xmlDoc.querySelector('parsererror');
+        if (parserError) {
+            throw new Error('Error al parsear el archivo XML');
+        }
+
+        // Determinar el tipo de archivo
+        if (xmlDoc.documentElement.tagName === 'TrainingCenterDatabase' || xmlDoc.querySelector('TrainingCenterDatabase')) {
+            // Es un archivo TCX
+            return parseTCX(xmlDoc);
+        } else if (xmlDoc.documentElement.tagName === 'gpx' || xmlDoc.querySelector('gpx')) {
+            // Es un archivo GPX
+            return parseGPX(xmlDoc);
+        } else {
+            throw new Error('Formato de archivo no reconocido');
+        }
+    } catch (error) {
+        console.error('Error parseando archivo Garmin:', error);
+        return [];
+    }
+}
+
+// Parsear CSV de Garmin Connect (Activities.csv)
+function parseGarminCSV(fileContent) {
+    const sessions = [];
+    const lines = fileContent.split(/\r?\n/).filter(line => line.trim());
+    if (lines.length < 2) return sessions;
+
+    // Parsear una línea CSV respetando campos entre comillas
+    function parseCSVLine(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const c = line[i];
+            if (c === '"') {
+                inQuotes = !inQuotes;
+            } else if ((c === ',' && !inQuotes) || (c === '\n' && !inQuotes)) {
+                result.push(current.trim());
+                current = '';
+            } else {
+                current += c;
+            }
+        }
+        result.push(current.trim());
+        return result;
+    }
+
+    const header = parseCSVLine(lines[0]).map(h => (h || '').replace(/^\uFEFF/, '').trim());
+    const colIndex = (name) => {
+        const n = (name || '').toLowerCase();
+        const i = header.findIndex(h => h && h.toLowerCase() === n);
+        return i >= 0 ? i : -1;
+    };
+    const idxFecha = colIndex('Fecha');
+    const idxDistancia = colIndex('Distancia');
+    const idxTiempo = colIndex('Tiempo');
+    const idxTipo = colIndex('Tipo de actividad');
+    const idxAscenso = colIndex('Ascenso total');
+    const idxDescenso = colIndex('Descenso total');
+    const idxTitulo = colIndex('Título');
+
+    if (idxFecha < 0 || idxDistancia < 0 || idxTiempo < 0) {
+        console.warn('CSV no tiene columnas Fecha, Distancia o Tiempo');
+        return sessions;
+    }
+
+    for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        if (cols.length <= Math.max(idxFecha, idxDistancia, idxTiempo)) continue;
+
+        const fechaStr = (cols[idxFecha] || '').trim();
+        const distanciaStr = (cols[idxDistancia] || '').replace(',', '.').trim();
+        const tiempoStr = (cols[idxTiempo] || '').trim();
+
+        if (!fechaStr || !distanciaStr || !tiempoStr) continue;
+
+        const distance = parseFloat(distanciaStr);
+        if (isNaN(distance) || distance <= 0) continue;
+
+        // Fecha: "2026-02-04 17:41:14" -> date YYYY-MM-DD
+        const date = fechaStr.split(' ')[0];
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+
+        // Tiempo: "00:38:24" o "00:02:38.4" -> hh:mm:ss (sin decimales)
+        const timeParts = tiempoStr.replace(',', '.').split(':');
+        if (timeParts.length < 3) continue;
+        const hours = parseInt(timeParts[0], 10) || 0;
+        const minutes = parseInt(timeParts[1], 10) || 0;
+        const secParts = (timeParts[2] || '0').split('.');
+        const seconds = Math.floor(parseFloat(secParts[0]) || 0);
+        const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        const timeInMinutes = hours * 60 + minutes + seconds / 60;
+
+        // Desnivel: número o "--"
+        const parseElev = (val) => {
+            if (val === undefined || val === null) return 0;
+            const v = String(val).trim().replace(',', '.');
+            if (v === '' || v === '--') return 0;
+            const n = parseInt(v, 10);
+            return isNaN(n) ? 0 : Math.max(0, n);
+        };
+        const elevationGain = parseElev(cols[idxAscenso]);
+        const elevationLoss = parseElev(cols[idxDescenso]);
+
+        // Tipo: mapear a nuestros tipos
+        const tipoStr = (cols[idxTipo] || '').toLowerCase();
+        let type = 'rodaje';
+        if (tipoStr.includes('series') || tipoStr.includes('interval')) type = 'series';
+        else if (tipoStr.includes('tirada') || tipoStr.includes('larga') || tipoStr.includes('long')) type = 'tirada-larga';
+        else if (tipoStr.includes('ritmo') || tipoStr.includes('tempo') || tipoStr.includes('carrera')) type = 'ritmo-carrera';
+        // "Carrera" y "Entrenamiento en cinta" -> rodaje por defecto
+
+        const title = idxTitulo >= 0 ? (cols[idxTitulo] || '').trim() : '';
+        const notes = title ? `Importado desde Garmin Connect: ${title}` : 'Importado desde Garmin Connect (CSV)';
+
+        sessions.push({
+            date,
+            distance: parseFloat(distance.toFixed(2)),
+            time: timeString,
+            timeInMinutes,
+            type,
+            notes,
+            elevationGain,
+            elevationLoss
+        });
+    }
+
+    return sessions;
+}
+
+// Parsear archivo TCX
+function parseTCX(xmlDoc) {
+    const sessions = [];
+    const activities = xmlDoc.querySelectorAll('Activity');
+    
+    activities.forEach(activity => {
+        try {
+            // Fecha de la actividad
+            const idElement = activity.querySelector('Id');
+            if (!idElement) return;
+            
+            const dateStr = idElement.textContent;
+            const date = new Date(dateStr);
+            const dateFormatted = date.toISOString().split('T')[0];
+
+            // Distancia total (en metros, convertir a km)
+            const distanceElements = activity.querySelectorAll('DistanceMeters');
+            let totalDistance = 0;
+            distanceElements.forEach(el => {
+                totalDistance += parseFloat(el.textContent) || 0;
+            });
+            totalDistance = totalDistance / 1000; // Convertir a km
+
+            // Tiempo total (en segundos)
+            const totalTimeSeconds = activity.querySelector('TotalTimeSeconds');
+            if (!totalTimeSeconds) return;
+            
+            const seconds = parseFloat(totalTimeSeconds.textContent) || 0;
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            // Desnivel (en metros)
+            const elevationGain = activity.querySelector('ElevationGain') || 
+                                 activity.querySelector('MaximumElevation');
+            const elevationLoss = activity.querySelector('ElevationLoss') || 
+                                activity.querySelector('MinimumElevation');
+            
+            let gain = 0;
+            let loss = 0;
+            
+            // Calcular desnivel desde los puntos de track
+            const trackPoints = activity.querySelectorAll('Trackpoint');
+            if (trackPoints.length > 0) {
+                let prevElevation = null;
+                trackPoints.forEach(point => {
+                    const elevationEl = point.querySelector('AltitudeMeters');
+                    if (elevationEl) {
+                        const elevation = parseFloat(elevationEl.textContent);
+                        if (prevElevation !== null) {
+                            const diff = elevation - prevElevation;
+                            if (diff > 0) gain += diff;
+                            else loss += Math.abs(diff);
+                        }
+                        prevElevation = elevation;
+                    }
+                });
+            } else {
+                // Usar valores directos si existen
+                if (elevationGain) gain = parseFloat(elevationGain.textContent) || 0;
+                if (elevationLoss) loss = parseFloat(elevationLoss.textContent) || 0;
+            }
+
+            // Tipo de actividad (intentar detectar desde el nombre o usar "rodaje" por defecto)
+            const activityType = activity.getAttribute('Sport') || 'Running';
+            let type = 'rodaje'; // Por defecto
+            
+            // Intentar detectar el tipo desde el nombre de la actividad
+            const nameEl = activity.querySelector('Name');
+            if (nameEl) {
+                const name = nameEl.textContent.toLowerCase();
+                if (name.includes('series') || name.includes('interval')) type = 'series';
+                else if (name.includes('tirada') || name.includes('long')) type = 'tirada-larga';
+                else if (name.includes('ritmo') || name.includes('tempo')) type = 'ritmo-carrera';
+            }
+
+            if (totalDistance > 0 && seconds > 0) {
+                sessions.push({
+                    date: dateFormatted,
+                    distance: parseFloat(totalDistance.toFixed(2)),
+                    time: timeString,
+                    timeInMinutes: seconds / 60,
+                    type: type,
+                    notes: `Importado desde Garmin Connect`,
+                    elevationGain: Math.round(gain),
+                    elevationLoss: Math.round(loss)
+                });
+            }
+        } catch (error) {
+            console.error('Error procesando actividad TCX:', error);
+        }
+    });
+
+    return sessions;
+}
+
+// Parsear archivo GPX
+function parseGPX(xmlDoc) {
+    const sessions = [];
+    const tracks = xmlDoc.querySelectorAll('trk');
+    
+    tracks.forEach(track => {
+        try {
+            // Fecha (buscar en metadata o en el primer punto)
+            let date = new Date();
+            const metadata = xmlDoc.querySelector('metadata time');
+            const firstTime = track.querySelector('time');
+            
+            if (metadata) {
+                date = new Date(metadata.textContent);
+            } else if (firstTime) {
+                date = new Date(firstTime.textContent);
+            }
+            
+            const dateFormatted = date.toISOString().split('T')[0];
+
+            // Calcular distancia y tiempo desde los puntos de track
+            const trackSegments = track.querySelectorAll('trkseg');
+            let totalDistance = 0;
+            let startTime = null;
+            let endTime = null;
+            let elevations = [];
+
+            trackSegments.forEach(segment => {
+                const points = segment.querySelectorAll('trkpt');
+                let prevPoint = null;
+
+                points.forEach((point, index) => {
+                    const lat = parseFloat(point.getAttribute('lat'));
+                    const lon = parseFloat(point.getAttribute('lon'));
+                    const timeEl = point.querySelector('time');
+                    const elevationEl = point.querySelector('ele');
+
+                    if (timeEl) {
+                        const pointTime = new Date(timeEl.textContent);
+                        if (!startTime) startTime = pointTime;
+                        endTime = pointTime;
+                    }
+
+                    if (elevationEl) {
+                        elevations.push(parseFloat(elevationEl.textContent));
+                    }
+
+                    // Calcular distancia usando fórmula de Haversine
+                    if (prevPoint) {
+                        const prevLat = parseFloat(prevPoint.getAttribute('lat'));
+                        const prevLon = parseFloat(prevPoint.getAttribute('lon'));
+                        totalDistance += haversineDistance(prevLat, prevLon, lat, lon);
+                    }
+                    prevPoint = point;
+                });
+            });
+
+            totalDistance = totalDistance / 1000; // Convertir a km
+
+            // Calcular tiempo total
+            let seconds = 0;
+            if (startTime && endTime) {
+                seconds = (endTime - startTime) / 1000;
+            }
+
+            // Calcular desnivel
+            let gain = 0;
+            let loss = 0;
+            for (let i = 1; i < elevations.length; i++) {
+                const diff = elevations[i] - elevations[i - 1];
+                if (diff > 0) gain += diff;
+                else loss += Math.abs(diff);
+            }
+
+            // Tipo de actividad
+            const typeEl = track.querySelector('type');
+            let type = 'rodaje';
+            if (typeEl) {
+                const typeText = typeEl.textContent.toLowerCase();
+                if (typeText.includes('series') || typeText.includes('interval')) type = 'series';
+                else if (typeText.includes('tirada') || typeText.includes('long')) type = 'tirada-larga';
+                else if (typeText.includes('ritmo') || typeText.includes('tempo')) type = 'ritmo-carrera';
+            }
+
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            if (totalDistance > 0 && seconds > 0) {
+                sessions.push({
+                    date: dateFormatted,
+                    distance: parseFloat(totalDistance.toFixed(2)),
+                    time: timeString,
+                    timeInMinutes: seconds / 60,
+                    type: type,
+                    notes: `Importado desde Garmin Connect (GPX)`,
+                    elevationGain: Math.round(gain),
+                    elevationLoss: Math.round(loss)
+                });
+            }
+        } catch (error) {
+            console.error('Error procesando track GPX:', error);
+        }
+    });
+
+    return sessions;
+}
+
+// Calcular distancia entre dos puntos usando fórmula de Haversine
+function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
 }
 
 // Renderizar sesiones

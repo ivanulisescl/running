@@ -409,3 +409,38 @@ header h1 {
 .install-prompt button {
     margin: 5px;
 }
+
+.import-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#importStatus {
+    padding: 10px;
+    border-radius: 8px;
+    background: var(--background);
+}
+
+#importStatus p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.sync-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.sync-buttons .btn {
+    margin: 0;
+}
+
+.sync-buttons code {
+    background: var(--border-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
