@@ -15,16 +15,16 @@
         <header>
             <div class="header-top">
                 <h1>Running</h1>
-                <div class="header-buttons">
-                    <button id="newSessionBtn" class="btn-new-session">Nueva sesión</button>
-                    <button id="menuBtn" class="menu-btn" aria-label="Menú">
-                        <span class="menu-icon">⋮</span>
-                    </button>
-                </div>
             </div>
-            <p class="subtitle">Controla tus entrenamientos</p>
+            <p class="subtitle">Gestiona tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.7</span>
+                <span id="currentVersion">v1.0.8</span>
+            </div>
+            <div class="header-actions">
+                <button id="newSessionBtn" class="btn-header">Nueva sesión</button>
+                <button id="statsBtn" class="btn-header">Estadísticas</button>
+                <button id="historyBtn" class="btn-header">Historial</button>
+                <button id="menuBtn" class="btn-options">Opciones</button>
             </div>
             
             <!-- Menú desplegable -->
@@ -104,12 +104,15 @@
                         <textarea id="notes" rows="3" placeholder="Lugar por donde se hizo el entrenamiento"></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Guardar Sesión</button>
+                    <div class="form-actions">
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Sesión</button>
+                    </div>
                 </form>
             </section>
 
             <!-- Estadísticas -->
-            <section class="card stats">
+            <section id="statsSection" class="card stats">
                 <h2>Estadísticas</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
@@ -136,7 +139,7 @@
             <div id="importStatus" class="status-message" style="display: none;"></div>
 
             <!-- Lista de sesiones -->
-            <section class="card">
+            <section id="historySection" class="card">
                 <div class="section-header">
                     <h2>Historial de Sesiones</h2>
                     <button id="clearAll" class="btn btn-danger btn-small">Limpiar Todo</button>

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.7",
+  "version": "1.0.8",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -15,6 +15,9 @@
     "Nueva funcionalidad: mostrar lugar destacado en historial de sesiones (primera palabra de descripción)",
     "Nueva funcionalidad: botón Editar para modificar sesiones existentes",
     "Mejora UX: botón Nueva sesión en header, formulario colapsable",
-    "Cambio: campo Notas renombrado a Descripción con placeholder mejorado"
+    "Cambio: campo Notas renombrado a Descripción con placeholder mejorado",
+    "Mejora UX: botón Cancelar en formulario para cerrar sin guardar",
+    "Mejora navegación: botones Estadísticas e Historial en header para navegación rápida",
+    "Mejora diseño: botón Opciones con estilo consistente, layout mejorado del header"
   ]
 }

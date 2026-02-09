@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.7'; // Versión actual de la app
+let currentAppVersion = '1.0.8'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 
 // Inicialización
@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSessionsFromProject();
     setupForm();
     setupNewSessionButton();
+    setupNavigationButtons();
     setupClearButton();
     setupMenu();
     setupSync();
@@ -34,6 +35,14 @@ function setupForm() {
         e.preventDefault();
         addSession();
     });
+    
+    // Configurar botón cancelar
+    const cancelBtn = document.getElementById('cancelBtn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            cancelForm();
+        });
+    }
 }
 
 // Configurar botón "Nueva sesión"
@@ -58,6 +67,26 @@ function setupNewSessionButton() {
     });
 }
 
+// Configurar botones de navegación (Estadísticas e Historial)
+function setupNavigationButtons() {
+    const statsBtn = document.getElementById('statsBtn');
+    const historyBtn = document.getElementById('historyBtn');
+    const statsSection = document.getElementById('statsSection');
+    const historySection = document.getElementById('historySection');
+    
+    if (statsBtn && statsSection) {
+        statsBtn.addEventListener('click', () => {
+            statsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+    
+    if (historyBtn && historySection) {
+        historyBtn.addEventListener('click', () => {
+            historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+}
+
 // Mostrar formulario (para usar desde editSession)
 function showSessionForm() {
     const sessionFormSection = document.getElementById('sessionFormSection');
@@ -72,6 +101,13 @@ function hideSessionForm() {
     if (sessionFormSection) {
         sessionFormSection.style.display = 'none';
     }
+}
+
+// Cancelar formulario (cerrar sin guardar)
+function cancelForm() {
+    editingSessionId = null;
+    resetForm();
+    hideSessionForm();
 }
 
 // Convertir tiempo hh:mm:ss a minutos

@@ -42,21 +42,29 @@ header {
 
 .header-top {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     position: relative;
     width: 100%;
     max-width: 100%;
-    gap: 15px;
 }
 
-.header-buttons {
+header h1 {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    margin: 0;
+}
+
+.header-actions {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 10px;
+    margin-top: 15px;
 }
 
-.btn-new-session {
+.btn-header {
     background: var(--primary-color);
     color: white;
     border: none;
@@ -69,52 +77,29 @@ header {
     white-space: nowrap;
 }
 
-.btn-new-session:hover {
+.btn-header:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
 }
 
-header h1 {
-    font-size: 2.5em;
-    flex: 1;
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 5px;
-    margin: 0;
-}
-
-.menu-btn {
-    background: transparent;
+.btn-options {
+    background: var(--text-secondary);
+    color: white;
     border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    padding: 10px;
-    font-size: 1.5em;
-    color: var(--text-primary);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    z-index: 10;
+    font-size: 0.95em;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.2s ease;
+    white-space: nowrap;
 }
 
-.menu-btn:hover {
-    background: var(--background);
-    color: var(--primary-color);
-}
-
-.menu-btn:active {
-    transform: translateY(-50%) scale(0.95);
-}
-
-.menu-icon {
-    font-size: 1.8em;
-    line-height: 1;
-    font-weight: bold;
+.btn-options:hover {
+    background: #6C7A7B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(127, 140, 141, 0.3);
 }
 
 .menu-dropdown {
@@ -381,16 +366,41 @@ header h1 {
     font-family: inherit;
 }
 
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
 .btn-primary {
     background: var(--primary-color);
     color: white;
-    width: 100%;
+    flex: 1;
 }
 
 .btn-primary:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.btn-secondary {
+    background: var(--text-secondary);
+    color: white;
+    flex: 1;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-family: inherit;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: #6C7A7B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(127, 140, 141, 0.3);
 }
 
 .btn-danger {
@@ -691,27 +701,24 @@ header h1 {
     
     .header-top {
         padding: 0 20px;
-        flex-wrap: wrap;
     }
     
     header h1 {
         font-size: 2em;
-        order: 1;
-        width: 100%;
-        margin-bottom: 10px;
     }
     
-    .header-buttons {
-        order: 2;
-        width: 100%;
-        justify-content: space-between;
+    .header-actions {
+        padding: 0 20px;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
-    .btn-new-session {
-        font-size: 0.9em;
-        padding: 8px 16px;
+    .btn-header,
+    .btn-options {
+        font-size: 0.85em;
+        padding: 8px 12px;
         flex: 1;
-        max-width: calc(50% - 5px);
+        min-width: 0;
     }
     
     .menu-dropdown {
