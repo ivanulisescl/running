@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Iconos</title>
+</head>
+<body>
+    <h1>Generar Iconos para PWA</h1>
+    <p>Este archivo genera los iconos necesarios para la PWA.</p>
+    <canvas id="icon192" width="192" height="192"></canvas>
+    <canvas id="icon512" width="512" height="512"></canvas>
+    <br>
+    <button onclick="downloadIcons()">Descargar Iconos</button>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Fondo
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#4A90E2');
+            gradient.addColorStop(1, '#50C878');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Dibujar figura de corredor simple
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size / 20;
+            
+            // Cabeza (círculo)
+            const headRadius = size / 8;
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 3, headRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cuerpo (línea)
+            ctx.beginPath();
+            ctx.moveTo(size / 2, size / 3 + headRadius);
+            ctx.lineTo(size / 2, size / 2 + size / 6);
+            ctx.stroke();
+            
+            // Brazos
+            ctx.beginPath();
+            ctx.moveTo(size / 2, size / 2);
+            ctx.lineTo(size / 2 - size / 6, size / 2 + size / 12);
+            ctx.moveTo(size / 2, size / 2);
+            ctx.lineTo(size / 2 + size / 6, size / 2 + size / 12);
+            ctx.stroke();
+            
+            // Piernas corriendo
+            ctx.beginPath();
+            ctx.moveTo(size / 2, size / 2 + size / 6);
+            ctx.lineTo(size / 2 - size / 8, size * 0.75);
+            ctx.moveTo(size / 2, size / 2 + size / 6);
+            ctx.lineTo(size / 2 + size / 8, size * 0.75);
+            ctx.stroke();
+        }
+        
+        function downloadIcons() {
+            // Dibujar iconos
+            const canvas192 = document.getElementById('icon192');
+            const canvas512 = document.getElementById('icon512');
+            
+            drawIcon(canvas192, 192);
+            drawIcon(canvas512, 512);
+            
+            // Descargar icono 192
+            canvas192.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'icon-192.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            
+            // Descargar icono 512
+            setTimeout(() => {
+                canvas512.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'icon-512.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            }, 500);
+        }
+        
+        // Dibujar iconos al cargar
+        window.onload = () => {
+            drawIcon(document.getElementById('icon192'), 192);
+            drawIcon(document.getElementById('icon512'), 512);
+        };
+    </script>
+</body>
+</html>

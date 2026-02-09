@@ -1,0 +1,18 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos temporales
+*.tmp
+*.log
+*.swp
+*~
+
+# Archivos de iconos generados (opcional, si quieres generarlos localmente)
+# icon-192.png
+# icon-512.png
+
+# Archivos de desarrollo
+.vscode/
+.idea/

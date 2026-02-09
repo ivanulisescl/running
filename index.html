@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplicación para controlar tus sesiones de entrenamiento de running">
+    <meta name="theme-color" content="#4A90E2">
+    <title>Running</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="icon-192.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Running</h1>
+            <p class="subtitle">Controla tus entrenamientos</p>
+        </header>
+
+        <main>
+            <!-- Formulario para agregar sesión -->
+            <section class="card">
+                <h2>Nueva Sesión</h2>
+                <form id="sessionForm">
+                    <div class="form-group">
+                        <label for="date">Fecha</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="distance">Distancia (km)</label>
+                        <input type="number" id="distance" step="0.1" min="0" required placeholder="Ej: 5.5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tiempo</label>
+                        <div class="time-inputs">
+                            <div class="time-input-group">
+                                <input type="number" id="timeHours" min="0" max="23" value="0" required placeholder="00">
+                                <label for="timeHours" class="time-label">h</label>
+                            </div>
+                            <div class="time-input-group">
+                                <input type="number" id="timeMinutes" min="0" max="59" value="0" required placeholder="00">
+                                <label for="timeMinutes" class="time-label">m</label>
+                            </div>
+                            <div class="time-input-group">
+                                <input type="number" id="timeSeconds" min="0" max="59" value="0" required placeholder="00">
+                                <label for="timeSeconds" class="time-label">s</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="elevationGain">Desnivel + (m)</label>
+                            <input type="number" id="elevationGain" step="1" min="0" placeholder="Ej: 150">
+                        </div>
+                        <div class="form-group">
+                            <label for="elevationLoss">Desnivel - (m)</label>
+                            <input type="number" id="elevationLoss" step="1" min="0" placeholder="Ej: 120">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type">Tipo de entrenamiento</label>
+                        <select id="type" required>
+                            <option value="rodaje">Rodaje</option>
+                            <option value="series">Series</option>
+                            <option value="tirada-larga">Tirada larga</option>
+                            <option value="ritmo-carrera">Ritmo carrera</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notas (opcional)</label>
+                        <textarea id="notes" rows="3" placeholder="Cómo te sentiste, condiciones del clima, etc."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Guardar Sesión</button>
+                </form>
+            </section>
+
+            <!-- Estadísticas -->
+            <section class="card stats">
+                <h2>Estadísticas</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalSessions">0</div>
+                        <div class="stat-label">Sesiones</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalDistance">0</div>
+                        <div class="stat-label">Kilómetros</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTime">00:00:00</div>
+                        <div class="stat-label">Tiempo Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avgPace">--</div>
+                        <div class="stat-label">Ritmo (min/km)</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lista de sesiones -->
+            <section class="card">
+                <div class="section-header">
+                    <h2>Historial de Sesiones</h2>
+                    <button id="clearAll" class="btn btn-danger btn-small">Limpiar Todo</button>
+                </div>
+                <div id="sessionsList" class="sessions-list">
+                    <p class="empty-state">No hay sesiones registradas aún. ¡Agrega tu primera sesión!</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
