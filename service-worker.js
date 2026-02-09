@@ -12,7 +12,7 @@ const urlsToCache = [
   // version.json NO se cachea para que la comprobación de versión siempre obtenga la actual
 ];
 
-// Instalación del Service Worker
+// Instalación del Service Worker (skipWaiting para que la nueva versión tome control enseguida)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -20,6 +20,7 @@ self.addEventListener('install', (event) => {
         console.log('Cache abierto');
         return cache.addAll(urlsToCache);
       })
+      .then(() => self.skipWaiting())
   );
 });
 

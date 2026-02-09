@@ -794,6 +794,14 @@ function setupSync() {
         });
     }
 
+    const forceUpdateBtn = document.getElementById('forceUpdateBtn');
+    if (forceUpdateBtn) {
+        forceUpdateBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            applyUpdate();
+        });
+    }
+
     importInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -1900,6 +1908,10 @@ function setupPWA() {
             navigator.serviceWorker.register('./service-worker.js')
                 .then(registration => {
                     console.log('Service Worker registrado:', registration);
+                    registration.update(); // Buscar nueva versión al cargar
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        window.location.reload(); // Recargar cuando el nuevo SW tome control
+                    });
                 })
                 .catch(error => {
                     console.log('Error al registrar Service Worker:', error);
