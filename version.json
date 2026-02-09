@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "buildDate": "2026-02-09",
   "changelog": [
     "Versión inicial con registro de sesiones",
@@ -10,6 +10,7 @@
     "Menú de tres puntos con opciones de importar/exportar",
     "Mejoras de diseño responsive: campos en la misma fila en móvil",
     "Correcciones: menú funcional en PC, alineación de campos en móvil, estadísticas sin desbordamiento",
-    "Correcciones adicionales: menú mejorado, altura uniforme de campos fecha/distancia"
+    "Correcciones adicionales: menú mejorado, altura uniforme de campos fecha/distancia",
+    "Mejora UX: etiquetas h/m/s dentro de los inputs de tiempo, posicionadas a la derecha"
   ]
 }
