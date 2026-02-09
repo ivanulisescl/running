@@ -1,5 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
+let currentAppVersion = '1.0.0'; // Versión actual de la app
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGarminImport();
     updateStats();
     setupPWA();
+    setupVersionCheck();
     setTodayDate();
 });
 
@@ -783,6 +785,112 @@ function loadSessions() {
         saveSessions(); // Guardar datos migrados
         renderSessions();
     }
+}
+
+// Configurar verificación de versiones
+function setupVersionCheck() {
+    const versionElement = document.getElementById('currentVersion');
+    const updateBadge = document.getElementById('updateAvailable');
+    const updateNotification = document.getElementById('updateNotification');
+    const updateVersionInfo = document.getElementById('updateVersionInfo');
+    const updateNowBtn = document.getElementById('updateNowBtn');
+    const updateLaterBtn = document.getElementById('updateLaterBtn');
+
+    // Mostrar versión actual
+    versionElement.textContent = `v${currentAppVersion}`;
+
+    // Verificar versión desde el servidor
+    fetch('./version.json?' + Date.now())
+        .then(res => res.ok ? res.json() : null)
+        .then(versionData => {
+            if (!versionData || !versionData.version) return;
+            
+            const serverVersion = versionData.version;
+            const versionElement = document.getElementById('currentVersion');
+            
+            // Comparar versiones (formato semver: x.y.z)
+            if (compareVersions(serverVersion, currentAppVersion) > 0) {
+                // Hay una nueva versión disponible
+                updateBadge.style.display = 'inline-block';
+                updateNotification.style.display = 'block';
+                
+                const changelog = versionData.changelog || [];
+                const changelogText = changelog.length > 0 
+                    ? changelog.map(item => `• ${item}`).join('<br>')
+                    : 'Mejoras y correcciones';
+                
+                updateVersionInfo.innerHTML = `
+                    <strong>Versión ${serverVersion}</strong><br>
+                    <small style="color: var(--text-secondary);">${changelogText}</small>
+                `;
+                
+                // Guardar versión disponible en localStorage para recordar
+                localStorage.setItem('availableVersion', serverVersion);
+            } else {
+                // Está actualizado
+                versionElement.textContent = `v${currentAppVersion} ✓`;
+                versionElement.style.color = 'var(--secondary-color)';
+            }
+        })
+        .catch(() => {
+            // Si no se puede cargar, mostrar versión local
+            versionElement.textContent = `v${currentAppVersion}`;
+        });
+
+    // Botón actualizar ahora
+    updateNowBtn.addEventListener('click', () => {
+        // Limpiar cache del service worker y recargar
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(registration => {
+                    registration.update();
+                });
+            });
+        }
+        // Recargar la página
+        window.location.reload(true);
+    });
+
+    // Botón más tarde
+    updateLaterBtn.addEventListener('click', () => {
+        updateNotification.style.display = 'none';
+    });
+
+    // Verificar periódicamente (cada hora)
+    setInterval(() => {
+        fetch('./version.json?' + Date.now())
+            .then(res => res.ok ? res.json() : null)
+            .then(versionData => {
+                if (versionData && versionData.version) {
+                    const serverVersion = versionData.version;
+                    if (compareVersions(serverVersion, currentAppVersion) > 0) {
+                        const savedVersion = localStorage.getItem('availableVersion');
+                        if (savedVersion !== serverVersion) {
+                            // Nueva versión detectada
+                            updateBadge.style.display = 'inline-block';
+                            updateNotification.style.display = 'block';
+                            localStorage.setItem('availableVersion', serverVersion);
+                        }
+                    }
+                }
+            })
+            .catch(() => {});
+    }, 3600000); // Cada hora
+}
+
+// Comparar versiones (retorna: 1 si v1 > v2, -1 si v1 < v2, 0 si iguales)
+function compareVersions(v1, v2) {
+    const parts1 = v1.split('.').map(Number);
+    const parts2 = v2.split('.').map(Number);
+    const maxLength = Math.max(parts1.length, parts2.length);
+    
+    for (let i = 0; i < maxLength; i++) {
+        const part1 = parts1[i] || 0;
+        const part2 = parts2[i] || 0;
+        if (part1 > part2) return 1;
+        if (part1 < part2) return -1;
+    }
+    return 0;
 }
 
 // Configurar PWA

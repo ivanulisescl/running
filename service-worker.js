@@ -1,4 +1,4 @@
-const CACHE_NAME = 'running-v1';
+const CACHE_NAME = 'running-v1.0.0';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,7 +7,8 @@ const urlsToCache = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  './data/sessions.json'
+  './data/sessions.json',
+  './version.json'
 ];
 
 // Instalación del Service Worker
