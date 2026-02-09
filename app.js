@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.4'; // Versión actual de la app
+let currentAppVersion = '1.0.5'; // Versión actual de la app
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -209,27 +209,47 @@ function setupMenu() {
     const menuBtn = document.getElementById('menuBtn');
     const menuDropdown = document.getElementById('menuDropdown');
     
-    if (!menuBtn || !menuDropdown) return;
+    if (!menuBtn || !menuDropdown) {
+        console.error('No se encontraron elementos del menú');
+        return;
+    }
+    
+    // Asegurar que el menú esté oculto al inicio
+    menuDropdown.style.display = 'none';
     
     menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
-        const isVisible = menuDropdown.style.display === 'block' || menuDropdown.style.display === '';
-        menuDropdown.style.display = isVisible ? 'none' : 'block';
-    });
-    
-    // Cerrar menú al hacer clic fuera
-    document.addEventListener('click', (e) => {
-        if (menuDropdown && menuBtn) {
-            if (!menuDropdown.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) {
-                menuDropdown.style.display = 'none';
-            }
+        const currentDisplay = menuDropdown.style.display;
+        const computedDisplay = window.getComputedStyle(menuDropdown).display;
+        const isVisible = currentDisplay === 'block' || computedDisplay === 'block';
+        
+        console.log('Menú clickeado. Display actual:', currentDisplay, 'Computed:', computedDisplay, 'Visible:', isVisible);
+        
+        if (isVisible) {
+            menuDropdown.style.display = 'none';
+        } else {
+            menuDropdown.style.display = 'block';
         }
+        
+        console.log('Display después del cambio:', menuDropdown.style.display);
     });
     
     // Prevenir que el menú se cierre al hacer clic dentro
     menuDropdown.addEventListener('click', (e) => {
         e.stopPropagation();
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (menuDropdown && menuBtn) {
+            const clickedInsideMenu = menuDropdown.contains(e.target);
+            const clickedOnButton = e.target === menuBtn || menuBtn.contains(e.target);
+            
+            if (!clickedInsideMenu && !clickedOnButton) {
+                menuDropdown.style.display = 'none';
+            }
+        }
     });
 }
 
