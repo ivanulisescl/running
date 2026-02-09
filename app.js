@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.2'; // Versión actual de la app
+let currentAppVersion = '1.0.3'; // Versión actual de la app
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSessionsFromProject();
     setupForm();
     setupClearButton();
+    setupMenu();
     setupSync();
     setupGarminImport();
     updateStats();
@@ -203,14 +204,34 @@ function mergeSessions(externalSessions) {
     }
 }
 
+// Configurar menú desplegable
+function setupMenu() {
+    const menuBtn = document.getElementById('menuBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+    
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = menuDropdown.style.display === 'block';
+        menuDropdown.style.display = isVisible ? 'none' : 'block';
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!menuDropdown.contains(e.target) && e.target !== menuBtn) {
+            menuDropdown.style.display = 'none';
+        }
+    });
+}
+
 // Configurar exportar/importar JSON para sincronización
 function setupSync() {
-    const exportBtn = document.getElementById('exportJsonBtn');
-    const importBtn = document.getElementById('importJsonBtn');
+    const exportBtn = document.getElementById('exportJsonBtnMenu');
+    const importBtn = document.getElementById('importJsonBtnMenu');
     const importInput = document.getElementById('importJsonFile');
     const syncStatus = document.getElementById('syncStatus');
 
     exportBtn.addEventListener('click', () => {
+        document.getElementById('menuDropdown').style.display = 'none';
         const data = JSON.stringify(sessions, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -221,9 +242,15 @@ function setupSync() {
         URL.revokeObjectURL(url);
         syncStatus.style.display = 'block';
         syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Descargado. Guarda el archivo en <code>data/sessions.json</code> del proyecto y haz commit para sincronizar.</p>';
+        setTimeout(() => {
+            syncStatus.style.display = 'none';
+        }, 5000);
     });
 
-    importBtn.addEventListener('click', () => importInput.click());
+    importBtn.addEventListener('click', () => {
+        document.getElementById('menuDropdown').style.display = 'none';
+        importInput.click();
+    });
 
     importInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -248,9 +275,17 @@ function setupSync() {
                 renderSessions();
                 updateStats();
             }
+                syncStatus.style.display = 'block';
             syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ ${added} sesión(es) importada(s) desde el JSON.</p>`;
+            setTimeout(() => {
+                syncStatus.style.display = 'none';
+            }, 5000);
         } catch (err) {
+            syncStatus.style.display = 'block';
             syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error al leer el JSON: ${err.message}</p>`;
+            setTimeout(() => {
+                syncStatus.style.display = 'none';
+            }, 5000);
         }
         importInput.value = '';
     });
@@ -258,11 +293,12 @@ function setupSync() {
 
 // Configurar importación desde Garmin Connect
 function setupGarminImport() {
-    const importBtn = document.getElementById('importBtn');
+    const importBtn = document.getElementById('importGarminBtnMenu');
     const fileInput = document.getElementById('garminFile');
     const importStatus = document.getElementById('importStatus');
 
     importBtn.addEventListener('click', () => {
+        document.getElementById('menuDropdown').style.display = 'none';
         fileInput.click();
     });
 
@@ -309,9 +345,17 @@ function setupGarminImport() {
             saveSessions();
             renderSessions();
             updateStats();
+            importStatus.style.display = 'block';
             importStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ ${importedCount} sesión(es) importada(s) correctamente${errorCount > 0 ? `. ${errorCount} archivo(s) con errores.` : ''}</p>`;
+            setTimeout(() => {
+                importStatus.style.display = 'none';
+            }, 5000);
         } else {
+            importStatus.style.display = 'block';
             importStatus.innerHTML = `<p style="color: var(--danger-color);">❌ No se pudieron importar sesiones. Verifica que los archivos sean TCX, GPX o CSV (Activities.csv) válidos de Garmin Connect.</p>`;
+            setTimeout(() => {
+                importStatus.style.display = 'none';
+            }, 5000);
         }
 
         // Limpiar el input
