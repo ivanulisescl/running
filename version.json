@@ -1,7 +1,8 @@
 {
-  "version": "1.0.25",
+  "version": "1.0.26",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Logo en cabecera encima del nombre RunMetrics",
     "Marca RunMetrics, subtítulo Datos evolución y control; iconos PWA actualizados",
     "Distancia total: con 1 mes, eje horizontal = últimas 4 semanas con km por semana",
     "Estadísticas: gráfico de barras Distancia total (km por día de la semana o por mes según período)",
