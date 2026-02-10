@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.19'; // Versión actual de la app
+let currentAppVersion = '1.0.20'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1800,21 +1800,24 @@ function loadSessions() {
     }
 }
 
-// Aplicar actualización: forzar recarga con la nueva versión
+// Aplicar actualización: forzar recarga con la nueva versión (evita caché HTTP)
 function applyUpdate() {
+    sessionStorage.setItem('updateReloadTime', String(Date.now()));
     if ('serviceWorker' in navigator) {
-        sessionStorage.setItem('updateReloadTime', String(Date.now()));
         navigator.serviceWorker.getRegistrations().then(registrations => {
             registrations.forEach(registration => registration.unregister());
         });
         caches.keys().then(names => {
             names.forEach(name => caches.delete(name));
-        }).finally(() => {
-            window.location.reload(true);
-        });
+        }).finally(goToFreshPage);
     } else {
-        window.location.reload(true);
+        goToFreshPage();
     }
+}
+
+function goToFreshPage() {
+    const url = window.location.origin + window.location.pathname + '?nocache=' + Date.now();
+    window.location.href = url;
 }
 
 // Aviso de nueva versión (evita recarga automática y parpadeo 14/15)
