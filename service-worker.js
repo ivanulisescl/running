@@ -1,15 +1,12 @@
-const CACHE_NAME = 'running-v1.0.13';
+const CACHE_NAME = 'running-v1.0.14';
 const urlsToCache = [
-  './',
-  './index.html',
   './styles.css',
-  './app.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
   './data/sessions.json',
   './sessions.json'
-  // version.json NO se cachea para que la comprobación de versión siempre obtenga la actual
+  // NO cachear: ./ , index.html, app.js, version.json → siempre desde red para no revertir versión
 ];
 
 // Instalación del Service Worker (skipWaiting para que la nueva versión tome control enseguida)
@@ -40,10 +37,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Estrategia: Cache First, excepto version.json (siempre red)
+// Estrategia: shell de app siempre desde red; el resto cache first
 self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('version.json')) {
-    // version.json: siempre desde la red, no usar ni guardar en caché
+  const url = event.request.url;
+  const isShell = event.request.mode === 'navigate' ||
+    url.endsWith('/') || url.endsWith('index.html') || url.includes('app.js') || url.includes('version.json');
+
+  if (isShell) {
+    // Documento, app.js y version.json: siempre red, no cachear (evita que vuelva a versión antigua)
     event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
     return;
   }
@@ -53,9 +54,7 @@ self.addEventListener('fetch', (event) => {
       .then((response) => {
         if (response) return response;
         return fetch(event.request).then((response) => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
+          if (!response || response.status !== 200 || response.type !== 'basic') return response;
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
           return response;
