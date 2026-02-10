@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.23'; // Versión actual de la app
+let currentAppVersion = '1.0.24'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1537,18 +1537,17 @@ function updateCharts(filteredSessions) {
     updateElevationChart(filteredSessions);
 }
 
-// Gráfica de barras: Distancia total por día de la semana (1 sem / 1 mes) o por mes (1 año / Todo)
+// Gráfica de barras: Distancia total por día de la semana (1 sem), por últimas 4 semanas (1 mes), o por mes (1 año / Todo)
 function updateTotalDistanceChart(sessions) {
     const ctx = document.getElementById('totalDistanceChart');
     if (!ctx) return;
     
     const period = currentStatsPeriod;
-    const useWeekdays = period === 'week' || period === 'month';
-    
     let labels;
     let data;
+    let xMaxRotation = 0;
     
-    if (useWeekdays) {
+    if (period === 'week') {
         labels = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
         data = [0, 0, 0, 0, 0, 0, 0];
         sessions.forEach(s => {
@@ -1556,6 +1555,34 @@ function updateTotalDistanceChart(sessions) {
             const weekdayIndex = (d.getDay() + 6) % 7; // 0 = Lunes, 6 = Domingo
             data[weekdayIndex] += s.distance || 0;
         });
+    } else if (period === 'month') {
+        // Últimas 4 semanas: eje de izquierda a derecha = más antigua a más reciente
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const weekRanges = []; // [0]=semana más antigua (4.ª), [3]=más reciente (1.ª)
+        for (let w = 0; w < 4; w++) {
+            const start = new Date(today);
+            start.setDate(today.getDate() - (w + 1) * 7 + 1);
+            const end = new Date(today);
+            end.setDate(today.getDate() - w * 7);
+            weekRanges.push({ start, end });
+        }
+        const fmt = (d) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+        labels = weekRanges.map(ws => `${fmt(ws.start)} - ${fmt(ws.end)}`);
+        data = [0, 0, 0, 0];
+        sessions.forEach(s => {
+            const d = new Date(s.date + 'T00:00:00');
+            const t = d.getTime();
+            for (let w = 0; w < 4; w++) {
+                const start = weekRanges[w].start.getTime();
+                const end = weekRanges[w].end.getTime();
+                if (t >= start && t <= end) {
+                    data[w] += s.distance || 0;
+                    break;
+                }
+            }
+        });
+        xMaxRotation = 25;
     } else {
         labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -1563,6 +1590,7 @@ function updateTotalDistanceChart(sessions) {
             const d = new Date(s.date + 'T00:00:00');
             data[d.getMonth()] += s.distance || 0;
         });
+        xMaxRotation = 45;
     }
     
     if (charts.totalDistanceChart) {
@@ -1596,7 +1624,7 @@ function updateTotalDistanceChart(sessions) {
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
                 x: {
-                    ticks: { color: 'white', maxRotation: useWeekdays ? 0 : 45 },
+                    ticks: { color: 'white', maxRotation: xMaxRotation },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 }
             }
