@@ -905,6 +905,15 @@ header h1 {
     gap: 8px;
 }
 
+/* Vista compacta: botones solo icono */
+.edit-btn-icon,
+.delete-btn-icon {
+    min-width: 0;
+    flex: none;
+    padding: 6px 10px;
+    font-size: 1.1em;
+}
+
 .session-header {
     display: flex;
     justify-content: space-between;
@@ -1054,6 +1063,38 @@ header h1 {
     
     .card {
         padding: 20px;
+    }
+    
+    .history-section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .history-section-header h2 {
+        margin-bottom: 0;
+    }
+    
+    .history-header-actions {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .history-view-toggle {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .history-view-toggle .btn-view-mode {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+    
+    #clearAll {
+        flex: none;
     }
     
     .stats-filters {

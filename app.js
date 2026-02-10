@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.18'; // Versión actual de la app
+let currentAppVersion = '1.0.19'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1365,8 +1365,8 @@ function renderSessions() {
                     <span class="session-compact-location">${location ? escapeHtml(location) : '—'}</span>
                     <span class="session-compact-km">${session.distance} km</span>
                     <div class="session-actions session-actions-inline">
-                        <button class="edit-btn" onclick="editSession(${session.id})">Editar</button>
-                        <button class="delete-btn" onclick="deleteSession(${session.id})">Eliminar</button>
+                        <button class="edit-btn edit-btn-icon" onclick="editSession(${session.id})" title="Editar">✏️</button>
+                        <button class="delete-btn delete-btn-icon" onclick="deleteSession(${session.id})" title="Eliminar">🗑️</button>
                     </div>
                 </div>
             `;

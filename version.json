@@ -1,7 +1,8 @@
 {
-  "version": "1.0.18",
+  "version": "1.0.19",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Móvil: Historial con Detallada/Compacta/Limpiar en una línea bajo el título; vista compacta con Editar/Eliminar solo icono",
     "Nombre PWA RunCode, subtítulo PWA Trainer",
     "Historial: vista Detallada y Compacta (fecha, lugar, km en una línea)",
     "Horas/minutos/segundos en blanco por defecto en Nueva sesión (vacío = 0)",
