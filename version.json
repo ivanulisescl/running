@@ -1,7 +1,8 @@
 {
-  "version": "1.0.20",
+  "version": "1.0.21",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Resetear: si data/sessions.json está vacío, cargar desde sessions.json de la raíz",
     "Forzar actualización: recarga con ?nocache y app.js?v= para evitar que en PC vuelva a versión anterior",
     "Móvil: Historial con Detallada/Compacta/Limpiar en una línea bajo el título; vista compacta con Editar/Eliminar solo icono",
     "Nombre PWA RunCode, subtítulo PWA Trainer",

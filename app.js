@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.20'; // Versión actual de la app
+let currentAppVersion = '1.0.21'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -675,7 +675,7 @@ function resetFromRepository() {
     fetch('./data/sessions.json' + cacheBust, opts)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
-            if (Array.isArray(data)) return data;
+            if (Array.isArray(data) && data.length > 0) return data;
             return fetch('./sessions.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
         })
         .then(data => {
