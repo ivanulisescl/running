@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.2'; // Versión actual de la app
+let currentAppVersion = '1.2.3'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -741,9 +741,10 @@ function renderMarcas() {
                     <div class="marca-card-body">
                         <span class="marca-card-distance">${session.distance} km · ${timeDisplay}</span>
                         <div class="marca-card-datos">
-                            <span>${marca.numParticipantes || '—'} participantes</span>
+                            <span>${marca.numParticipantes ?? '—'} participantes</span>
                             <span>Puesto general: ${marca.puestoGeneral ?? '—'}</span>
                             <span>Categoría: ${escapeHtml((marca.categoria || '—'))}</span>
+                            <span>Participantes categoría: ${marca.participantesCategoria ?? '—'}</span>
                             <span>Puesto categoría: ${marca.puestoCategoria ?? '—'}</span>
                         </div>
                     </div>
@@ -779,6 +780,7 @@ function openMarcaForm(sessionId) {
         document.getElementById('marcaNumParticipantes').value = marca.numParticipantes ?? '';
         document.getElementById('marcaPuestoGeneral').value = marca.puestoGeneral ?? '';
         document.getElementById('marcaCategoria').value = marca.categoria ?? '';
+        document.getElementById('marcaParticipantesCategoria').value = marca.participantesCategoria ?? '';
         document.getElementById('marcaPuestoCategoria').value = marca.puestoCategoria ?? '';
     } else {
         titleEl.textContent = 'Añadir marca';
@@ -799,6 +801,7 @@ function setupMarcaForm() {
         const numParticipantes = parseInt(document.getElementById('marcaNumParticipantes').value, 10) || null;
         const puestoGeneral = parseInt(document.getElementById('marcaPuestoGeneral').value, 10) || null;
         const categoria = (document.getElementById('marcaCategoria').value || '').trim() || null;
+        const participantesCategoria = parseInt(document.getElementById('marcaParticipantesCategoria').value, 10) || null;
         const puestoCategoria = parseInt(document.getElementById('marcaPuestoCategoria').value, 10) || null;
         let marca = getMarcaBySessionId(sessionId);
         if (!marca) {
@@ -808,6 +811,7 @@ function setupMarcaForm() {
         marca.numParticipantes = numParticipantes;
         marca.puestoGeneral = puestoGeneral;
         marca.categoria = categoria;
+        marca.participantesCategoria = participantesCategoria;
         marca.puestoCategoria = puestoCategoria;
         saveMarcas();
         renderMarcas();
