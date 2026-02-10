@@ -1,9 +1,10 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.27'; // Versión actual de la app
+let currentAppVersion = '1.1.0'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
+let historyTypeFilter = ''; // '' = todos, 'entrenamiento' | 'series' | 'carrera'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
 
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEquipmentSection();
     setupClearButton();
     setupHistoryViewToggle();
+    setupHistoryTypeFilter();
     setupMenu();
     setupSync();
     setupGarminImport();
@@ -663,6 +665,15 @@ function setupHistoryViewToggle() {
         historyViewMode = 'compact';
         btnCompact.classList.add('active');
         btnDetailed.classList.remove('active');
+        renderSessions();
+    });
+}
+
+function setupHistoryTypeFilter() {
+    const select = document.getElementById('historyTypeFilter');
+    if (!select) return;
+    select.addEventListener('change', () => {
+        historyTypeFilter = select.value;
         renderSessions();
     });
 }
@@ -1359,16 +1370,22 @@ function getSessionLocation(session) {
 // Renderizar sesiones (modo detallado o compacto)
 function renderSessions() {
     const container = document.getElementById('sessionsList');
-    
-    if (sessions.length === 0) {
-        container.innerHTML = '<p class="empty-state">No hay sesiones registradas aún. ¡Agrega tu primera sesión!</p>';
+
+    const sortedSessions = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const normalizeType = (t) => (t === 'rodaje' || t === 'tirada-larga') ? 'entrenamiento' : (t === 'ritmo-carrera' ? 'carrera' : t);
+    const filteredSessions = historyTypeFilter
+        ? sortedSessions.filter(s => normalizeType(s.type) === historyTypeFilter)
+        : sortedSessions;
+    const isCompact = historyViewMode === 'compact';
+
+    if (filteredSessions.length === 0) {
+        container.innerHTML = sessions.length === 0
+            ? '<p class="empty-state">No hay sesiones registradas aún. ¡Agrega tu primera sesión!</p>'
+            : '<p class="empty-state">No hay sesiones de este tipo.</p>';
         return;
     }
 
-    const sortedSessions = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
-    const isCompact = historyViewMode === 'compact';
-
-    container.innerHTML = sortedSessions.map(session => {
+    container.innerHTML = filteredSessions.map(session => {
         const formattedDate = formatDate(session.date);
         const location = getSessionLocation(session);
 

@@ -837,6 +837,28 @@ header h1 {
     overflow-wrap: break-word;
 }
 
+.history-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.history-filters label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.history-filters select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-primary);
+    font-size: 0.95em;
+    min-width: 140px;
+}
+
 .history-header-actions {
     display: flex;
     align-items: center;

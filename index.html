@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.27</span>
+                <span id="currentVersion">v1.1.0</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -226,6 +226,15 @@
                         <button id="clearAll" class="btn btn-danger btn-small">Limpiar Todo</button>
                     </div>
                 </div>
+                <div class="history-filters">
+                    <label for="historyTypeFilter">Tipo</label>
+                    <select id="historyTypeFilter">
+                        <option value="">Todos</option>
+                        <option value="entrenamiento">Entrenamiento</option>
+                        <option value="series">Series</option>
+                        <option value="carrera">Carrera</option>
+                    </select>
+                </div>
                 <div id="sessionsList" class="sessions-list">
                     <p class="empty-state">No hay sesiones registradas aún. ¡Agrega tu primera sesión!</p>
                 </div>
@@ -234,6 +243,6 @@
 
     </div>
 
-    <script src="app.js?v=1.0.27"></script>
+    <script src="app.js?v=1.1.0"></script>
 </body>
 </html>
