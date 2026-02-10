@@ -1,23 +1,26 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.1.0'; // Versión actual de la app
+let currentAppVersion = '1.2.0'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
 let historyTypeFilter = ''; // '' = todos, 'entrenamiento' | 'series' | 'carrera'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
+let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
     loadEquipment();
     loadSessions();
     loadSessionsFromProject();
+    loadMarcas();
     setupForm();
     setupNewSessionButton();
     setupNavigationButtons();
     setupStatsFilters();
     setupEquipmentSection();
+    setupMarcaForm();
     setupClearButton();
     setupHistoryViewToggle();
     setupHistoryTypeFilter();
@@ -75,7 +78,8 @@ const MAIN_SECTIONS = {
     newSession: { btnId: 'newSessionBtn', sectionId: 'sessionFormSection' },
     stats: { btnId: 'statsBtn', sectionId: 'statsSection' },
     history: { btnId: 'historyBtn', sectionId: 'historySection' },
-    equipment: { btnId: 'equipmentBtn', sectionId: 'equipmentSection' }
+    equipment: { btnId: 'equipmentBtn', sectionId: 'equipmentSection' },
+    marcas: { btnId: 'marcasBtn', sectionId: 'marcasSection' }
 };
 
 function hideAllMainSections() {
@@ -104,7 +108,7 @@ function toggleSection(sectionId) {
 }
 
 function setActiveNavButton(activeBtnId) {
-    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn'].forEach(id => {
+    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.classList.toggle('active', id === activeBtnId);
     });
@@ -154,6 +158,15 @@ function setupNavigationButtons() {
         equipmentBtn.addEventListener('click', () => {
             toggleSection('equipmentSection');
             setActiveNavButton(equipmentSection.style.display !== 'none' ? 'equipmentBtn' : null);
+        });
+    }
+    const marcasBtn = document.getElementById('marcasBtn');
+    const marcasSection = document.getElementById('marcasSection');
+    if (marcasBtn && marcasSection) {
+        marcasBtn.addEventListener('click', () => {
+            toggleSection('marcasSection');
+            setActiveNavButton(marcasSection.style.display !== 'none' ? 'marcasBtn' : null);
+            renderMarcas();
         });
     }
 }
@@ -676,6 +689,135 @@ function setupHistoryTypeFilter() {
         historyTypeFilter = select.value;
         renderSessions();
     });
+}
+
+// --- Marcas (mejores marcas por carrera) ---
+function loadMarcas() {
+    const saved = localStorage.getItem('runningMarcas');
+    if (saved) {
+        try {
+            marcas = JSON.parse(saved);
+        } catch (_) {
+            marcas = [];
+        }
+    }
+}
+
+function saveMarcas() {
+    localStorage.setItem('runningMarcas', JSON.stringify(marcas));
+}
+
+function getMarcaBySessionId(sessionId) {
+    return marcas.find(m => m.id === sessionId);
+}
+
+function getCarreraSessions() {
+    const normalizeType = (t) => (t === 'rodaje' || t === 'tirada-larga') ? 'entrenamiento' : (t === 'ritmo-carrera' ? 'carrera' : t);
+    return sessions
+        .filter(s => normalizeType(s.type) === 'carrera')
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function renderMarcas() {
+    const container = document.getElementById('marcasList');
+    if (!container) return;
+    const carreras = getCarreraSessions();
+    if (carreras.length === 0) {
+        container.innerHTML = '<p class="empty-state">No hay sesiones de tipo Carrera. Añade una carrera en Nueva sesión.</p>';
+        return;
+    }
+    container.innerHTML = carreras.map(session => {
+        const marca = getMarcaBySessionId(session.id);
+        const location = getSessionLocation(session);
+        const dateFormatted = formatDate(session.date);
+        const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.timeInMinutes || session.time);
+        if (marca) {
+            return `
+                <div class="marca-card" data-session-id="${session.id}">
+                    <div class="marca-card-header">
+                        <span class="marca-card-date">${dateFormatted}</span>
+                        ${location ? `<span class="marca-card-location">${escapeHtml(location)}</span>` : ''}
+                    </div>
+                    <div class="marca-card-body">
+                        <span class="marca-card-distance">${session.distance} km · ${timeDisplay}</span>
+                        <div class="marca-card-datos">
+                            <span>${marca.numParticipantes || '—'} participantes</span>
+                            <span>Puesto general: ${marca.puestoGeneral ?? '—'}</span>
+                            <span>Categoría: ${escapeHtml((marca.categoria || '—'))}</span>
+                            <span>Puesto categoría: ${marca.puestoCategoria ?? '—'}</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-small btn-edit-marca" data-session-id="${session.id}">Editar</button>
+                </div>
+            `;
+        }
+        return `
+            <div class="marca-card" data-session-id="${session.id}">
+                <div class="marca-card-header">
+                    <span class="marca-card-date">${dateFormatted}</span>
+                    ${location ? `<span class="marca-card-location">${escapeHtml(location)}</span>` : ''}
+                </div>
+                <div class="marca-card-body">
+                    <span class="marca-card-distance">${session.distance} km · ${timeDisplay}</span>
+                </div>
+                <button type="button" class="btn btn-primary btn-small btn-add-marca" data-session-id="${session.id}">Añadir marca</button>
+            </div>
+        `;
+    }).join('');
+    container.querySelectorAll('.btn-add-marca, .btn-edit-marca').forEach(btn => {
+        btn.addEventListener('click', () => openMarcaForm(parseFloat(btn.getAttribute('data-session-id'))));
+    });
+}
+
+function openMarcaForm(sessionId) {
+    const container = document.getElementById('marcaFormContainer');
+    const titleEl = document.getElementById('marcaFormTitle');
+    document.getElementById('marcaSessionId').value = sessionId;
+    const marca = getMarcaBySessionId(sessionId);
+    if (marca) {
+        titleEl.textContent = 'Editar marca';
+        document.getElementById('marcaNumParticipantes').value = marca.numParticipantes ?? '';
+        document.getElementById('marcaPuestoGeneral').value = marca.puestoGeneral ?? '';
+        document.getElementById('marcaCategoria').value = marca.categoria ?? '';
+        document.getElementById('marcaPuestoCategoria').value = marca.puestoCategoria ?? '';
+    } else {
+        titleEl.textContent = 'Añadir marca';
+        document.getElementById('marcaForm').reset();
+        document.getElementById('marcaSessionId').value = sessionId;
+    }
+    container.style.display = 'block';
+}
+
+function setupMarcaForm() {
+    const form = document.getElementById('marcaForm');
+    const container = document.getElementById('marcaFormContainer');
+    const cancelBtn = document.getElementById('marcaFormCancel');
+    if (!form || !container) return;
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const sessionId = parseFloat(document.getElementById('marcaSessionId').value);
+        const numParticipantes = parseInt(document.getElementById('marcaNumParticipantes').value, 10) || null;
+        const puestoGeneral = parseInt(document.getElementById('marcaPuestoGeneral').value, 10) || null;
+        const categoria = (document.getElementById('marcaCategoria').value || '').trim() || null;
+        const puestoCategoria = parseInt(document.getElementById('marcaPuestoCategoria').value, 10) || null;
+        let marca = getMarcaBySessionId(sessionId);
+        if (!marca) {
+            marca = { id: sessionId };
+            marcas.push(marca);
+        }
+        marca.numParticipantes = numParticipantes;
+        marca.puestoGeneral = puestoGeneral;
+        marca.categoria = categoria;
+        marca.puestoCategoria = puestoCategoria;
+        saveMarcas();
+        renderMarcas();
+        container.style.display = 'none';
+    });
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            container.style.display = 'none';
+        });
+    }
 }
 
 // Traer el último JSON del repositorio y reemplazar datos locales (botón Resetear)

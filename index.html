@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.1.0</span>
+                <span id="currentVersion">v1.2.0</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -32,6 +32,9 @@
                 </div>
                 <div class="header-row-3">
                     <button id="equipmentBtn" class="btn-header">Equipo</button>
+                    <button id="marcasBtn" class="btn-header">Marcas</button>
+                </div>
+                <div class="header-row-4">
                     <button id="menuBtn" class="btn-header">Opciones</button>
                 </div>
             </div>
@@ -200,6 +203,45 @@
             <div id="syncStatus" class="status-message" style="display: none;"></div>
             <div id="importStatus" class="status-message" style="display: none;"></div>
 
+            <!-- Sección de Marcas (mejores marcas por carrera) -->
+            <section id="marcasSection" class="card main-section" style="display: none;">
+                <h2>Mejores marcas</h2>
+                <p class="section-intro">Carreras con resultado registrado. Añade o edita los datos de cada carrera.</p>
+                <div id="marcasList" class="marcas-list">
+                    <!-- Se rellena dinámicamente -->
+                </div>
+                <div id="marcaFormContainer" class="marca-form-container" style="display: none;">
+                    <h3 id="marcaFormTitle">Añadir marca</h3>
+                    <form id="marcaForm">
+                        <input type="hidden" id="marcaSessionId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="marcaNumParticipantes">Nº participantes</label>
+                                <input type="number" id="marcaNumParticipantes" min="0" placeholder="Ej: 500">
+                            </div>
+                            <div class="form-group">
+                                <label for="marcaPuestoGeneral">Puesto general</label>
+                                <input type="number" id="marcaPuestoGeneral" min="1" placeholder="Ej: 42">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="marcaCategoria">Categoría</label>
+                                <input type="text" id="marcaCategoria" placeholder="Ej: V40">
+                            </div>
+                            <div class="form-group">
+                                <label for="marcaPuestoCategoria">Puesto categoría</label>
+                                <input type="number" id="marcaPuestoCategoria" min="1" placeholder="Ej: 5">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="marcaFormCancel" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
             <!-- Sección de Equipos -->
             <section id="equipmentSection" class="card main-section" style="display: none;">
                 <h2>Equipos</h2>
@@ -243,6 +285,6 @@
 
     </div>
 
-    <script src="app.js?v=1.1.0"></script>
+    <script src="app.js?v=1.2.0"></script>
 </body>
 </html>
