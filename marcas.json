@@ -1,82 +1,42 @@
 [
   {
     "id": 1770637973884.5347,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
+    "numParticipantes": 2082,
+    "puestoGeneral": 1216,
+    "categoria": "Master 45",
+    "puestoCategoria": 167,
+    "participantesCategoria": 254
   },
   {
     "id": 1770637973884.4468,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
+    "numParticipantes": 184,
+    "puestoGeneral": 96,
+    "categoria": "Absoluta",
     "participantesCategoria": null,
     "puestoCategoria": null
   },
   {
     "id": 1770637973884.36,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
+    "numParticipantes": 1053,
+    "puestoGeneral": 531,
+    "categoria": "Senior C",
+    "participantesCategoria": 150,
+    "puestoCategoria": 91
   },
   {
     "id": 1770637973884.3025,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
-  },
-  {
-    "id": 1770637973884.463,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
-  },
-  {
-    "id": 1770637973885.598,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
-  },
-  {
-    "id": 1770637973885.8027,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
-  },
-  {
-    "id": 1770637973885.1519,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
-  },
-  {
-    "id": 1770637973885.4233,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
+    "numParticipantes": 4554,
+    "puestoGeneral": 395,
+    "categoria": "Master A",
+    "participantesCategoria": 1032,
+    "puestoCategoria": 143
   },
   {
     "id": 1770640037741.041,
-    "numParticipantes": null,
-    "puestoGeneral": null,
-    "categoria": null,
-    "participantesCategoria": null,
-    "puestoCategoria": null
+    "numParticipantes": 862,
+    "puestoGeneral": 355,
+    "categoria": "Master 45",
+    "participantesCategoria": 122,
+    "puestoCategoria": 69
   }
 ]
