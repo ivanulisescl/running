@@ -19,14 +19,20 @@
             </div>
             <p class="subtitle">Gestiona tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.14</span>
+                <span id="currentVersion">v1.0.15</span>
             </div>
             <div class="header-actions">
-                <button id="newSessionBtn" class="btn-header">Nueva sesión</button>
-                <button id="statsBtn" class="btn-header">Estadísticas</button>
-                <button id="historyBtn" class="btn-header">Historial</button>
-                <button id="equipmentBtn" class="btn-header">Equipo</button>
-                <button id="menuBtn" class="btn-options">Opciones</button>
+                <div class="header-row-1">
+                    <button id="newSessionBtn" class="btn-header btn-header-main">Nueva sesión</button>
+                </div>
+                <div class="header-row-2">
+                    <button id="statsBtn" class="btn-header">Estadísticas</button>
+                    <button id="historyBtn" class="btn-header">Historial</button>
+                </div>
+                <div class="header-row-3">
+                    <button id="equipmentBtn" class="btn-header">Equipo</button>
+                    <button id="menuBtn" class="btn-header">Opciones</button>
+                </div>
             </div>
             
             <!-- Menú desplegable -->
@@ -53,7 +59,7 @@
 
         <main>
             <!-- Formulario para agregar sesión -->
-            <section id="sessionFormSection" class="card" style="display: none;">
+            <section id="sessionFormSection" class="card main-section" style="display: none;">
                 <h2>Nueva Sesión</h2>
                 <form id="sessionForm">
                     <div class="form-row">
@@ -130,11 +136,11 @@
             </section>
 
             <!-- Estadísticas -->
-            <section id="statsSection" class="card stats">
+            <section id="statsSection" class="card stats main-section" style="display: none;">
                 <h2>Estadísticas</h2>
                 <div class="stats-filters">
                     <button class="stats-filter-btn active" data-period="all">Todo</button>
-                    <button class="stats-filter-btn" data-period="week">1 semana</button>
+                    <button class="stats-filter-btn" data-period="week">1 sem.</button>
                     <button class="stats-filter-btn" data-period="month">1 mes</button>
                     <button class="stats-filter-btn" data-period="year">1 año</button>
                 </div>
@@ -164,11 +170,6 @@
                     </div>
                     
                     <div class="chart-wrapper">
-                        <h3>Frecuencia de Sesiones</h3>
-                        <canvas id="frequencyChart"></canvas>
-                    </div>
-                    
-                    <div class="chart-wrapper">
                         <h3>Tipos de Entrenamiento</h3>
                         <canvas id="typeChart"></canvas>
                     </div>
@@ -190,7 +191,7 @@
             <div id="importStatus" class="status-message" style="display: none;"></div>
 
             <!-- Sección de Equipos -->
-            <section id="equipmentSection" class="card">
+            <section id="equipmentSection" class="card main-section" style="display: none;">
                 <h2>Equipos</h2>
                 <div class="equipment-container">
                     <div id="equipmentList" class="equipment-list-grid">
@@ -204,7 +205,7 @@
             </section>
 
             <!-- Lista de sesiones -->
-            <section id="historySection" class="card">
+            <section id="historySection" class="card main-section" style="display: none;">
                 <div class="section-header">
                     <h2>Historial de Sesiones</h2>
                     <button id="clearAll" class="btn btn-danger btn-small">Limpiar Todo</button>

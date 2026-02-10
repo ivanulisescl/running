@@ -2,7 +2,7 @@
   "name": "Running",
   "short_name": "Running",
   "description": "Aplicación para controlar tus sesiones de entrenamiento de running",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#F5F7FA",

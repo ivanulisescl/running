@@ -1,7 +1,11 @@
 {
-  "version": "1.0.14",
+  "version": "1.0.15",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Navegación por secciones: Estadísticas, Historial, Equipo y Nueva sesión se muestran/ocultan al pulsar",
+    "Botón Nueva sesión: estilo pill verde, moderno y destacado",
+    "Combos Tipo y Equipo en formulario sin cortar en PC",
+    "Colores desnivel en gráfico más visibles",
     "SW: shell (index, app.js) siempre desde red para que la versión no revierta",
     "Equipo visible en fichas de sesión (bloque Equipo en detalles)",
     "Merge desde repo actualiza equipo en sesiones existentes",

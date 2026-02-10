@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.14'; // Versión actual de la app
+let currentAppVersion = '1.0.15'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
@@ -66,32 +66,62 @@ function setupForm() {
     }
 }
 
+// Secciones que se muestran/ocultan con los botones del header
+const MAIN_SECTIONS = {
+    newSession: { btnId: 'newSessionBtn', sectionId: 'sessionFormSection' },
+    stats: { btnId: 'statsBtn', sectionId: 'statsSection' },
+    history: { btnId: 'historyBtn', sectionId: 'historySection' },
+    equipment: { btnId: 'equipmentBtn', sectionId: 'equipmentSection' }
+};
+
+function hideAllMainSections() {
+    document.querySelectorAll('.main-section').forEach(el => {
+        if (el) el.style.display = 'none';
+    });
+}
+
+function showSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    hideAllMainSections();
+    section.style.display = 'block';
+}
+
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const isVisible = section.style.display !== 'none';
+    if (isVisible) {
+        section.style.display = 'none';
+    } else {
+        hideAllMainSections();
+        section.style.display = 'block';
+    }
+}
+
+function setActiveNavButton(activeBtnId) {
+    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.toggle('active', id === activeBtnId);
+    });
+}
+
 // Configurar botón "Nueva sesión"
 function setupNewSessionButton() {
     const newSessionBtn = document.getElementById('newSessionBtn');
     const sessionFormSection = document.getElementById('sessionFormSection');
-    
     if (!newSessionBtn || !sessionFormSection) return;
-    
+
     newSessionBtn.addEventListener('click', () => {
-        // Si está editando, cancelar edición
         if (editingSessionId !== null) {
             editingSessionId = null;
             resetForm();
         }
-        
-        // Mostrar formulario
-        sessionFormSection.style.display = 'block';
-        
-    // Establecer equipo por defecto desde localStorage
-    const selectedEquipment = localStorage.getItem('selectedEquipment') || '';
-    const equipoField = document.getElementById('equipo');
-    if (equipoField) {
-        equipoField.value = selectedEquipment;
-    }
-        
-        // Scroll al formulario
-        sessionFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const selectedEquipment = localStorage.getItem('selectedEquipment') || '';
+        const equipoField = document.getElementById('equipo');
+        if (equipoField) equipoField.value = selectedEquipment;
+        toggleSection('sessionFormSection');
+        setActiveNavButton(sessionFormSection.style.display !== 'none' ? 'newSessionBtn' : null);
     });
 }
 
@@ -103,22 +133,23 @@ function setupNavigationButtons() {
     const statsSection = document.getElementById('statsSection');
     const historySection = document.getElementById('historySection');
     const equipmentSection = document.getElementById('equipmentSection');
-    
+
     if (statsBtn && statsSection) {
         statsBtn.addEventListener('click', () => {
-            statsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            toggleSection('statsSection');
+            setActiveNavButton(statsSection.style.display !== 'none' ? 'statsBtn' : null);
         });
     }
-    
     if (historyBtn && historySection) {
         historyBtn.addEventListener('click', () => {
-            historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            toggleSection('historySection');
+            setActiveNavButton(historySection.style.display !== 'none' ? 'historyBtn' : null);
         });
     }
-    
     if (equipmentBtn && equipmentSection) {
         equipmentBtn.addEventListener('click', () => {
-            equipmentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            toggleSection('equipmentSection');
+            setActiveNavButton(equipmentSection.style.display !== 'none' ? 'equipmentBtn' : null);
         });
     }
 }
@@ -346,7 +377,9 @@ function updateEquipmentSelect() {
 function showSessionForm() {
     const sessionFormSection = document.getElementById('sessionFormSection');
     if (sessionFormSection) {
+        hideAllMainSections();
         sessionFormSection.style.display = 'block';
+        setActiveNavButton('newSessionBtn');
     }
 }
 
@@ -355,6 +388,7 @@ function hideSessionForm() {
     const sessionFormSection = document.getElementById('sessionFormSection');
     if (sessionFormSection) {
         sessionFormSection.style.display = 'none';
+        setActiveNavButton(null);
     }
 }
 
@@ -572,14 +606,7 @@ function editSession(id) {
     editingSessionId = id;
     updateSubmitButton();
     
-    // Mostrar formulario
     showSessionForm();
-
-    // Scroll al formulario
-    const sessionFormSection = document.getElementById('sessionFormSection');
-    if (sessionFormSection) {
-        sessionFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
 }
 
 // Eliminar sesión
@@ -1458,7 +1485,6 @@ function updateStats() {
 // Actualizar todas las gráficas
 function updateCharts(filteredSessions) {
     updateDistanceChart(filteredSessions);
-    updateFrequencyChart(filteredSessions);
     updateTypeChart(filteredSessions);
     updatePaceChart(filteredSessions);
     updateElevationChart(filteredSessions);
@@ -1479,13 +1505,6 @@ function updateDistanceChart(sessions) {
     
     const distances = sortedSessions.map(s => s.distance);
     
-    // Calcular distancia acumulada
-    let accumulated = 0;
-    const accumulatedDistances = distances.map(d => {
-        accumulated += d;
-        return accumulated;
-    });
-    
     if (charts.distanceChart) {
         charts.distanceChart.destroy();
     }
@@ -1495,19 +1514,12 @@ function updateDistanceChart(sessions) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Distancia por sesión (km)',
+                label: 'Distancia (km)',
                 data: distances,
                 borderColor: 'rgba(255, 255, 255, 0.9)',
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 tension: 0.4,
                 fill: true
-            }, {
-                label: 'Distancia acumulada (km)',
-                data: accumulatedDistances,
-                borderColor: 'rgba(255, 255, 255, 0.6)',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                tension: 0.4,
-                borderDash: [5, 5]
             }]
         },
         options: {
@@ -1522,83 +1534,6 @@ function updateDistanceChart(sessions) {
                 y: {
                     beginAtZero: true,
                     ticks: { color: 'white' },
-                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
-                },
-                x: {
-                    ticks: { color: 'white' },
-                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
-                }
-            }
-        }
-    });
-}
-
-// Gráfica de frecuencia de sesiones
-function updateFrequencyChart(sessions) {
-    const ctx = document.getElementById('frequencyChart');
-    if (!ctx) return;
-    
-    // Agrupar por semana o mes según el período
-    const period = currentStatsPeriod === 'week' ? 'week' : 'month';
-    const grouped = {};
-    
-    sessions.forEach(session => {
-        const date = new Date(session.date + 'T00:00:00');
-        let key;
-        
-        if (period === 'week') {
-            const weekStart = new Date(date);
-            weekStart.setDate(date.getDate() - date.getDay());
-            key = weekStart.toISOString().split('T')[0];
-        } else {
-            key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        }
-        
-        grouped[key] = (grouped[key] || 0) + 1;
-    });
-    
-    const labels = Object.keys(grouped).sort().map(key => {
-        const date = new Date(key + (period === 'week' ? 'T00:00:00' : '-01T00:00:00'));
-        if (period === 'week') {
-            return `Sem ${date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}`;
-        } else {
-            return date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
-        }
-    });
-    
-    const frequencies = labels.map(label => {
-        const key = Object.keys(grouped).sort()[labels.indexOf(label)];
-        return grouped[key];
-    });
-    
-    if (charts.frequencyChart) {
-        charts.frequencyChart.destroy();
-    }
-    
-    charts.frequencyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Sesiones',
-                data: frequencies,
-                backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                borderColor: 'rgba(255, 255, 255, 0.9)',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { color: 'white', stepSize: 1 },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
                 x: {
@@ -1756,14 +1691,14 @@ function updateElevationChart(sessions) {
             datasets: [{
                 label: 'Desnivel + (m)',
                 data: elevationGain,
-                backgroundColor: 'rgba(80, 200, 120, 0.6)',
-                borderColor: 'rgba(80, 200, 120, 0.9)',
+                backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                borderColor: 'rgb(16, 185, 129)',
                 borderWidth: 2
             }, {
                 label: 'Desnivel - (m)',
                 data: elevationLoss.map(v => -v), // Negativo para mostrar hacia abajo
-                backgroundColor: 'rgba(231, 76, 60, 0.6)',
-                borderColor: 'rgba(231, 76, 60, 0.9)',
+                backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                borderColor: 'rgb(239, 68, 68)',
                 borderWidth: 2
             }]
         },

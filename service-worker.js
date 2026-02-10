@@ -1,4 +1,4 @@
-const CACHE_NAME = 'running-v1.0.14';
+const CACHE_NAME = 'running-v1.0.15';
 const urlsToCache = [
   './styles.css',
   './manifest.json',
