@@ -1,7 +1,10 @@
 {
-  "version": "1.0.15",
+  "version": "1.0.16",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Horas/minutos/segundos en blanco por defecto en Nueva sesión (vacío = 0)",
+    "Actualización: aviso con botón en lugar de recarga automática (evita parpadeo versión)",
+    "Todos los botones con redondeo pill como Nueva sesión",
     "Navegación por secciones: Estadísticas, Historial, Equipo y Nueva sesión se muestran/ocultan al pulsar",
     "Botón Nueva sesión: estilo pill verde, moderno y destacado",
     "Combos Tipo y Equipo en formulario sin cortar en PC",

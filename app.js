@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.15'; // Versión actual de la app
+let currentAppVersion = '1.0.16'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
@@ -539,9 +539,9 @@ function resetForm() {
     document.getElementById('sessionForm').reset();
     setTodayDate();
     // Resetear campos de tiempo a 0
-    document.getElementById('timeHours').value = 0;
-    document.getElementById('timeMinutes').value = 0;
-    document.getElementById('timeSeconds').value = 0;
+    document.getElementById('timeHours').value = '';
+    document.getElementById('timeMinutes').value = '';
+    document.getElementById('timeSeconds').value = '';
     // Limpiar campos de desnivel
     document.getElementById('elevationGain').value = '';
     document.getElementById('elevationLoss').value = '';
@@ -585,21 +585,22 @@ function editSession(id) {
     document.getElementById('elevationGain').value = session.elevationGain || '';
     document.getElementById('elevationLoss').value = session.elevationLoss || '';
 
-    // Parsear tiempo hh:mm:ss a horas, minutos, segundos
+    // Parsear tiempo hh:mm:ss a horas, minutos, segundos (vacío si es 0)
+    const toVal = (n) => (n === 0 ? '' : n);
     const timeParts = session.time.split(':');
     if (timeParts.length === 3) {
-        document.getElementById('timeHours').value = parseInt(timeParts[0]) || 0;
-        document.getElementById('timeMinutes').value = parseInt(timeParts[1]) || 0;
-        document.getElementById('timeSeconds').value = parseInt(timeParts[2]) || 0;
+        const h = parseInt(timeParts[0]) || 0, m = parseInt(timeParts[1]) || 0, s = parseInt(timeParts[2]) || 0;
+        document.getElementById('timeHours').value = toVal(h);
+        document.getElementById('timeMinutes').value = toVal(m);
+        document.getElementById('timeSeconds').value = toVal(s);
     } else {
-        // Fallback para datos antiguos
         const minutes = session.timeInMinutes || session.time || 0;
         const hours = Math.floor(minutes / 60);
         const mins = Math.floor(minutes % 60);
         const secs = Math.round((minutes % 1) * 60);
-        document.getElementById('timeHours').value = hours;
-        document.getElementById('timeMinutes').value = mins;
-        document.getElementById('timeSeconds').value = secs;
+        document.getElementById('timeHours').value = toVal(hours);
+        document.getElementById('timeMinutes').value = toVal(mins);
+        document.getElementById('timeSeconds').value = toVal(secs);
     }
 
     // Establecer modo edición
@@ -1773,6 +1774,7 @@ function loadSessions() {
 // Aplicar actualización: forzar recarga con la nueva versión
 function applyUpdate() {
     if ('serviceWorker' in navigator) {
+        sessionStorage.setItem('updateReloadTime', String(Date.now()));
         navigator.serviceWorker.getRegistrations().then(registrations => {
             registrations.forEach(registration => registration.unregister());
         });
@@ -1786,50 +1788,67 @@ function applyUpdate() {
     }
 }
 
-// Configurar verificación de versiones
+// Aviso de nueva versión (evita recarga automática y parpadeo 14/15)
+function showUpdateBanner(serverVersion) {
+    const key = 'updateBannerDismissed';
+    if (sessionStorage.getItem(key)) return;
+    let el = document.getElementById('updateBanner');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'updateBanner';
+        el.className = 'update-banner';
+        el.innerHTML = '<span class="update-banner-text">Nueva versión disponible<span id="updateBannerVersion"></span>. </span><button type="button" class="update-banner-btn" id="updateBannerBtn">Actualizar ahora</button>';
+        document.body.insertBefore(el, document.body.firstChild);
+        document.getElementById('updateBannerBtn').addEventListener('click', () => {
+            sessionStorage.removeItem('updateReloadTime');
+            applyUpdate();
+        });
+    }
+    const verEl = document.getElementById('updateBannerVersion');
+    if (verEl) verEl.textContent = serverVersion ? ` (v${serverVersion})` : '';
+    el.style.display = 'flex';
+}
+
+// Configurar verificación de versiones (sin recarga automática para evitar parpadeo)
 function setupVersionCheck() {
     const versionElement = document.getElementById('currentVersion');
     if (!versionElement) return;
 
-    // Mostrar versión actual
     versionElement.textContent = `v${currentAppVersion}`;
 
-    // Verificar versión desde el servidor (sin caché para no recibir 1.0.10 viejo)
+    // No intentar applyUpdate justo después de una recarga por actualización (evita bucle)
+    const reloadTime = sessionStorage.getItem('updateReloadTime');
+    if (reloadTime && (Date.now() - parseInt(reloadTime, 10)) < 45000) {
+        versionElement.textContent = `v${currentAppVersion} ✓`;
+        versionElement.style.color = 'var(--secondary-color)';
+        return;
+    }
+    sessionStorage.removeItem('updateReloadTime');
+
     fetch('./version.json?' + Date.now(), { cache: 'no-store' })
         .then(res => res.ok ? res.json() : null)
         .then(versionData => {
             if (!versionData || !versionData.version) return;
-            
             const serverVersion = versionData.version;
-            
-            // Comparar versiones (formato semver: x.y.z)
             if (compareVersions(serverVersion, currentAppVersion) > 0) {
-                // Hay una nueva versión: actualizar directamente
-                applyUpdate();
+                showUpdateBanner(serverVersion);
                 return;
             }
-            // Está actualizado
             versionElement.textContent = `v${currentAppVersion} ✓`;
             versionElement.style.color = 'var(--secondary-color)';
         })
-        .catch(() => {
-            versionElement.textContent = `v${currentAppVersion}`;
-        });
+        .catch(() => {});
 
-    // Verificar periódicamente (cada hora) y actualizar automáticamente si hay nueva versión
     setInterval(() => {
         fetch('./version.json?' + Date.now(), { cache: 'no-store' })
             .then(res => res.ok ? res.json() : null)
             .then(versionData => {
-                if (versionData && versionData.version) {
-                    const serverVersion = versionData.version;
-                    if (compareVersions(serverVersion, currentAppVersion) > 0) {
-                        applyUpdate();
-                    }
-                }
+                if (!versionData || !versionData.version) return;
+                const serverVersion = versionData.version;
+                if (compareVersions(serverVersion, currentAppVersion) > 0) showUpdateBanner(serverVersion);
             })
             .catch(() => {});
-    }, 3600000); // Cada hora
+    }, 3600000);
 }
 
 // Comparar versiones (retorna: 1 si v1 > v2, -1 si v1 < v2, 0 si iguales)
@@ -1855,9 +1874,10 @@ function setupPWA() {
             navigator.serviceWorker.register('./service-worker.js')
                 .then(registration => {
                     console.log('Service Worker registrado:', registration);
-                    registration.update(); // Buscar nueva versión al cargar
+                    registration.update();
+                    // No recargar automáticamente: evita parpadeo 14/15. Mostrar aviso y que el usuario pulse Actualizar.
                     navigator.serviceWorker.addEventListener('controllerchange', () => {
-                        window.location.reload(); // Recargar cuando el nuevo SW tome control
+                        showUpdateBanner();
                     });
                 })
                 .catch(error => {
