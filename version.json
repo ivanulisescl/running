@@ -1,7 +1,8 @@
 {
-  "version": "1.0.17",
+  "version": "1.0.18",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Nombre PWA RunCode, subtítulo PWA Trainer",
     "Historial: vista Detallada y Compacta (fecha, lugar, km en una línea)",
     "Horas/minutos/segundos en blanco por defecto en Nueva sesión (vacío = 0)",
     "Actualización: aviso con botón en lugar de recarga automática (evita parpadeo versión)",

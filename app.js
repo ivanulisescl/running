@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.17'; // Versión actual de la app
+let currentAppVersion = '1.0.18'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1920,7 +1920,7 @@ function setupPWA() {
     const installPrompt = document.createElement('div');
     installPrompt.className = 'install-prompt';
     installPrompt.innerHTML = `
-        <p>¿Instalar Running como app?</p>
+        <p>¿Instalar RunCode como app?</p>
         <button class="btn btn-primary btn-small" id="installBtn">Instalar</button>
         <button class="btn btn-danger btn-small" id="cancelInstall">Cancelar</button>
     `;
