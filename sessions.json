@@ -780,19 +780,6 @@
     "localizacion": "Colunga"
   },
   {
-    "date": "2025-08-09",
-    "distance": 1.65,
-    "time": "00:12:06",
-    "timeInMinutes": 12.1,
-    "type": "ritmo-carrera",
-    "notes": "Colunga Carrera",
-    "elevationGain": 16,
-    "elevationLoss": 34,
-    "id": 1770637973884.0583,
-    "equipo": "Hokka Bondi 9 Grises",
-    "localizacion": "Colunga"
-  },
-  {
     "date": "2025-08-06",
     "distance": 6.01,
     "time": "00:30:30",
@@ -3482,19 +3469,6 @@
     "id": 1770637973885.482,
     "equipo": "Asics Gel Nimbus 25 Negras",
     "localizacion": "Barrigón"
-  },
-  {
-    "date": "2023-09-02",
-    "distance": 3.17,
-    "time": "00:34:42",
-    "timeInMinutes": 34.7,
-    "type": "rodaje",
-    "notes": "Colunga Caminar",
-    "elevationGain": 37,
-    "elevationLoss": 26,
-    "id": 1770637973885.2537,
-    "equipo": "Asics Gel Nimbus 25 Negras",
-    "localizacion": "Colunga"
   },
   {
     "date": "2025-09-03",
