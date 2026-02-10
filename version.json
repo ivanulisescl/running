@@ -1,7 +1,8 @@
 {
-  "version": "1.2.1",
+  "version": "1.2.2",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Opciones: botón Exportar marcas (descarga marcas.json)",
     "marcas.json: entradas por sesiones tipo carrera (ids rellenados)",
     "Marcas: sección Mejores marcas por carrera (Nº participantes, Puesto general, Categoría, Puesto categoría); marcas.json",
     "Historial: filtro por tipo de sesión (Todos, Entrenamiento, Series, Carrera)",

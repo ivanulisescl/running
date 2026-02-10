@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.1'; // Versión actual de la app
+let currentAppVersion = '1.2.2'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -997,6 +997,26 @@ function setupSync() {
             syncStatus.style.display = 'none';
         }, 5000);
     });
+
+    const exportMarcasBtn = document.getElementById('exportMarcasBtnMenu');
+    if (exportMarcasBtn) {
+        exportMarcasBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            const data = JSON.stringify(marcas, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'marcas.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ marcas.json descargado.</p>';
+                setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
+            }
+        });
+    }
 
     importBtn.addEventListener('click', () => {
         document.getElementById('menuDropdown').style.display = 'none';
