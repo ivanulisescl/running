@@ -1,7 +1,8 @@
 {
-  "version": "1.0.21",
+  "version": "1.0.22",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Tipos de entrenamiento: Entrenamiento, Series, Carrera (rodaje→entrenamiento, ritmo carrera→carrera)",
     "Resetear: si data/sessions.json está vacío, cargar desde sessions.json de la raíz",
     "Forzar actualización: recarga con ?nocache y app.js?v= para evitar que en PC vuelva a versión anterior",
     "Móvil: Historial con Detallada/Compacta/Limpiar en una línea bajo el título; vista compacta con Editar/Eliminar solo icono",

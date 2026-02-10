@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.21'; // Versión actual de la app
+let currentAppVersion = '1.0.22'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -581,7 +581,8 @@ function editSession(id) {
     // Cargar datos en el formulario
     document.getElementById('date').value = session.date;
     document.getElementById('distance').value = session.distance;
-    document.getElementById('type').value = session.type;
+    const typeVal = (session.type === 'rodaje' || session.type === 'tirada-larga') ? 'entrenamiento' : (session.type === 'ritmo-carrera' ? 'carrera' : session.type);
+    document.getElementById('type').value = ['entrenamiento', 'series', 'carrera'].includes(typeVal) ? typeVal : 'entrenamiento';
     document.getElementById('equipo').value = session.equipo || '';
     document.getElementById('notes').value = session.notes || '';
     document.getElementById('elevationGain').value = session.elevationGain || '';
@@ -1087,11 +1088,10 @@ function parseGarminCSV(fileContent) {
 
         // Tipo: mapear a nuestros tipos
         const tipoStr = (cols[idxTipo] || '').toLowerCase();
-        let type = 'rodaje';
+        let type = 'entrenamiento';
         if (tipoStr.includes('series') || tipoStr.includes('interval')) type = 'series';
-        else if (tipoStr.includes('tirada') || tipoStr.includes('larga') || tipoStr.includes('long')) type = 'tirada-larga';
-        else if (tipoStr.includes('ritmo') || tipoStr.includes('tempo') || tipoStr.includes('carrera')) type = 'ritmo-carrera';
-        // "Carrera" y "Entrenamiento en cinta" -> rodaje por defecto
+        else if (tipoStr.includes('ritmo') || tipoStr.includes('tempo') || tipoStr.includes('carrera')) type = 'carrera';
+        // "Entrenamiento en cinta" etc. -> entrenamiento por defecto
 
         const title = idxTitulo >= 0 ? (cols[idxTitulo] || '').trim() : '';
         const notes = title ? `Importado desde Garmin Connect: ${title}` : 'Importado desde Garmin Connect (CSV)';
@@ -1176,17 +1176,16 @@ function parseTCX(xmlDoc) {
                 if (elevationLoss) loss = parseFloat(elevationLoss.textContent) || 0;
             }
 
-            // Tipo de actividad (intentar detectar desde el nombre o usar "rodaje" por defecto)
+            // Tipo de actividad (intentar detectar desde el nombre o usar "entrenamiento" por defecto)
             const activityType = activity.getAttribute('Sport') || 'Running';
-            let type = 'rodaje'; // Por defecto
+            let type = 'entrenamiento'; // Por defecto
             
             // Intentar detectar el tipo desde el nombre de la actividad
             const nameEl = activity.querySelector('Name');
             if (nameEl) {
                 const name = nameEl.textContent.toLowerCase();
                 if (name.includes('series') || name.includes('interval')) type = 'series';
-                else if (name.includes('tirada') || name.includes('long')) type = 'tirada-larga';
-                else if (name.includes('ritmo') || name.includes('tempo')) type = 'ritmo-carrera';
+                else if (name.includes('ritmo') || name.includes('tempo') || name.includes('carrera')) type = 'carrera';
             }
 
             if (totalDistance > 0 && seconds > 0) {
@@ -1285,12 +1284,11 @@ function parseGPX(xmlDoc) {
 
             // Tipo de actividad
             const typeEl = track.querySelector('type');
-            let type = 'rodaje';
+            let type = 'entrenamiento';
             if (typeEl) {
                 const typeText = typeEl.textContent.toLowerCase();
                 if (typeText.includes('series') || typeText.includes('interval')) type = 'series';
-                else if (typeText.includes('tirada') || typeText.includes('long')) type = 'tirada-larga';
-                else if (typeText.includes('ritmo') || typeText.includes('tempo')) type = 'ritmo-carrera';
+                else if (typeText.includes('ritmo') || typeText.includes('tempo') || typeText.includes('carrera')) type = 'carrera';
             }
 
             const hours = Math.floor(seconds / 3600);
@@ -1376,10 +1374,12 @@ function renderSessions() {
         const pace = (timeInMinutes / session.distance).toFixed(2);
         const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.time);
         const typeLabels = {
-            rodaje: 'Rodaje',
+            entrenamiento: 'Entrenamiento',
             series: 'Series',
-            'tirada-larga': 'Tirada larga',
-            'ritmo-carrera': 'Ritmo carrera'
+            carrera: 'Carrera',
+            rodaje: 'Entrenamiento',
+            'tirada-larga': 'Entrenamiento',
+            'ritmo-carrera': 'Carrera'
         };
 
         return `
@@ -1581,24 +1581,21 @@ function updateTypeChart(sessions) {
     if (!ctx) return;
     
     const typeCounts = {
-        'rodaje': 0,
+        'entrenamiento': 0,
         'series': 0,
-        'tirada-larga': 0,
-        'ritmo-carrera': 0
+        'carrera': 0
     };
     
     sessions.forEach(session => {
-        if (typeCounts.hasOwnProperty(session.type)) {
-            typeCounts[session.type]++;
-        }
+        const t = (session.type === 'rodaje' || session.type === 'tirada-larga') ? 'entrenamiento' : (session.type === 'ritmo-carrera' ? 'carrera' : session.type);
+        if (typeCounts.hasOwnProperty(t)) typeCounts[t]++;
     });
     
-    const labels = ['Rodaje', 'Series', 'Tirada larga', 'Ritmo carrera'];
+    const labels = ['Entrenamiento', 'Series', 'Carrera'];
     const data = [
-        typeCounts['rodaje'],
+        typeCounts['entrenamiento'],
         typeCounts['series'],
-        typeCounts['tirada-larga'],
-        typeCounts['ritmo-carrera']
+        typeCounts['carrera']
     ];
     
     if (charts.typeChart) {
