@@ -1,7 +1,9 @@
 {
-  "version": "1.0.22",
+  "version": "1.0.23",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Estadísticas: gráfico de barras Distancia total (km por día de la semana o por mes según período)",
+    "Campo Localización en sesiones (independiente de Notas); migración desde notes",
     "Tipos de entrenamiento: Entrenamiento, Series, Carrera (rodaje→entrenamiento, ritmo carrera→carrera)",
     "Resetear: si data/sessions.json está vacío, cargar desde sessions.json de la raíz",
     "Forzar actualización: recarga con ?nocache y app.js?v= para evitar que en PC vuelva a versión anterior",

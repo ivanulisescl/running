@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.22'; // Versión actual de la app
+let currentAppVersion = '1.0.23'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -435,6 +435,7 @@ function addSession() {
     const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
     const type = document.getElementById('type').value;
     const equipo = document.getElementById('equipo').value;
+    const localizacion = document.getElementById('localizacion').value.trim();
     const notes = document.getElementById('notes').value.trim();
     const elevationGain = parseFloat(document.getElementById('elevationGain').value) || 0;
     const elevationLoss = parseFloat(document.getElementById('elevationLoss').value) || 0;
@@ -479,6 +480,7 @@ function addSession() {
                 time: timeString,
                 timeInMinutes,
                 type,
+                localizacion,
                 notes,
                 elevationGain,
                 elevationLoss,
@@ -508,6 +510,7 @@ function addSession() {
             time: timeString, // Guardar en formato hh:mm:ss
             timeInMinutes, // Guardar también en minutos para cálculos
             type,
+            localizacion,
             notes,
             elevationGain,
             elevationLoss,
@@ -584,6 +587,7 @@ function editSession(id) {
     const typeVal = (session.type === 'rodaje' || session.type === 'tirada-larga') ? 'entrenamiento' : (session.type === 'ritmo-carrera' ? 'carrera' : session.type);
     document.getElementById('type').value = ['entrenamiento', 'series', 'carrera'].includes(typeVal) ? typeVal : 'entrenamiento';
     document.getElementById('equipo').value = session.equipo || '';
+    document.getElementById('localizacion').value = session.localizacion || '';
     document.getElementById('notes').value = session.notes || '';
     document.getElementById('elevationGain').value = session.elevationGain || '';
     document.getElementById('elevationLoss').value = session.elevationLoss || '';
@@ -690,6 +694,7 @@ function resetFromRepository() {
             }
             sessions = data.map(s => {
                 if (s.equipo === undefined) s.equipo = '';
+                if (!('localizacion' in s) || s.localizacion === undefined) s.localizacion = (s.notes || '').trim();
                 return s;
             });
             saveSessions();
@@ -741,6 +746,7 @@ function mergeSessions(externalSessions) {
     externalSessions.forEach(session => {
         if (session.id == null) return;
         if (session.equipo === undefined) session.equipo = '';
+        if (!('localizacion' in session) || session.localizacion === undefined) session.localizacion = (session.notes || '').trim();
         const local = existingById.get(session.id);
         if (!local) {
             sessions.push(session);
@@ -1102,6 +1108,7 @@ function parseGarminCSV(fileContent) {
             time: timeString,
             timeInMinutes,
             type,
+            localizacion: title,
             notes,
             elevationGain,
             elevationLoss,
@@ -1189,15 +1196,18 @@ function parseTCX(xmlDoc) {
             }
 
             if (totalDistance > 0 && seconds > 0) {
+                const nameText = nameEl ? nameEl.textContent.trim() : '';
                 sessions.push({
                     date: dateFormatted,
                     distance: parseFloat(totalDistance.toFixed(2)),
                     time: timeString,
                     timeInMinutes: seconds / 60,
                     type: type,
+                    localizacion: nameText,
                     notes: `Importado desde Garmin Connect`,
                     elevationGain: Math.round(gain),
-                    elevationLoss: Math.round(loss)
+                    elevationLoss: Math.round(loss),
+                    equipo: ''
                 });
             }
         } catch (error) {
@@ -1297,15 +1307,19 @@ function parseGPX(xmlDoc) {
             const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
             if (totalDistance > 0 && seconds > 0) {
+                const nameEl = track.querySelector('name');
+                const nameText = nameEl ? nameEl.textContent.trim() : '';
                 sessions.push({
                     date: dateFormatted,
                     distance: parseFloat(totalDistance.toFixed(2)),
                     time: timeString,
                     timeInMinutes: seconds / 60,
                     type: type,
+                    localizacion: nameText,
                     notes: `Importado desde Garmin Connect (GPX)`,
                     elevationGain: Math.round(gain),
-                    elevationLoss: Math.round(loss)
+                    elevationLoss: Math.round(loss),
+                    equipo: ''
                 });
             }
         } catch (error) {
@@ -1329,8 +1343,10 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-// Extraer lugar (primera palabra) de las notas de una sesión
+// Obtener localización de una sesión (campo localizacion o fallback desde notas)
 function getSessionLocation(session) {
+    const loc = (session.localizacion != null && String(session.localizacion).trim() !== '') ? String(session.localizacion).trim() : '';
+    if (loc) return loc;
     if (!session.notes || !session.notes.trim()) return '';
     const notes = session.notes.trim();
     if (notes.includes(':')) {
@@ -1514,10 +1530,78 @@ function updateStats() {
 
 // Actualizar todas las gráficas
 function updateCharts(filteredSessions) {
+    updateTotalDistanceChart(filteredSessions);
     updateDistanceChart(filteredSessions);
     updateTypeChart(filteredSessions);
     updatePaceChart(filteredSessions);
     updateElevationChart(filteredSessions);
+}
+
+// Gráfica de barras: Distancia total por día de la semana (1 sem / 1 mes) o por mes (1 año / Todo)
+function updateTotalDistanceChart(sessions) {
+    const ctx = document.getElementById('totalDistanceChart');
+    if (!ctx) return;
+    
+    const period = currentStatsPeriod;
+    const useWeekdays = period === 'week' || period === 'month';
+    
+    let labels;
+    let data;
+    
+    if (useWeekdays) {
+        labels = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        data = [0, 0, 0, 0, 0, 0, 0];
+        sessions.forEach(s => {
+            const d = new Date(s.date + 'T00:00:00');
+            const weekdayIndex = (d.getDay() + 6) % 7; // 0 = Lunes, 6 = Domingo
+            data[weekdayIndex] += s.distance || 0;
+        });
+    } else {
+        labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        sessions.forEach(s => {
+            const d = new Date(s.date + 'T00:00:00');
+            data[d.getMonth()] += s.distance || 0;
+        });
+    }
+    
+    if (charts.totalDistanceChart) {
+        charts.totalDistanceChart.destroy();
+    }
+    
+    charts.totalDistanceChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Km',
+                data: data,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white', maxRotation: useWeekdays ? 0 : 45 },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
 }
 
 // Gráfica de evolución de distancia
@@ -1790,6 +1874,10 @@ function loadSessions() {
             if (session.elevationLoss === undefined) session.elevationLoss = 0;
             // Asegurar que el campo equipo exista
             if (session.equipo === undefined) session.equipo = '';
+            // Migrar: campo localizacion desde notes si no existe
+            if (!('localizacion' in session) || session.localizacion === undefined) {
+                session.localizacion = (session.notes || '').trim();
+            }
             return session;
         });
         saveSessions(); // Guardar datos migrados

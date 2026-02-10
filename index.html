@@ -19,7 +19,7 @@
             </div>
             <p class="subtitle">PWA Trainer</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.22</span>
+                <span id="currentVersion">v1.0.23</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -123,8 +123,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="notes">Descripción</label>
-                        <textarea id="notes" rows="3" placeholder="Lugar por donde se hizo el entrenamiento"></textarea>
+                        <label for="localizacion">Localización</label>
+                        <input type="text" id="localizacion" placeholder="Lugar o ruta del entrenamiento">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notas</label>
+                        <textarea id="notes" rows="3" placeholder="Notas adicionales (opcional)"></textarea>
                     </div>
                     
                     <div class="form-actions">
@@ -163,6 +168,11 @@
                 </div>
                 
                 <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <h3>Distancia total</h3>
+                        <canvas id="totalDistanceChart"></canvas>
+                    </div>
+                    
                     <div class="chart-wrapper">
                         <h3>Evolución de Distancia</h3>
                         <canvas id="distanceChart"></canvas>
@@ -223,6 +233,6 @@
 
     </div>
 
-    <script src="app.js?v=1.0.22"></script>
+    <script src="app.js?v=1.0.23"></script>
 </body>
 </html>
