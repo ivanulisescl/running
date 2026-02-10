@@ -1,8 +1,9 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.16'; // Versión actual de la app
+let currentAppVersion = '1.0.17'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
+let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
 
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupStatsFilters();
     setupEquipmentSection();
     setupClearButton();
+    setupHistoryViewToggle();
     setupMenu();
     setupSync();
     setupGarminImport();
@@ -629,7 +631,7 @@ function deleteSession(id) {
 // Configurar botón de limpiar todo
 function setupClearButton() {
     const clearBtn = document.getElementById('clearAll');
-    clearBtn.addEventListener('click', () => {
+    if (clearBtn) clearBtn.addEventListener('click', () => {
         if (confirm('¿Estás seguro de que quieres eliminar TODAS las sesiones? Esta acción no se puede deshacer.')) {
             sessions = [];
             saveSessions();
@@ -637,6 +639,26 @@ function setupClearButton() {
             renderEquipmentList();
             updateStats();
         }
+    });
+}
+
+function setupHistoryViewToggle() {
+    const btnDetailed = document.getElementById('historyViewDetailed');
+    const btnCompact = document.getElementById('historyViewCompact');
+    if (!btnDetailed || !btnCompact) return;
+    btnDetailed.addEventListener('click', () => {
+        if (historyViewMode === 'detailed') return;
+        historyViewMode = 'detailed';
+        btnDetailed.classList.add('active');
+        btnCompact.classList.remove('active');
+        renderSessions();
+    });
+    btnCompact.addEventListener('click', () => {
+        if (historyViewMode === 'compact') return;
+        historyViewMode = 'compact';
+        btnCompact.classList.add('active');
+        btnDetailed.classList.remove('active');
+        renderSessions();
     });
 }
 
@@ -1309,7 +1331,18 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-// Renderizar sesiones
+// Extraer lugar (primera palabra) de las notas de una sesión
+function getSessionLocation(session) {
+    if (!session.notes || !session.notes.trim()) return '';
+    const notes = session.notes.trim();
+    if (notes.includes(':')) {
+        const afterColon = notes.split(':')[1].trim();
+        return afterColon ? afterColon.split(/\s+/)[0] : '';
+    }
+    return notes.split(/\s+/)[0] || '';
+}
+
+// Renderizar sesiones (modo detallado o compacto)
 function renderSessions() {
     const container = document.getElementById('sessionsList');
     
@@ -1318,40 +1351,36 @@ function renderSessions() {
         return;
     }
 
-    // Ordenar por fecha (más recientes primero)
     const sortedSessions = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const isCompact = historyViewMode === 'compact';
 
     container.innerHTML = sortedSessions.map(session => {
-        // Calcular ritmo usando tiempo en minutos (compatibilidad con datos antiguos)
+        const formattedDate = formatDate(session.date);
+        const location = getSessionLocation(session);
+
+        if (isCompact) {
+            return `
+                <div class="session-item session-item-compact">
+                    <span class="session-compact-date">${formattedDate}</span>
+                    <span class="session-compact-location">${location ? escapeHtml(location) : '—'}</span>
+                    <span class="session-compact-km">${session.distance} km</span>
+                    <div class="session-actions session-actions-inline">
+                        <button class="edit-btn" onclick="editSession(${session.id})">Editar</button>
+                        <button class="delete-btn" onclick="deleteSession(${session.id})">Eliminar</button>
+                    </div>
+                </div>
+            `;
+        }
+
         const timeInMinutes = session.timeInMinutes || (typeof session.time === 'string' ? timeToMinutes(session.time) : session.time);
         const pace = (timeInMinutes / session.distance).toFixed(2);
-        const formattedDate = formatDate(session.date);
         const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.time);
-        
         const typeLabels = {
             rodaje: 'Rodaje',
             series: 'Series',
             'tirada-larga': 'Tirada larga',
             'ritmo-carrera': 'Ritmo carrera'
         };
-
-        // Extraer la primera palabra de las notas como lugar
-        // Si contiene ":", tomar la primera palabra después de ":"
-        // Si no contiene ":", tomar la primera palabra
-        let location = '';
-        if (session.notes && session.notes.trim()) {
-            const notes = session.notes.trim();
-            if (notes.includes(':')) {
-                // Para sesiones importadas: tomar primera palabra después de ":"
-                const afterColon = notes.split(':')[1].trim();
-                if (afterColon) {
-                    location = afterColon.split(/\s+/)[0];
-                }
-            } else {
-                // Para sesiones manuales: tomar primera palabra
-                location = notes.split(/\s+/)[0];
-            }
-        }
 
         return `
             <div class="session-item">

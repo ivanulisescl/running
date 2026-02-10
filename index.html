@@ -19,7 +19,7 @@
             </div>
             <p class="subtitle">Gestiona tus entrenamientos</p>
             <div class="version-info">
-                <span id="currentVersion">v1.0.16</span>
+                <span id="currentVersion">v1.0.17</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -208,7 +208,13 @@
             <section id="historySection" class="card main-section" style="display: none;">
                 <div class="section-header">
                     <h2>Historial de Sesiones</h2>
-                    <button id="clearAll" class="btn btn-danger btn-small">Limpiar Todo</button>
+                    <div class="history-header-actions">
+                        <div class="history-view-toggle">
+                            <button type="button" id="historyViewDetailed" class="btn-view-mode active" title="Vista detallada">Detallada</button>
+                            <button type="button" id="historyViewCompact" class="btn-view-mode" title="Vista compacta">Compacta</button>
+                        </div>
+                        <button id="clearAll" class="btn btn-danger btn-small">Limpiar Todo</button>
+                    </div>
                 </div>
                 <div id="sessionsList" class="sessions-list">
                     <p class="empty-state">No hay sesiones registradas aún. ¡Agrega tu primera sesión!</p>
