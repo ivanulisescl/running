@@ -2210,32 +2210,6 @@
     "localizacion": "Gijón"
   },
   {
-    "date": "2024-09-14",
-    "distance": 3.01,
-    "time": "00:14:59",
-    "timeInMinutes": 14.983333333333333,
-    "type": "rodaje",
-    "notes": "Tortolì Carrera",
-    "elevationGain": 94,
-    "elevationLoss": 38,
-    "id": 1770637973884.5679,
-    "equipo": "Asics Gel Nimbus 25 Negras",
-    "localizacion": "Tortolì"
-  },
-  {
-    "date": "2024-09-11",
-    "distance": 4.79,
-    "time": "01:59:14",
-    "timeInMinutes": 119.23333333333333,
-    "type": "rodaje",
-    "notes": "Cagliari Carrera",
-    "elevationGain": 258,
-    "elevationLoss": 244,
-    "id": 1770637973884.4473,
-    "equipo": "Asics Gel Nimbus 25 Negras",
-    "localizacion": "Cagliari"
-  },
-  {
     "date": "2024-09-05",
     "distance": 6.01,
     "time": "00:28:37",
