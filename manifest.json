@@ -1,8 +1,8 @@
 {
-  "name": "RunCode",
-  "short_name": "RunCode",
+  "name": "RunMetrics",
+  "short_name": "RunMetrics",
   "description": "Aplicación para controlar tus sesiones de entrenamiento de running",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#F5F7FA",
