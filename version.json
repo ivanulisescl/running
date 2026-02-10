@@ -1,7 +1,9 @@
 {
-  "version": "1.0.12",
+  "version": "1.0.13",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Equipo visible en fichas de sesión (bloque Equipo en detalles)",
+    "Merge desde repo actualiza equipo en sesiones existentes",
     "Botón Resetear en Opciones: traer último JSON del repositorio",
     "version.json sin caché: versión estable en PC",
     "Versión inicial con registro de sesiones",

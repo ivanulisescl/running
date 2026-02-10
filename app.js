@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.0.12'; // Versión actual de la app
+let currentAppVersion = '1.0.13'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
@@ -682,18 +682,25 @@ function loadSessionsFromProject() {
         .catch(() => {});
 }
 
-// Fusionar sesiones desde un array externo
+// Fusionar sesiones desde un array externo (añade nuevas y actualiza equipo en existentes)
 function mergeSessions(externalSessions) {
-    const existingIds = new Set(sessions.map(s => s.id));
+    const existingById = new Map(sessions.map(s => [s.id, s]));
     let merged = false;
     
     externalSessions.forEach(session => {
-        if (session.id != null && !existingIds.has(session.id)) {
-            // Asegurar que el campo equipo exista
-            if (session.equipo === undefined) session.equipo = '';
+        if (session.id == null) return;
+        if (session.equipo === undefined) session.equipo = '';
+        const local = existingById.get(session.id);
+        if (!local) {
             sessions.push(session);
-            existingIds.add(session.id);
+            existingById.set(session.id, session);
             merged = true;
+        } else {
+            // Actualizar campos del repositorio en la sesión local (ej. equipo)
+            if ((session.equipo || '').trim() !== (local.equipo || '').trim()) {
+                local.equipo = session.equipo || '';
+                merged = true;
+            }
         }
     });
     
@@ -702,7 +709,7 @@ function mergeSessions(externalSessions) {
         renderSessions();
         renderEquipmentList();
         updateStats();
-        console.log(`✅ ${merged ? externalSessions.length : 0} sesiones cargadas desde el proyecto`);
+        console.log('✅ Sesiones sincronizadas con el proyecto');
     }
 }
 
@@ -1350,11 +1357,16 @@ function renderSessions() {
                         </span>
                     </div>
                     ` : ''}
+                    ${(session.equipo || '').trim() ? `
+                    <div class="session-detail session-detail-equipo">
+                        <span class="session-detail-label">Equipo</span>
+                        <span class="session-detail-value">${escapeHtml((session.equipo || '').trim())}</span>
+                    </div>
+                    ` : ''}
                 </div>
-                ${(session.notes || session.equipo) ? `
+                ${session.notes ? `
                 <div class="session-notes-row">
-                    ${session.notes ? `<span class="session-notes">${escapeHtml(session.notes)}</span>` : '<span class="session-notes"></span>'}
-                    ${session.equipo ? `<span class="session-equipo">${escapeHtml(session.equipo)}</span>` : ''}
+                    <span class="session-notes">${escapeHtml(session.notes)}</span>
                 </div>` : ''}
                 <div class="session-actions">
                     <button class="edit-btn" onclick="editSession(${session.id})">Editar</button>
