@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.15",
-  "exportedAt": "2026-02-11T12:02:39.443Z",
+  "version": "1.2.16",
+  "exportedAt": "2026-02-11T14:46:55.279Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -470,14 +470,14 @@
       "distance": 21.1,
       "time": "01:51:51",
       "timeInMinutes": 111.85,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "Media Maratón Villa de Gijón",
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973884.5347,
       "equipo": "Hokka Bondi 9 Grises",
       "Localidad": "Media",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2025-10-08",
@@ -750,14 +750,14 @@
       "distance": 11.72,
       "time": "00:58:09",
       "timeInMinutes": 58.15,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "Ruta Imperial Carlos I",
       "elevationGain": 171,
       "elevationLoss": 173,
       "id": 1770637973884.4468,
       "equipo": "Hokka Bondi 9 Grises",
       "Localidad": "Villaviciosa",
-      "localizacion": ""
+      "localizacion": "Villaviciosa"
     },
     {
       "date": "2025-08-21",
@@ -1156,14 +1156,14 @@
       "distance": 21.01,
       "time": "01:45:09",
       "timeInMinutes": 105.15,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "Media Maratón Reconquista",
       "elevationGain": 214,
       "elevationLoss": 212,
       "id": 1770637973884.36,
       "equipo": "Asics Gel Nimbus 26 Azules",
       "Localidad": "Media",
-      "localizacion": ""
+      "localizacion": "Cangas de Onís"
     },
     {
       "date": "2025-05-28",
