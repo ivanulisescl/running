@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.4'; // Versión actual de la app
+let currentAppVersion = '1.2.5'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -732,22 +732,25 @@ function renderMarcas() {
         const location = getSessionLocation(session);
         const dateFormatted = formatDate(session.date);
         const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.timeInMinutes || session.time);
+        const raceName = (session.notes || '').trim() || (session.localizacion || '').trim() || 'Carrera';
         if (marca) {
             return `
                 <div class="marca-card" data-session-id="${session.id}">
-                    <div class="marca-card-header">
+                    <h3 class="marca-card-name">${escapeHtml(raceName)}</h3>
+                    <div class="marca-card-meta">
                         <span class="marca-card-date">${dateFormatted}</span>
                         ${location ? `<span class="marca-card-location">${escapeHtml(location)}</span>` : ''}
                     </div>
-                    <div class="marca-card-body">
-                        <span class="marca-card-distance">${session.distance} km · ${timeDisplay}</span>
-                        <div class="marca-card-datos">
-                            <span>${marca.numParticipantes ?? '—'} participantes</span>
-                            <span>Puesto general: ${marca.puestoGeneral ?? '—'}</span>
-                            <span>Categoría: ${escapeHtml((marca.categoria || '—'))}</span>
-                            <span>Participantes categoría: ${marca.participantesCategoria ?? '—'}</span>
-                            <span>Puesto categoría: ${marca.puestoCategoria ?? '—'}</span>
-                        </div>
+                    <div class="marca-card-stats">
+                        <span class="marca-card-stat"><strong>${session.distance}</strong> km</span>
+                        <span class="marca-card-stat"><strong>${timeDisplay}</strong></span>
+                    </div>
+                    <div class="marca-card-datos">
+                        <div class="marca-card-dato"><span class="marca-dato-label">Participantes</span><span>${marca.numParticipantes ?? '—'}</span></div>
+                        <div class="marca-card-dato"><span class="marca-dato-label">Puesto general</span><span>${marca.puestoGeneral ?? '—'}</span></div>
+                        <div class="marca-card-dato"><span class="marca-dato-label">Categoría</span><span>${escapeHtml(marca.categoria || '—')}</span></div>
+                        <div class="marca-card-dato"><span class="marca-dato-label">Part. categoría</span><span>${marca.participantesCategoria ?? '—'}</span></div>
+                        <div class="marca-card-dato"><span class="marca-dato-label">Puesto categoría</span><span>${marca.puestoCategoria ?? '—'}</span></div>
                     </div>
                     <button type="button" class="btn btn-small btn-edit-marca" data-session-id="${session.id}">Editar</button>
                 </div>
@@ -755,12 +758,14 @@ function renderMarcas() {
         }
         return `
             <div class="marca-card" data-session-id="${session.id}">
-                <div class="marca-card-header">
+                <h3 class="marca-card-name">${escapeHtml(raceName)}</h3>
+                <div class="marca-card-meta">
                     <span class="marca-card-date">${dateFormatted}</span>
                     ${location ? `<span class="marca-card-location">${escapeHtml(location)}</span>` : ''}
                 </div>
-                <div class="marca-card-body">
-                    <span class="marca-card-distance">${session.distance} km · ${timeDisplay}</span>
+                <div class="marca-card-stats">
+                    <span class="marca-card-stat"><strong>${session.distance}</strong> km</span>
+                    <span class="marca-card-stat"><strong>${timeDisplay}</strong></span>
                 </div>
                 <button type="button" class="btn btn-primary btn-small btn-add-marca" data-session-id="${session.id}">Añadir marca</button>
             </div>
@@ -1617,7 +1622,10 @@ function renderSessions() {
         }
 
         const timeInMinutes = session.timeInMinutes || (typeof session.time === 'string' ? timeToMinutes(session.time) : session.time);
-        const pace = (timeInMinutes / session.distance).toFixed(2);
+        const paceMinPerKm = session.distance > 0 ? timeInMinutes / session.distance : 0;
+        const paceMin = Math.floor(paceMinPerKm);
+        const paceSec = Math.round((paceMinPerKm - paceMin) * 60);
+        const pace = `${paceMin}:${String(paceSec).padStart(2, '0')}`;
         const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.time);
         const typeLabels = {
             entrenamiento: 'Entrenamiento',
