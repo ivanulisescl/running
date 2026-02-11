@@ -3612,5 +3612,19 @@
     "id": 1770640037741.3965,
     "equipo": "Asics Gel Nimbus 25 Negras",
     "localizacion": "Gijón"
+  },
+  {
+    "id": 1770749223681,
+    "date": "2026-02-10",
+    "distance": 7.5,
+    "time": "00:37:06",
+    "timeInMinutes": 37.1,
+    "type": "entrenamiento",
+    "localizacion": "Gijón",
+    "notes": "",
+    "elevationGain": 41,
+    "elevationLoss": 40,
+    "equipo": "Hokka Bondi 9 Grises",
+    "createdAt": "2026-02-10T18:47:03.681Z"
   }
 ]
