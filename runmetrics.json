@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.2.14",
-  "exportedAt": "2026-02-11T11:22:04.402638+00:00",
+  "exportedAt": "2026-02-11T11:24:38.215923+00:00",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -13,8 +13,7 @@
       "elevationGain": 41,
       "elevationLoss": 32,
       "id": 1770637973884.9646,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-02-02",
@@ -26,8 +25,7 @@
       "elevationGain": 43,
       "elevationLoss": 28,
       "id": 1770637973884.2363,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-30",
@@ -39,21 +37,19 @@
       "elevationGain": 52,
       "elevationLoss": 37,
       "id": 1770637973884.8584,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-27",
-      "distance": 4,
-      "time": "00:15:20",
-      "timeInMinutes": 15.333333333333334,
-      "type": "ritmo-carrera",
+      "distance": 8,
+      "time": "00:40:00",
+      "timeInMinutes": 40,
+      "type": "rodaje",
       "notes": "Importado desde Garmin Connect: Gijón Carrera",
-      "elevationGain": 66,
-      "elevationLoss": 5,
+      "elevationGain": 30,
+      "elevationLoss": 30,
       "id": 1770637973884.8687,
-      "equipo": "Asics Gel Nimbus 25 Negras",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-23",
@@ -65,8 +61,7 @@
       "elevationGain": 50,
       "elevationLoss": 37,
       "id": 1770637973884.609,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-20",
@@ -78,8 +73,7 @@
       "elevationGain": 43,
       "elevationLoss": 19,
       "id": 1770637973884.6155,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-17",
@@ -91,8 +85,7 @@
       "elevationGain": 52,
       "elevationLoss": 31,
       "id": 1770637973884.5195,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-13",
@@ -104,8 +97,7 @@
       "elevationGain": 11,
       "elevationLoss": 15,
       "id": 1770637973884.8997,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-11",
@@ -117,21 +109,19 @@
       "elevationGain": 44,
       "elevationLoss": 42,
       "id": 1770637973884.3965,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2026-01-08",
-      "distance": 0.5,
-      "time": "00:02:38",
-      "timeInMinutes": 2.6333333333333333,
+      "distance": 8,
+      "time": "00:40:38",
+      "timeInMinutes": 40.63333333333333,
       "type": "rodaje",
       "notes": "Importado desde Garmin Connect: Entrenamiento en cinta",
-      "elevationGain": 0,
-      "elevationLoss": 0,
+      "elevationGain": 30,
+      "elevationLoss": 30,
       "id": 1770637973884.8948,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Entrenamiento en cinta"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-31",
@@ -143,8 +133,7 @@
       "elevationGain": 95,
       "elevationLoss": 79,
       "id": 1770637973884.6394,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-27",
@@ -156,8 +145,7 @@
       "elevationGain": 91,
       "elevationLoss": 83,
       "id": 1770637973884.0425,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-24",
@@ -169,8 +157,7 @@
       "elevationGain": 53,
       "elevationLoss": 20,
       "id": 1770637973884.1118,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-21",
@@ -182,8 +169,7 @@
       "elevationGain": 52,
       "elevationLoss": 44,
       "id": 1770637973884.1755,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-17",
@@ -195,8 +181,7 @@
       "elevationGain": 20,
       "elevationLoss": 14,
       "id": 1770637973884.1987,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-12",
@@ -208,8 +193,7 @@
       "elevationGain": 23,
       "elevationLoss": 26,
       "id": 1770637973884.2573,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-09",
@@ -221,8 +205,7 @@
       "elevationGain": 11,
       "elevationLoss": 18,
       "id": 1770637973884.1956,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-06",
@@ -234,8 +217,7 @@
       "elevationGain": 95,
       "elevationLoss": 91,
       "id": 1770637973884.2576,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-03",
@@ -247,8 +229,7 @@
       "elevationGain": 36,
       "elevationLoss": 26,
       "id": 1770637973884.5837,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-12-01",
@@ -260,8 +241,7 @@
       "elevationGain": 20,
       "elevationLoss": 189,
       "id": 1770637973884.037,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-27",
@@ -273,8 +253,7 @@
       "elevationGain": 33,
       "elevationLoss": 17,
       "id": 1770637973884.357,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-21",
@@ -286,8 +265,7 @@
       "elevationGain": 34,
       "elevationLoss": 14,
       "id": 1770637973884.508,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-18",
@@ -299,8 +277,7 @@
       "elevationGain": 183,
       "elevationLoss": 11,
       "id": 1770637973884.7295,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-11",
@@ -312,8 +289,7 @@
       "elevationGain": 155,
       "elevationLoss": 143,
       "id": 1770637973884.3008,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-08",
@@ -325,8 +301,7 @@
       "elevationGain": 47,
       "elevationLoss": 56,
       "id": 1770637973884.4094,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Carbayera Tragamón"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-06",
@@ -338,8 +313,7 @@
       "elevationGain": 93,
       "elevationLoss": 68,
       "id": 1770637973884.6016,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-11-04",
@@ -351,8 +325,7 @@
       "elevationGain": 17,
       "elevationLoss": 24,
       "id": 1770637973884.2078,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-29",
@@ -364,8 +337,7 @@
       "elevationGain": 32,
       "elevationLoss": 35,
       "id": 1770637973884.286,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-26",
@@ -377,8 +349,7 @@
       "elevationGain": 68,
       "elevationLoss": 74,
       "id": 1770637973884.33,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Carbayera Tragamón"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-22",
@@ -390,8 +361,7 @@
       "elevationGain": 83,
       "elevationLoss": 77,
       "id": 1770637973884.9817,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Carbayera Tragamón"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-18",
@@ -403,8 +373,7 @@
       "elevationGain": 30,
       "elevationLoss": 31,
       "id": 1770637973884.5996,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Campo Golf"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-15",
@@ -416,8 +385,7 @@
       "elevationGain": 33,
       "elevationLoss": 84,
       "id": 1770637973884.7334,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-15",
@@ -429,8 +397,7 @@
       "elevationGain": 46,
       "elevationLoss": 0,
       "id": 1770637973884.8027,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-11",
@@ -442,8 +409,7 @@
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973884.5347,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Media Maratón Gijón"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-08",
@@ -455,8 +421,7 @@
       "elevationGain": 20,
       "elevationLoss": 4,
       "id": 1770637973884.8594,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Parque Fluvial"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-06",
@@ -468,8 +433,7 @@
       "elevationGain": 36,
       "elevationLoss": 41,
       "id": 1770637973884.3884,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-04",
@@ -481,8 +445,7 @@
       "elevationGain": 108,
       "elevationLoss": 122,
       "id": 1770637973884.5505,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-10-02",
@@ -494,8 +457,7 @@
       "elevationGain": 32,
       "elevationLoss": 40,
       "id": 1770637973884.8254,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-30",
@@ -507,8 +469,7 @@
       "elevationGain": 41,
       "elevationLoss": 46,
       "id": 1770637973884.8828,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-28",
@@ -520,8 +481,7 @@
       "elevationGain": 212,
       "elevationLoss": 227,
       "id": 1770637973884.2507,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Caravia-Huerres"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-25",
@@ -533,8 +493,7 @@
       "elevationGain": 96,
       "elevationLoss": 89,
       "id": 1770637973884.4917,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Colunga"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-23",
@@ -546,8 +505,7 @@
       "elevationGain": 77,
       "elevationLoss": 72,
       "id": 1770637973884.9023,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Colunga"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-21",
@@ -559,8 +517,7 @@
       "elevationGain": 237,
       "elevationLoss": 238,
       "id": 1770637973884.3342,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Caravia-Huerres"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-18",
@@ -572,8 +529,7 @@
       "elevationGain": 74,
       "elevationLoss": 78,
       "id": 1770637973884.3335,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Colunga"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-16",
@@ -585,8 +541,7 @@
       "elevationGain": 73,
       "elevationLoss": 69,
       "id": 1770637973884.1626,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Huerres"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-14",
@@ -598,8 +553,7 @@
       "elevationGain": 133,
       "elevationLoss": 139,
       "id": 1770637973884.5718,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Griega"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-10",
@@ -611,8 +565,7 @@
       "elevationGain": 118,
       "elevationLoss": 126,
       "id": 1770637973884.0144,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Agaete"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-08",
@@ -624,8 +577,7 @@
       "elevationGain": 142,
       "elevationLoss": 147,
       "id": 1770637973884.35,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Agaete"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-05",
@@ -637,21 +589,7 @@
       "elevationGain": 138,
       "elevationLoss": 134,
       "id": 1770637973884.7996,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Riera"
-    },
-    {
-      "date": "2025-09-03",
-      "distance": 6,
-      "time": "00:29:37",
-      "timeInMinutes": 29.616666666666667,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Colunga Casa-La Espasa",
-      "elevationGain": 39,
-      "elevationLoss": 42,
-      "id": 1770637973884.1956,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Espasa"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-09-02",
@@ -663,8 +601,7 @@
       "elevationGain": 95,
       "elevationLoss": 98,
       "id": 1770637973884.022,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-30",
@@ -676,8 +613,7 @@
       "elevationGain": 100,
       "elevationLoss": 89,
       "id": 1770637973884.2932,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Riera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-28",
@@ -689,8 +625,7 @@
       "elevationGain": 69,
       "elevationLoss": 71,
       "id": 1770637973884.0222,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Huerres"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-26",
@@ -702,8 +637,7 @@
       "elevationGain": 68,
       "elevationLoss": 70,
       "id": 1770637973884.1814,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Huerres"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-24",
@@ -715,8 +649,7 @@
       "elevationGain": 171,
       "elevationLoss": 173,
       "id": 1770637973884.4468,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Villaviciosa Ruta Imperial Carlos I"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-21",
@@ -728,8 +661,7 @@
       "elevationGain": 40,
       "elevationLoss": 18,
       "id": 1770637973884.9182,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Espasa"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-19",
@@ -741,8 +673,7 @@
       "elevationGain": 68,
       "elevationLoss": 73,
       "id": 1770637973884.6372,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Espasa"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-16",
@@ -754,8 +685,7 @@
       "elevationGain": 141,
       "elevationLoss": 145,
       "id": 1770637973884.1555,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-14",
@@ -767,8 +697,7 @@
       "elevationGain": 91,
       "elevationLoss": 85,
       "id": 1770637973884.8655,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-12",
@@ -780,8 +709,7 @@
       "elevationGain": 60,
       "elevationLoss": 29,
       "id": 1770637973884.2842,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-10",
@@ -793,8 +721,7 @@
       "elevationGain": 146,
       "elevationLoss": 145,
       "id": 1770637973884.6558,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-09",
@@ -806,8 +733,7 @@
       "elevationGain": 16,
       "elevationLoss": 34,
       "id": 1770637973884.0583,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Carrera"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-06",
@@ -819,8 +745,7 @@
       "elevationGain": 72,
       "elevationLoss": 70,
       "id": 1770637973884.4922,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-04",
@@ -832,8 +757,7 @@
       "elevationGain": 135,
       "elevationLoss": 133,
       "id": 1770637973884.4983,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-08-02",
@@ -845,8 +769,7 @@
       "elevationGain": 134,
       "elevationLoss": 136,
       "id": 1770637973884.5686,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-07-30",
@@ -858,8 +781,7 @@
       "elevationGain": 22,
       "elevationLoss": 38,
       "id": 1770637973884.8115,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Rinconín"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-28",
@@ -871,8 +793,7 @@
       "elevationGain": 55,
       "elevationLoss": 59,
       "id": 1770637973884.907,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-26",
@@ -884,8 +805,7 @@
       "elevationGain": 76,
       "elevationLoss": 81,
       "id": 1770637973884.0125,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-24",
@@ -897,8 +817,7 @@
       "elevationGain": 63,
       "elevationLoss": 67,
       "id": 1770637973884.7163,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-22",
@@ -910,8 +829,7 @@
       "elevationGain": 57,
       "elevationLoss": 56,
       "id": 1770637973884.2063,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-19",
@@ -923,8 +841,7 @@
       "elevationGain": 72,
       "elevationLoss": 70,
       "id": 1770637973884.4902,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-17",
@@ -936,8 +853,7 @@
       "elevationGain": 75,
       "elevationLoss": 77,
       "id": 1770637973884.03,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-14",
@@ -949,8 +865,7 @@
       "elevationGain": 47,
       "elevationLoss": 48,
       "id": 1770637973884.832,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-12",
@@ -962,8 +877,7 @@
       "elevationGain": 55,
       "elevationLoss": 58,
       "id": 1770637973884.533,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-10",
@@ -975,8 +889,7 @@
       "elevationGain": 67,
       "elevationLoss": 67,
       "id": 1770637973884.6208,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-08",
@@ -988,8 +901,7 @@
       "elevationGain": 88,
       "elevationLoss": 90,
       "id": 1770637973884.7205,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-06",
@@ -1001,8 +913,7 @@
       "elevationGain": 88,
       "elevationLoss": 87,
       "id": 1770637973884.4155,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-07-01",
@@ -1014,8 +925,7 @@
       "elevationGain": 75,
       "elevationLoss": 78,
       "id": 1770637973884.366,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-06-19",
@@ -1027,8 +937,7 @@
       "elevationGain": 90,
       "elevationLoss": 97,
       "id": 1770637973884.0444,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-06-17",
@@ -1040,8 +949,7 @@
       "elevationGain": 36,
       "elevationLoss": 40,
       "id": 1770637973884.4238,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-06-14",
@@ -1053,8 +961,7 @@
       "elevationGain": 157,
       "elevationLoss": 85,
       "id": 1770637973884.701,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Caravia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-06-11",
@@ -1066,8 +973,7 @@
       "elevationGain": 75,
       "elevationLoss": 67,
       "id": 1770637973884.0518,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Caravia Baja"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-06-09",
@@ -1079,8 +985,7 @@
       "elevationGain": 36,
       "elevationLoss": 30,
       "id": 1770637973884.1113,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-06-05",
@@ -1092,8 +997,7 @@
       "elevationGain": 54,
       "elevationLoss": 44,
       "id": 1770637973884.6455,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-31",
@@ -1105,8 +1009,7 @@
       "elevationGain": 214,
       "elevationLoss": 212,
       "id": 1770637973884.36,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Media Maratón Reconquista"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-28",
@@ -1118,8 +1021,7 @@
       "elevationGain": 13,
       "elevationLoss": 0,
       "id": 1770637973884.8853,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Fluvial"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-26",
@@ -1131,8 +1033,7 @@
       "elevationGain": 34,
       "elevationLoss": 31,
       "id": 1770637973884.7231,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-25",
@@ -1144,8 +1045,7 @@
       "elevationGain": 45,
       "elevationLoss": 44,
       "id": 1770637973884.949,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-22",
@@ -1157,8 +1057,7 @@
       "elevationGain": 121,
       "elevationLoss": 115,
       "id": 1770637973884.011,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-20",
@@ -1170,8 +1069,7 @@
       "elevationGain": 153,
       "elevationLoss": 134,
       "id": 1770637973884.02,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-18",
@@ -1183,8 +1081,7 @@
       "elevationGain": 40,
       "elevationLoss": 43,
       "id": 1770637973884.4866,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Peñafrancia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-15",
@@ -1196,8 +1093,7 @@
       "elevationGain": 139,
       "elevationLoss": 133,
       "id": 1770637973884.8547,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-13",
@@ -1209,8 +1105,7 @@
       "elevationGain": 47,
       "elevationLoss": 46,
       "id": 1770637973884.4377,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Peñafrancia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-11",
@@ -1222,8 +1117,7 @@
       "elevationGain": 47,
       "elevationLoss": 46,
       "id": 1770637973884.9238,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Peñafrancia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-08",
@@ -1235,8 +1129,7 @@
       "elevationGain": 116,
       "elevationLoss": 100,
       "id": 1770637973884.7595,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-06",
@@ -1248,8 +1141,7 @@
       "elevationGain": 250,
       "elevationLoss": 239,
       "id": 1770637973884.671,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Rinconín-Providencia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-05-03",
@@ -1261,8 +1153,7 @@
       "elevationGain": 92,
       "elevationLoss": 25,
       "id": 1770637973884.822,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Almagro Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-30",
@@ -1274,8 +1165,7 @@
       "elevationGain": 117,
       "elevationLoss": 125,
       "id": 1770637973884.2708,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-28",
@@ -1287,8 +1177,7 @@
       "elevationGain": 36,
       "elevationLoss": 32,
       "id": 1770637973884.1968,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-27",
@@ -1300,8 +1189,7 @@
       "elevationGain": 35,
       "elevationLoss": 32,
       "id": 1770637973884.6802,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-24",
@@ -1313,8 +1201,7 @@
       "elevationGain": 99,
       "elevationLoss": 90,
       "id": 1770637973884.2302,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-22",
@@ -1326,8 +1213,7 @@
       "elevationGain": 76,
       "elevationLoss": 47,
       "id": 1770637973884.3484,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-20",
@@ -1339,8 +1225,7 @@
       "elevationGain": 9,
       "elevationLoss": 82,
       "id": 1770637973884.5247,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Carrales"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-17",
@@ -1352,8 +1237,7 @@
       "elevationGain": 194,
       "elevationLoss": 191,
       "id": 1770637973884.631,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Caravia Alta"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-15",
@@ -1365,8 +1249,7 @@
       "elevationGain": 119,
       "elevationLoss": 102,
       "id": 1770637973884.5952,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-12",
@@ -1378,8 +1261,7 @@
       "elevationGain": 215,
       "elevationLoss": 134,
       "id": 1770637973884.9897,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-La Ñora"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-10",
@@ -1391,8 +1273,7 @@
       "elevationGain": 210,
       "elevationLoss": 194,
       "id": 1770637973884.8315,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Rinconín-Providencia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-08",
@@ -1404,8 +1285,7 @@
       "elevationGain": 115,
       "elevationLoss": 104,
       "id": 1770637973884.6675,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-05",
@@ -1417,8 +1297,7 @@
       "elevationGain": 264,
       "elevationLoss": 152,
       "id": 1770637973884.947,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-04-02",
@@ -1430,8 +1309,7 @@
       "elevationGain": 124,
       "elevationLoss": 90,
       "id": 1770637973884.2434,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-31",
@@ -1443,8 +1321,7 @@
       "elevationGain": 216,
       "elevationLoss": 199,
       "id": 1770637973884.8335,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-29",
@@ -1456,8 +1333,7 @@
       "elevationGain": 150,
       "elevationLoss": 127,
       "id": 1770637973884.1975,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-27",
@@ -1469,8 +1345,7 @@
       "elevationGain": 196,
       "elevationLoss": 193,
       "id": 1770637973884.0168,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Rinconín-Providencia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-25",
@@ -1482,8 +1357,7 @@
       "elevationGain": 106,
       "elevationLoss": 93,
       "id": 1770637973884.4587,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-22",
@@ -1495,21 +1369,7 @@
       "elevationGain": 156,
       "elevationLoss": 133,
       "id": 1770637973884.368,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
-    },
-    {
-      "date": "2025-03-20",
-      "distance": 6.5,
-      "time": "00:31:50",
-      "timeInMinutes": 31.833333333333332,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
-      "elevationGain": 86,
-      "elevationLoss": 80,
-      "id": 1770637973884.0125,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-18",
@@ -1521,8 +1381,7 @@
       "elevationGain": 88,
       "elevationLoss": 84,
       "id": 1770637973884.6296,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-15",
@@ -1534,21 +1393,7 @@
       "elevationGain": 113,
       "elevationLoss": 96,
       "id": 1770637973884.82,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
-    },
-    {
-      "date": "2025-03-14",
-      "distance": 7.01,
-      "time": "00:33:37",
-      "timeInMinutes": 33.61666666666667,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Casa-Camocha",
-      "elevationGain": 119,
-      "elevationLoss": 86,
-      "id": 1770637973884.5952,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-10",
@@ -1560,8 +1405,7 @@
       "elevationGain": 75,
       "elevationLoss": 70,
       "id": 1770637973884.9995,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-08",
@@ -1573,8 +1417,7 @@
       "elevationGain": 103,
       "elevationLoss": 91,
       "id": 1770637973884.2253,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-06",
@@ -1586,8 +1429,7 @@
       "elevationGain": 117,
       "elevationLoss": 104,
       "id": 1770637973884.742,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-04",
@@ -1599,8 +1441,7 @@
       "elevationGain": 69,
       "elevationLoss": 65,
       "id": 1770637973884.4358,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Caravia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-01",
@@ -1612,8 +1453,7 @@
       "elevationGain": 125,
       "elevationLoss": 109,
       "id": 1770637973884.4004,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Caravia"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-26",
@@ -1625,8 +1465,7 @@
       "elevationGain": 40,
       "elevationLoss": 27,
       "id": 1770637973884.4841,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-17",
@@ -1638,8 +1477,7 @@
       "elevationGain": 78,
       "elevationLoss": 64,
       "id": 1770637973884.501,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-14",
@@ -1651,8 +1489,7 @@
       "elevationGain": 37,
       "elevationLoss": 29,
       "id": 1770637973884.3645,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-10",
@@ -1664,21 +1501,7 @@
       "elevationGain": 39,
       "elevationLoss": 30,
       "id": 1770637973884.9167,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
-    },
-    {
-      "date": "2025-02-08",
-      "distance": 6.01,
-      "time": "00:29:20",
-      "timeInMinutes": 29.333333333333332,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Colunga Casa-Espasa",
-      "elevationGain": 57,
-      "elevationLoss": 41,
-      "id": 1770637973884.701,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Espasa"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-05",
@@ -1690,8 +1513,7 @@
       "elevationGain": 6,
       "elevationLoss": 14,
       "id": 1770637973884.5305,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-03",
@@ -1703,8 +1525,7 @@
       "elevationGain": 19,
       "elevationLoss": 21,
       "id": 1770637973884.657,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-01",
@@ -1716,21 +1537,7 @@
       "elevationGain": 29,
       "elevationLoss": 31,
       "id": 1770637973884.5295,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
-    },
-    {
-      "date": "2025-01-30",
-      "distance": 3.02,
-      "time": "00:15:01",
-      "timeInMinutes": 15.016666666666667,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Carrera",
-      "elevationGain": 27,
-      "elevationLoss": 11,
-      "id": 1770637973884.2507,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-30",
@@ -1742,8 +1549,7 @@
       "elevationGain": 0,
       "elevationLoss": 12,
       "id": 1770637973884.0015,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-28",
@@ -1755,8 +1561,7 @@
       "elevationGain": 29,
       "elevationLoss": 20,
       "id": 1770637973884.2566,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-24",
@@ -1768,8 +1573,7 @@
       "elevationGain": 47,
       "elevationLoss": 253,
       "id": 1770637973884.4753,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-20",
@@ -1781,8 +1585,7 @@
       "elevationGain": 41,
       "elevationLoss": 30,
       "id": 1770637973884.3672,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-15",
@@ -1794,21 +1597,7 @@
       "elevationGain": 28,
       "elevationLoss": 25,
       "id": 1770637973884.4644,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
-    },
-    {
-      "date": "2025-01-12",
-      "distance": 6.01,
-      "time": "00:30:28",
-      "timeInMinutes": 30.466666666666665,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
-      "elevationGain": 81,
-      "elevationLoss": 68,
-      "id": 1770637973884.9897,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-06",
@@ -1820,8 +1609,7 @@
       "elevationGain": 32,
       "elevationLoss": 31,
       "id": 1770637973884.003,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-04",
@@ -1833,8 +1621,7 @@
       "elevationGain": 45,
       "elevationLoss": 125,
       "id": 1770637973884.354,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-31",
@@ -1846,8 +1633,7 @@
       "elevationGain": 24,
       "elevationLoss": 11,
       "id": 1770637973884.3025,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón San Silvestre"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-29",
@@ -1859,8 +1645,7 @@
       "elevationGain": 32,
       "elevationLoss": 11,
       "id": 1770637973884.4792,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-23",
@@ -1872,8 +1657,7 @@
       "elevationGain": 128,
       "elevationLoss": 123,
       "id": 1770637973884.7573,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-21",
@@ -1885,8 +1669,7 @@
       "elevationGain": 149,
       "elevationLoss": 117,
       "id": 1770637973884.53,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-14",
@@ -1898,8 +1681,7 @@
       "elevationGain": 78,
       "elevationLoss": 70,
       "id": 1770637973884.7266,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-12",
@@ -1911,8 +1693,7 @@
       "elevationGain": 15,
       "elevationLoss": 163,
       "id": 1770637973884.8481,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-07",
@@ -1924,8 +1705,7 @@
       "elevationGain": 39,
       "elevationLoss": 25,
       "id": 1770637973884.073,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-04",
@@ -1937,8 +1717,7 @@
       "elevationGain": 15,
       "elevationLoss": 2,
       "id": 1770637973884.768,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-12-01",
@@ -1950,21 +1729,7 @@
       "elevationGain": 195,
       "elevationLoss": 197,
       "id": 1770637973884.0325,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Rinconín-Providencia"
-    },
-    {
-      "date": "2024-11-24",
-      "distance": 11.96,
-      "time": "00:56:17",
-      "timeInMinutes": 56.28333333333333,
-      "type": "ritmo-carrera",
-      "notes": "Importado desde Garmin Connect: 12km Villa de Gijón",
-      "elevationGain": 54,
-      "elevationLoss": 66,
-      "id": 1770637973884.609,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: 12km Villa de Gijón"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-22",
@@ -1976,8 +1741,7 @@
       "elevationGain": 16,
       "elevationLoss": 0,
       "id": 1770637973884.6582,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Parque"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-20",
@@ -1989,8 +1753,7 @@
       "elevationGain": 11,
       "elevationLoss": 14,
       "id": 1770637973884.2114,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-16",
@@ -2002,8 +1765,7 @@
       "elevationGain": 60,
       "elevationLoss": 51,
       "id": 1770637973884.0647,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-14",
@@ -2015,8 +1777,7 @@
       "elevationGain": 21,
       "elevationLoss": 4,
       "id": 1770637973884.1223,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-12",
@@ -2028,8 +1789,7 @@
       "elevationGain": 30,
       "elevationLoss": 49,
       "id": 1770637973884.1992,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-09",
@@ -2041,8 +1801,7 @@
       "elevationGain": 48,
       "elevationLoss": 46,
       "id": 1770637973884.8977,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-06",
@@ -2054,8 +1813,7 @@
       "elevationGain": 7,
       "elevationLoss": 2,
       "id": 1770637973884.054,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Molinón"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-04",
@@ -2067,8 +1825,7 @@
       "elevationGain": 33,
       "elevationLoss": 36,
       "id": 1770637973884.1653,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-02",
@@ -2080,8 +1837,7 @@
       "elevationGain": 125,
       "elevationLoss": 123,
       "id": 1770637973884.3828,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Arenal"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-30",
@@ -2093,8 +1849,7 @@
       "elevationGain": 8,
       "elevationLoss": 7,
       "id": 1770637973884.9192,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-28",
@@ -2106,8 +1861,7 @@
       "elevationGain": 30,
       "elevationLoss": 18,
       "id": 1770637973884.1296,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-26",
@@ -2119,8 +1873,7 @@
       "elevationGain": 99,
       "elevationLoss": 100,
       "id": 1770637973884.5913,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-23",
@@ -2132,8 +1885,7 @@
       "elevationGain": 27,
       "elevationLoss": 29,
       "id": 1770637973884.1619,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-18",
@@ -2145,8 +1897,7 @@
       "elevationGain": 46,
       "elevationLoss": 49,
       "id": 1770637973884.2612,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-16",
@@ -2158,8 +1909,7 @@
       "elevationGain": 14,
       "elevationLoss": 14,
       "id": 1770637973884.241,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-La Guía"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-14",
@@ -2171,8 +1921,7 @@
       "elevationGain": 33,
       "elevationLoss": 27,
       "id": 1770637973884.7847,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Parque"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-11",
@@ -2184,8 +1933,7 @@
       "elevationGain": 62,
       "elevationLoss": 58,
       "id": 1770637973884.8105,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Tragamón"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-09",
@@ -2197,21 +1945,7 @@
       "elevationGain": 27,
       "elevationLoss": 35,
       "id": 1770637973884.5532,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Cabueñes"
-    },
-    {
-      "date": "2024-10-07",
-      "distance": 6.01,
-      "time": "00:30:01",
-      "timeInMinutes": 30.016666666666666,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Casa-Castiello",
-      "elevationGain": 78,
-      "elevationLoss": 86,
-      "id": 1770637973884.011,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-06",
@@ -2223,8 +1957,7 @@
       "elevationGain": 32,
       "elevationLoss": 32,
       "id": 1770637973884.669,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-03",
@@ -2236,8 +1969,7 @@
       "elevationGain": 24,
       "elevationLoss": 22,
       "id": 1770637973884.7527,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Muro"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-01",
@@ -2249,8 +1981,7 @@
       "elevationGain": 64,
       "elevationLoss": 148,
       "id": 1770637973884.3635,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-09-28",
@@ -2262,8 +1993,7 @@
       "elevationGain": 32,
       "elevationLoss": 21,
       "id": 1770637973884.816,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-09-26",
@@ -2275,8 +2005,7 @@
       "elevationGain": 31,
       "elevationLoss": 27,
       "id": 1770637973884.9543,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-09-24",
@@ -2288,8 +2017,7 @@
       "elevationGain": 44,
       "elevationLoss": 38,
       "id": 1770637973884.5493,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-09-22",
@@ -2301,8 +2029,7 @@
       "elevationGain": 23,
       "elevationLoss": 20,
       "id": 1770637973884.966,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-09-18",
@@ -2314,8 +2041,7 @@
       "elevationGain": 25,
       "elevationLoss": 21,
       "id": 1770637973884.0215,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-09-14",
@@ -2327,8 +2053,7 @@
       "elevationGain": 94,
       "elevationLoss": 38,
       "id": 1770637973884.5679,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Tortolì Carrera"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-09-11",
@@ -2340,8 +2065,7 @@
       "elevationGain": 258,
       "elevationLoss": 244,
       "id": 1770637973884.4473,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Cagliari Carrera"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-09-05",
@@ -2353,8 +2077,7 @@
       "elevationGain": 36,
       "elevationLoss": 42,
       "id": 1770637973884.1824,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Tragamón"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-09-03",
@@ -2366,8 +2089,7 @@
       "elevationGain": 89,
       "elevationLoss": 41,
       "id": 1770637973884.3823,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Tragamón"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-09-01",
@@ -2379,8 +2101,7 @@
       "elevationGain": 26,
       "elevationLoss": 25,
       "id": 1770637973884.6782,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Barrigón"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-30",
@@ -2392,8 +2113,7 @@
       "elevationGain": 72,
       "elevationLoss": 83,
       "id": 1770637973884.477,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Huerres"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-27",
@@ -2405,8 +2125,7 @@
       "elevationGain": 39,
       "elevationLoss": 14,
       "id": 1770637973884.4973,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-23",
@@ -2418,8 +2137,7 @@
       "elevationGain": 46,
       "elevationLoss": 41,
       "id": 1770637973884.9414,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Carrera"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-21",
@@ -2431,8 +2149,7 @@
       "elevationGain": 50,
       "elevationLoss": 51,
       "id": 1770637973884.6526,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-18",
@@ -2444,8 +2161,7 @@
       "elevationGain": 122,
       "elevationLoss": 63,
       "id": 1770637973884.0603,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Huerres"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-13",
@@ -2457,8 +2173,7 @@
       "elevationGain": 79,
       "elevationLoss": 83,
       "id": 1770637973884.1729,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Los Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-09",
@@ -2470,8 +2185,7 @@
       "elevationGain": 101,
       "elevationLoss": 109,
       "id": 1770637973884.2073,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Huerres"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-06",
@@ -2483,8 +2197,7 @@
       "elevationGain": 116,
       "elevationLoss": 113,
       "id": 1770637973884.2805,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Barrigón-Arenal Morís"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-08-02",
@@ -2496,8 +2209,7 @@
       "elevationGain": 98,
       "elevationLoss": 96,
       "id": 1770637973884.0295,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-07-25",
@@ -2509,8 +2221,7 @@
       "elevationGain": 69,
       "elevationLoss": 69,
       "id": 1770637973884.074,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Los Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-07-23",
@@ -2522,8 +2233,7 @@
       "elevationGain": 35,
       "elevationLoss": 30,
       "id": 1770637973884.2185,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Náutico"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-07-07",
@@ -2535,8 +2245,7 @@
       "elevationGain": 72,
       "elevationLoss": 61,
       "id": 1770637973884.9626,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-07-02",
@@ -2548,8 +2257,7 @@
       "elevationGain": 63,
       "elevationLoss": 66,
       "id": 1770637973884.3042,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Marina-Peñafrancia"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-06-08",
@@ -2561,21 +2269,7 @@
       "elevationGain": 46,
       "elevationLoss": 46,
       "id": 1770637973884.9849,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Tragamón"
-    },
-    {
-      "date": "2024-05-27",
-      "distance": 9,
-      "time": "00:42:59",
-      "timeInMinutes": 42.983333333333334,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Casa-Náutico",
-      "elevationGain": 0,
-      "elevationLoss": 0,
-      "id": 1770637973884.6208,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Náutico"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-05-24",
@@ -2587,8 +2281,7 @@
       "elevationGain": 33,
       "elevationLoss": 29,
       "id": 1770637973884.3582,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-05-20",
@@ -2600,8 +2293,7 @@
       "elevationGain": 109,
       "elevationLoss": 54,
       "id": 1770637973884.3264,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Tragamón"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-05-15",
@@ -2613,8 +2305,7 @@
       "elevationGain": 43,
       "elevationLoss": 39,
       "id": 1770637973884.4485,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-05-10",
@@ -2626,8 +2317,7 @@
       "elevationGain": 30,
       "elevationLoss": 33,
       "id": 1770637973884.1846,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-05-08",
@@ -2639,8 +2329,7 @@
       "elevationGain": 102,
       "elevationLoss": 30,
       "id": 1770637973884.9363,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-05-01",
@@ -2652,8 +2341,7 @@
       "elevationGain": 85,
       "elevationLoss": 144,
       "id": 1770637973884.9016,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Granda"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-04-17",
@@ -2665,8 +2353,7 @@
       "elevationGain": 33,
       "elevationLoss": 28,
       "id": 1770637973884.2385,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-04-14",
@@ -2678,8 +2365,7 @@
       "elevationGain": 46,
       "elevationLoss": 145,
       "id": 1770637973884.5696,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Tragamón"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-04-09",
@@ -2691,8 +2377,7 @@
       "elevationGain": 34,
       "elevationLoss": 32,
       "id": 1770637973884.8591,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-04-06",
@@ -2704,8 +2389,7 @@
       "elevationGain": 67,
       "elevationLoss": 79,
       "id": 1770637973884.568,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha con Mauro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-04-03",
@@ -2717,8 +2401,7 @@
       "elevationGain": 33,
       "elevationLoss": 36,
       "id": 1770637973884.363,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Senda Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-31",
@@ -2730,8 +2413,7 @@
       "elevationGain": 151,
       "elevationLoss": 149,
       "id": 1770637973884.9224,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Casa La Isla-Caravia Alta"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-28",
@@ -2743,8 +2425,7 @@
       "elevationGain": 110,
       "elevationLoss": 374,
       "id": 1770637973884.9375,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Carrera"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-23",
@@ -2756,8 +2437,7 @@
       "elevationGain": 37,
       "elevationLoss": 40,
       "id": 1770637973884.222,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-18",
@@ -2769,8 +2449,7 @@
       "elevationGain": 24,
       "elevationLoss": 26,
       "id": 1770637973884.4292,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Stuttgart Parque"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-13",
@@ -2782,8 +2461,7 @@
       "elevationGain": 82,
       "elevationLoss": 72,
       "id": 1770637973884.449,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-09",
@@ -2795,8 +2473,7 @@
       "elevationGain": 35,
       "elevationLoss": 26,
       "id": 1770637973884.9666,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Senda Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-03-03",
@@ -2808,8 +2485,7 @@
       "elevationGain": 161,
       "elevationLoss": 155,
       "id": 1770637973884.463,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Media Maratón Salamanca"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-23",
@@ -2821,8 +2497,7 @@
       "elevationGain": 143,
       "elevationLoss": 143,
       "id": 1770637973884.5383,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-La Casería"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-20",
@@ -2834,8 +2509,7 @@
       "elevationGain": 14,
       "elevationLoss": 14,
       "id": 1770637973884.7463,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-18",
@@ -2847,8 +2521,7 @@
       "elevationGain": 117,
       "elevationLoss": 125,
       "id": 1770637973884.3909,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-15",
@@ -2860,8 +2533,7 @@
       "elevationGain": 5,
       "elevationLoss": 11,
       "id": 1770637973884.1404,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-13",
@@ -2873,8 +2545,7 @@
       "elevationGain": 11,
       "elevationLoss": 15,
       "id": 1770637973884.8186,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Rinconín"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-10",
@@ -2886,21 +2557,7 @@
       "elevationGain": 143,
       "elevationLoss": 146,
       "id": 1770637973884.9138,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
-    },
-    {
-      "date": "2024-02-07",
-      "distance": 8.11,
-      "time": "00:37:56",
-      "timeInMinutes": 37.93333333333333,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Grupo-Poniente",
-      "elevationGain": 17,
-      "elevationLoss": 18,
-      "id": 1770637973884.1113,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Poniente"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-05",
@@ -2912,8 +2569,7 @@
       "elevationGain": 6,
       "elevationLoss": 9,
       "id": 1770637973884.2559,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Poniente"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-03",
@@ -2925,8 +2581,7 @@
       "elevationGain": 115,
       "elevationLoss": 111,
       "id": 1770637973884.7947,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Casa Yoli"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-01",
@@ -2938,8 +2593,7 @@
       "elevationGain": 18,
       "elevationLoss": 11,
       "id": 1770637973884.0142,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Poniente"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-30",
@@ -2951,8 +2605,7 @@
       "elevationGain": 7,
       "elevationLoss": 7,
       "id": 1770637973884.8772,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-27",
@@ -2964,8 +2617,7 @@
       "elevationGain": 95,
       "elevationLoss": 86,
       "id": 1770637973884.6958,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Peñafrancia"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-25",
@@ -2977,8 +2629,7 @@
       "elevationGain": 9,
       "elevationLoss": 9,
       "id": 1770637973884.5728,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Poniente"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-23",
@@ -2990,8 +2641,7 @@
       "elevationGain": 29,
       "elevationLoss": 31,
       "id": 1770637973884.5046,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-20",
@@ -3003,8 +2653,7 @@
       "elevationGain": 77,
       "elevationLoss": 70,
       "id": 1770637973884.3057,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Peñafrancia"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-18",
@@ -3016,8 +2665,7 @@
       "elevationGain": 241,
       "elevationLoss": 99,
       "id": 1770637973884.6614,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones-Fluvial"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-16",
@@ -3029,8 +2677,7 @@
       "elevationGain": 125,
       "elevationLoss": 122,
       "id": 1770637973884.782,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-13",
@@ -3042,21 +2689,7 @@
       "elevationGain": 210,
       "elevationLoss": 145,
       "id": 1770637973884.7593,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-La Ñora"
-    },
-    {
-      "date": "2024-01-11",
-      "distance": 6.41,
-      "time": "00:32:24",
-      "timeInMinutes": 32.4,
-      "type": "rodaje",
-      "notes": "Importado desde Garmin Connect: Gijón Casa-Pericones",
-      "elevationGain": 148,
-      "elevationLoss": 139,
-      "id": 1770637973884.8547,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-09",
@@ -3068,8 +2701,7 @@
       "elevationGain": 11,
       "elevationLoss": 4,
       "id": 1770637973885.4158,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-06",
@@ -3081,8 +2713,7 @@
       "elevationGain": 105,
       "elevationLoss": 100,
       "id": 1770637973885.7397,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-La Casería"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-04",
@@ -3094,8 +2725,7 @@
       "elevationGain": 13,
       "elevationLoss": 8,
       "id": 1770637973885.21,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-02",
@@ -3107,8 +2737,7 @@
       "elevationGain": 16,
       "elevationLoss": 25,
       "id": 1770637973885.107,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-31",
@@ -3120,8 +2749,7 @@
       "elevationGain": 20,
       "elevationLoss": 13,
       "id": 1770637973885.598,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón San Silvestre"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-29",
@@ -3133,8 +2761,7 @@
       "elevationGain": 185,
       "elevationLoss": 189,
       "id": 1770637973885.7217,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Rinconín-Providencia"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-26",
@@ -3146,8 +2773,7 @@
       "elevationGain": 192,
       "elevationLoss": 191,
       "id": 1770637973885.592,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Rinconín-Providencia"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-23",
@@ -3159,8 +2785,7 @@
       "elevationGain": 90,
       "elevationLoss": 85,
       "id": 1770637973885.5557,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-20",
@@ -3172,8 +2797,7 @@
       "elevationGain": 85,
       "elevationLoss": 91,
       "id": 1770637973885.1216,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-18",
@@ -3185,8 +2809,7 @@
       "elevationGain": 13,
       "elevationLoss": 7,
       "id": 1770637973885.7278,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Vuelta Grupo"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-16",
@@ -3198,8 +2821,7 @@
       "elevationGain": 101,
       "elevationLoss": 85,
       "id": 1770637973885.711,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-14",
@@ -3211,8 +2833,7 @@
       "elevationGain": 83,
       "elevationLoss": 82,
       "id": 1770637973885.9526,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-12-11",
@@ -3224,8 +2845,7 @@
       "elevationGain": 91,
       "elevationLoss": 89,
       "id": 1770637973885.0151,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-30",
@@ -3237,8 +2857,7 @@
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973885.0583,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Entrenamiento en cinta"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-29",
@@ -3250,8 +2869,7 @@
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973885.3198,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Entrenamiento en cinta"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-22",
@@ -3263,8 +2881,7 @@
       "elevationGain": 11,
       "elevationLoss": 15,
       "id": 1770637973885.1487,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-20",
@@ -3276,8 +2893,7 @@
       "elevationGain": 9,
       "elevationLoss": 7,
       "id": 1770637973885.2844,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Grupo-Náutico"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-18",
@@ -3289,8 +2905,7 @@
       "elevationGain": 28,
       "elevationLoss": 25,
       "id": 1770637973885.0588,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-La Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-15",
@@ -3302,8 +2917,7 @@
       "elevationGain": 25,
       "elevationLoss": 30,
       "id": 1770637973885.2922,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Plaza Mayor"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-13",
@@ -3315,8 +2929,7 @@
       "elevationGain": 13,
       "elevationLoss": 20,
       "id": 1770637973885.6262,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-06",
@@ -3328,8 +2941,7 @@
       "elevationGain": 11,
       "elevationLoss": 9,
       "id": 1770637973885.066,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa Parque"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-04",
@@ -3341,8 +2953,7 @@
       "elevationGain": 39,
       "elevationLoss": 36,
       "id": 1770637973885.8442,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-11-01",
@@ -3354,8 +2965,7 @@
       "elevationGain": 32,
       "elevationLoss": 18,
       "id": 1770637973885.351,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Grupo-Poniente"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-30",
@@ -3367,8 +2977,7 @@
       "elevationGain": 14,
       "elevationLoss": 16,
       "id": 1770637973885.795,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa - Las Mestas"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-26",
@@ -3380,8 +2989,7 @@
       "elevationGain": 7,
       "elevationLoss": 5,
       "id": 1770637973885.5864,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-25",
@@ -3393,8 +3001,7 @@
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973885.062,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Entrenamiento en cinta"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-21",
@@ -3406,8 +3013,7 @@
       "elevationGain": 111,
       "elevationLoss": 112,
       "id": 1770637973885.8027,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: 10km Soto del Barco"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-17",
@@ -3419,8 +3025,7 @@
       "elevationGain": 13,
       "elevationLoss": 8,
       "id": 1770637973885.4983,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Grupo-Muro"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-15",
@@ -3432,8 +3037,7 @@
       "elevationGain": 22,
       "elevationLoss": 22,
       "id": 1770637973885.5015,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa - Senda Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-13",
@@ -3445,8 +3049,7 @@
       "elevationGain": 27,
       "elevationLoss": 28,
       "id": 1770637973885.0156,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa - La Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-09",
@@ -3458,8 +3061,7 @@
       "elevationGain": 26,
       "elevationLoss": 21,
       "id": 1770637973885.5164,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Senda Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-07",
@@ -3471,8 +3073,7 @@
       "elevationGain": 15,
       "elevationLoss": 16,
       "id": 1770637973885.1519,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: 10km Salinas"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-04",
@@ -3484,8 +3085,7 @@
       "elevationGain": 27,
       "elevationLoss": 24,
       "id": 1770637973885.1843,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa - Senda Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-10-02",
@@ -3497,8 +3097,7 @@
       "elevationGain": 46,
       "elevationLoss": 37,
       "id": 1770637973885.964,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa - Senda Camocha"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-30",
@@ -3510,8 +3109,7 @@
       "elevationGain": 162,
       "elevationLoss": 163,
       "id": 1770637973885.7554,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Barrigón-Arenal de Morís"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-27",
@@ -3523,8 +3121,7 @@
       "elevationGain": 53,
       "elevationLoss": 64,
       "id": 1770637973885.4302,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Casa-Los Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-25",
@@ -3536,8 +3133,7 @@
       "elevationGain": 84,
       "elevationLoss": 83,
       "id": 1770637973885.697,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Casa-Huerres"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-23",
@@ -3549,8 +3145,7 @@
       "elevationGain": 15,
       "elevationLoss": 11,
       "id": 1770637973885.4233,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: 10Km Ribadesella"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-20",
@@ -3562,8 +3157,7 @@
       "elevationGain": 30,
       "elevationLoss": 26,
       "id": 1770637973885.9307,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Casa - El Visu"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-18",
@@ -3575,8 +3169,7 @@
       "elevationGain": 65,
       "elevationLoss": 61,
       "id": 1770637973885.669,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Morro Jable"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-14",
@@ -3588,8 +3181,7 @@
       "elevationGain": 10,
       "elevationLoss": 11,
       "id": 1770637973885.96,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Corralejo - Grandes Playas Corta"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-12",
@@ -3601,8 +3193,7 @@
       "elevationGain": 54,
       "elevationLoss": 10,
       "id": 1770637973885.1958,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Corralejo - Playas"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-10",
@@ -3614,8 +3205,7 @@
       "elevationGain": 85,
       "elevationLoss": 90,
       "id": 1770637973885.5676,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Corralejo - Bufadero"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-07",
@@ -3627,8 +3217,7 @@
       "elevationGain": 57,
       "elevationLoss": 55,
       "id": 1770637973885.8132,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Barri - Los Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-05",
@@ -3640,8 +3229,7 @@
       "elevationGain": 64,
       "elevationLoss": 54,
       "id": 1770637973885.4893,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Barrigón - Los Romeros"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-03",
@@ -3653,8 +3241,7 @@
       "elevationGain": 167,
       "elevationLoss": 178,
       "id": 1770637973885.482,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Barrigón - Arenal de Morís"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2023-09-02",
@@ -3666,8 +3253,7 @@
       "elevationGain": 37,
       "elevationLoss": 26,
       "id": 1770637973885.2537,
-      "equipo": "",
-      "localizacion": "Importado desde Garmin Connect: Colunga Caminar"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2025-09-03",
@@ -3679,8 +3265,7 @@
       "elevationGain": 39,
       "elevationLoss": 42,
       "id": 1770640037741.5464,
-      "equipo": "Hokka Bondi 9 Grises",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-La Espasa"
+      "equipo": "Hokka Bondi 9 Grises"
     },
     {
       "date": "2025-03-20",
@@ -3692,8 +3277,7 @@
       "elevationGain": 86,
       "elevationLoss": 80,
       "id": 1770640037741.2585,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-03-14",
@@ -3705,8 +3289,7 @@
       "elevationGain": 119,
       "elevationLoss": 86,
       "id": 1770640037741.3892,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Camocha"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-02-08",
@@ -3718,8 +3301,7 @@
       "elevationGain": 57,
       "elevationLoss": 41,
       "id": 1770640037741.8984,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: Colunga Casa-Espasa"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-30",
@@ -3731,8 +3313,7 @@
       "elevationGain": 27,
       "elevationLoss": 11,
       "id": 1770640037741.0713,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: Gijón Carrera"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2025-01-12",
@@ -3744,8 +3325,7 @@
       "elevationGain": 81,
       "elevationLoss": 68,
       "id": 1770640037741.6707,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-11-24",
@@ -3757,8 +3337,7 @@
       "elevationGain": 54,
       "elevationLoss": 66,
       "id": 1770640037741.041,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: 12km Villa de Gijón"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-10-07",
@@ -3770,8 +3349,7 @@
       "elevationGain": 78,
       "elevationLoss": 86,
       "id": 1770640037741.06,
-      "equipo": "Asics Gel Nimbus 26 Azules",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Castiello"
+      "equipo": "Asics Gel Nimbus 26 Azules"
     },
     {
       "date": "2024-05-27",
@@ -3783,8 +3361,7 @@
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770640037741.7012,
-      "equipo": "Asics Gel Nimbus 25 Negras",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Náutico"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-02-07",
@@ -3796,8 +3373,7 @@
       "elevationGain": 17,
       "elevationLoss": 18,
       "id": 1770640037741.236,
-      "equipo": "Asics Gel Nimbus 25 Negras",
-      "localizacion": "Importado desde Garmin Connect: Gijón Grupo-Poniente"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     },
     {
       "date": "2024-01-11",
@@ -3809,22 +3385,7 @@
       "elevationGain": 148,
       "elevationLoss": 139,
       "id": 1770640037741.3965,
-      "equipo": "Asics Gel Nimbus 25 Negras",
-      "localizacion": "Importado desde Garmin Connect: Gijón Casa-Pericones"
-    },
-    {
-      "id": 1770749223681,
-      "date": "2026-02-10",
-      "distance": 7.5,
-      "time": "00:37:06",
-      "timeInMinutes": 37.1,
-      "type": "entrenamiento",
-      "localizacion": "Gijón",
-      "notes": "",
-      "elevationGain": 41,
-      "elevationLoss": 40,
-      "equipo": "Hokka Bondi 9 Grises",
-      "createdAt": "2026-02-10T18:47:03.681Z"
+      "equipo": "Asics Gel Nimbus 25 Negras"
     }
   ],
   "carreras": [
