@@ -1009,6 +1009,48 @@ header h1 {
     color: #111;
 }
 
+.chart-month-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.chart-month-control label {
+    font-size: 0.9em;
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+.chart-month-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-month-input {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-weight: 700;
+    outline: none;
+}
+
+.chart-month-input:focus {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+.btn-month-nav {
+    padding: 6px 10px;
+    border-radius: 999px;
+    line-height: 1;
+}
+
 .chart-wrapper canvas {
     max-height: 300px;
 }

@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.11'; // Versión actual de la app
+let currentAppVersion = '1.2.12'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -13,6 +13,12 @@ let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado p
 let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
 let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
 let paceSelectedYear = new Date().getFullYear(); // Año seleccionado para Evolución del ritmo (por mes)
+let activitiesSelectedMonth = (() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+})(); // Mes seleccionado para Actividades (por día)
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTotalElevationYearSelector();
     setupTypeYearSelector();
     setupPaceYearSelector();
+    setupActivitiesMonthSelector();
     setupEquipmentSection();
     setupMarcaForm();
     setupClearButton();
@@ -1108,153 +1115,39 @@ function setupMenu() {
 
 // Configurar exportar/importar JSON para sincronización
 function setupSync() {
-    const exportBtn = document.getElementById('exportJsonBtnMenu');
-    const importBtn = document.getElementById('importJsonBtnMenu');
-    const importInput = document.getElementById('importJsonFile');
+    const exportAllBtn = document.getElementById('exportAllBtnMenu');
+    const importAllBtn = document.getElementById('importAllBtnMenu');
+    const importAllInput = document.getElementById('importAllFile');
     const syncStatus = document.getElementById('syncStatus');
 
-    exportBtn.addEventListener('click', () => {
+    if (exportAllBtn) exportAllBtn.addEventListener('click', () => {
         document.getElementById('menuDropdown').style.display = 'none';
-        const data = JSON.stringify(sessions, null, 2);
+        const backup = {
+            app: 'RunMetrics',
+            version: currentAppVersion,
+            exportedAt: new Date().toISOString(),
+            sessions: sessions || [],
+            carreras: marcas || [],
+            records: records || []
+        };
+        const data = JSON.stringify(backup, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'sessions.json';
+        a.download = 'runmetrics-backup.json';
         a.click();
         URL.revokeObjectURL(url);
-        syncStatus.style.display = 'block';
-        syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Descargado. Guarda el archivo en <code>data/sessions.json</code> del proyecto y haz commit para sincronizar.</p>';
-        setTimeout(() => {
-            syncStatus.style.display = 'none';
-        }, 5000);
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Backup descargado (<code>runmetrics-backup.json</code>).</p>';
+            setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
+        }
     });
 
-    const exportCarrerasBtn = document.getElementById('exportCarrerasBtnMenu');
-    if (exportCarrerasBtn) {
-        exportCarrerasBtn.addEventListener('click', () => {
-            document.getElementById('menuDropdown').style.display = 'none';
-            const data = JSON.stringify(marcas, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'carreras.json';
-            a.click();
-            URL.revokeObjectURL(url);
-            if (syncStatus) {
-                syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ carreras.json descargado.</p>';
-                setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
-            }
-        });
-    }
-
-    const exportRecordsBtn = document.getElementById('exportRecordsBtnMenu');
-    if (exportRecordsBtn) {
-        exportRecordsBtn.addEventListener('click', () => {
-            document.getElementById('menuDropdown').style.display = 'none';
-            const data = JSON.stringify(records, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'records.json';
-            a.click();
-            URL.revokeObjectURL(url);
-            if (syncStatus) {
-                syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ records.json descargado.</p>';
-                setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
-            }
-        });
-    }
-
-    const importCarrerasBtn = document.getElementById('importCarrerasBtnMenu');
-    const importCarrerasInput = document.getElementById('importCarrerasFile');
-    if (importCarrerasBtn && importCarrerasInput) {
-        importCarrerasBtn.addEventListener('click', () => {
-            document.getElementById('menuDropdown').style.display = 'none';
-            importCarrerasInput.click();
-        });
-        importCarrerasInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (syncStatus) {
-                syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando carreras...</p>';
-            }
-            try {
-                const text = await file.text();
-                const data = JSON.parse(text);
-                if (!Array.isArray(data)) throw new Error('El JSON debe ser un array');
-                const existingIds = new Set(marcas.map(m => m.id));
-                let added = 0;
-                data.forEach(marca => {
-                    if (marca.id != null && !existingIds.has(marca.id)) {
-                        marcas.push(marca);
-                        existingIds.add(marca.id);
-                        added++;
-                    } else if (marca.id != null && existingIds.has(marca.id)) {
-                        const idx = marcas.findIndex(m => m.id === marca.id);
-                        if (idx !== -1) marcas[idx] = { ...marcas[idx], ...marca };
-                    }
-                });
-                saveMarcas();
-                renderMarcas();
-                if (syncStatus) {
-                    syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Carreras importadas desde carreras.json.</p>';
-                    setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
-                }
-            } catch (err) {
-                if (syncStatus) {
-                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error: ' + (err.message || 'JSON no válido') + '</p>';
-                    setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
-                }
-            }
-            importCarrerasInput.value = '';
-        });
-    }
-
-    const importRecordsBtn = document.getElementById('importRecordsBtnMenu');
-    const importRecordsInput = document.getElementById('importRecordsFile');
-    if (importRecordsBtn && importRecordsInput) {
-        importRecordsBtn.addEventListener('click', () => {
-            document.getElementById('menuDropdown').style.display = 'none';
-            importRecordsInput.click();
-        });
-        importRecordsInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (syncStatus) {
-                syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando récords...</p>';
-            }
-            try {
-                const text = await file.text();
-                const data = JSON.parse(text);
-                if (!Array.isArray(data)) throw new Error('El JSON debe ser un array');
-                records = data.map(r => ({ ...r }));
-                saveRecords();
-                const recordsSection = document.getElementById('recordsSection');
-                if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
-                if (syncStatus) {
-                    syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Récords importados desde records.json.</p>';
-                    setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
-                }
-            } catch (err) {
-                if (syncStatus) {
-                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error: ' + (err.message || 'JSON no válido') + '</p>';
-                    setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
-                }
-            }
-            importRecordsInput.value = '';
-        });
-    }
-
-    importBtn.addEventListener('click', () => {
+    if (importAllBtn && importAllInput) importAllBtn.addEventListener('click', () => {
         document.getElementById('menuDropdown').style.display = 'none';
-        importInput.click();
+        importAllInput.click();
     });
 
     const resetFromRepoBtn = document.getElementById('resetFromRepoBtn');
@@ -1273,43 +1166,106 @@ function setupSync() {
         });
     }
 
-    importInput.addEventListener('change', async (e) => {
+    if (importAllInput) importAllInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        syncStatus.style.display = 'block';
-        syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando...</p>';
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando backup...</p>';
+        }
         try {
             const text = await file.text();
             const data = JSON.parse(text);
-            if (!Array.isArray(data)) throw new Error('El JSON debe ser un array de sesiones');
-            const existingIds = new Set(sessions.map(s => s.id));
-            let added = 0;
-            data.forEach(session => {
-                if (session.id != null && !existingIds.has(session.id)) {
-                    sessions.push(session);
-                    existingIds.add(session.id);
-                    added++;
-                }
-            });
-            if (added > 0) {
+
+            // Formato legacy: array de sesiones (reemplaza sesiones; no toca carreras/records)
+            if (Array.isArray(data)) {
+                sessions = data
+                    .filter(Boolean)
+                    .map(s => {
+                        // Normalizar campos mínimos (migración básica)
+                        if (!s.timeInMinutes && typeof s.time === 'number') {
+                            s.timeInMinutes = s.time;
+                            s.time = minutesToTime(s.time);
+                        } else if (!s.timeInMinutes && typeof s.time === 'string') {
+                            s.timeInMinutes = timeToMinutes(s.time);
+                        }
+                        if (s.elevationGain === undefined) s.elevationGain = 0;
+                        if (s.elevationLoss === undefined) s.elevationLoss = 0;
+                        if (s.equipo === undefined) s.equipo = '';
+                        if (!('localizacion' in s) || s.localizacion === undefined) {
+                            s.localizacion = (s.notes || '').trim();
+                        }
+                        return s;
+                    });
                 saveSessions();
                 renderSessions();
                 renderEquipmentList();
+                updateEquipmentSelect();
                 updateStats();
+                if (syncStatus) {
+                    syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Sesiones reemplazadas: ${sessions.length}.</p>`;
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
+                }
+                importAllInput.value = '';
+                return;
             }
-                syncStatus.style.display = 'block';
-            syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ ${added} sesión(es) importada(s) desde el JSON.</p>`;
-            setTimeout(() => {
-                syncStatus.style.display = 'none';
-            }, 5000);
+
+            // Formato backup: { sessions, carreras, records }
+            const sessionsArr = Array.isArray(data.sessions) ? data.sessions : (Array.isArray(data.sesiones) ? data.sesiones : null);
+            const carrerasArr = Array.isArray(data.carreras) ? data.carreras : null;
+            const recordsArr = Array.isArray(data.records) ? data.records : null;
+
+            if (!sessionsArr && !carrerasArr && !recordsArr) {
+                throw new Error('Backup inválido: faltan sessions/carreras/records');
+            }
+
+            // Reemplazar TODO con el contenido del backup (si alguna sección falta, se deja vacía)
+            sessions = (sessionsArr || [])
+                .filter(Boolean)
+                .map(s => {
+                    if (!s.timeInMinutes && typeof s.time === 'number') {
+                        s.timeInMinutes = s.time;
+                        s.time = minutesToTime(s.time);
+                    } else if (!s.timeInMinutes && typeof s.time === 'string') {
+                        s.timeInMinutes = timeToMinutes(s.time);
+                    }
+                    if (s.elevationGain === undefined) s.elevationGain = 0;
+                    if (s.elevationLoss === undefined) s.elevationLoss = 0;
+                    if (s.equipo === undefined) s.equipo = '';
+                    if (!('localizacion' in s) || s.localizacion === undefined) {
+                        s.localizacion = (s.notes || '').trim();
+                    }
+                    return s;
+                });
+            marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
+            records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
+
+            saveSessions();
+            saveMarcas();
+            saveRecords();
+
+            // Refresh UI
+            renderSessions();
+            renderEquipmentList();
+            updateEquipmentSelect();
+            updateStats();
+            renderMarcas();
+            const recordsSection = document.getElementById('recordsSection');
+            if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
+
+            if (syncStatus) {
+                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado backup (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}.</p>`;
+                setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+            }
         } catch (err) {
-            syncStatus.style.display = 'block';
-            syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error al leer el JSON: ${err.message}</p>`;
-            setTimeout(() => {
-                syncStatus.style.display = 'none';
-            }, 5000);
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error al leer el backup: ${err.message || err}</p>`;
+                setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+            }
+        } finally {
+            importAllInput.value = '';
         }
-        importInput.value = '';
     });
 }
 
@@ -1956,6 +1912,125 @@ function updateCharts(filteredSessions) {
     updateTotalElevationYearChart();
     updateTypeYearChart();
     updatePaceYearChart();
+    updateActivitiesMonthChart();
+}
+
+function formatMonthValue(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+}
+
+function parseMonthValue(value) {
+    if (!value || !/^\d{4}-\d{2}$/.test(value)) return null;
+    const [yy, mm] = value.split('-').map(Number);
+    if (!yy || !mm) return null;
+    const d = new Date(yy, mm - 1, 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+function shiftMonth(d, deltaMonths) {
+    const nd = new Date(d);
+    nd.setDate(1);
+    nd.setMonth(nd.getMonth() + deltaMonths);
+    nd.setHours(0, 0, 0, 0);
+    return nd;
+}
+
+function setupActivitiesMonthSelector() {
+    const picker = document.getElementById('activitiesMonthPicker');
+    if (!picker) return;
+
+    const saved = localStorage.getItem('activitiesSelectedMonth'); // YYYY-MM
+    const parsed = parseMonthValue(saved);
+    if (parsed) activitiesSelectedMonth = parsed;
+
+    picker.value = formatMonthValue(activitiesSelectedMonth);
+
+    const prevBtn = document.getElementById('activitiesMonthPrev');
+    const nextBtn = document.getElementById('activitiesMonthNext');
+
+    const apply = (newMonth) => {
+        activitiesSelectedMonth = newMonth;
+        const v = formatMonthValue(activitiesSelectedMonth);
+        picker.value = v;
+        localStorage.setItem('activitiesSelectedMonth', v);
+        updateActivitiesMonthChart();
+    };
+
+    picker.addEventListener('change', () => {
+        const d = parseMonthValue(picker.value);
+        if (d) apply(d);
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => apply(shiftMonth(activitiesSelectedMonth, -1)));
+    if (nextBtn) nextBtn.addEventListener('click', () => apply(shiftMonth(activitiesSelectedMonth, 1)));
+}
+
+function updateActivitiesMonthChart() {
+    const ctx = document.getElementById('activitiesChart');
+    if (!ctx) return;
+
+    const year = activitiesSelectedMonth.getFullYear();
+    const month = activitiesSelectedMonth.getMonth(); // 0-11
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const labels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
+    const data = Array(daysInMonth).fill(0);
+
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const d = new Date(s.date + 'T00:00:00');
+        if (d.getFullYear() !== year || d.getMonth() !== month) return;
+        const dayIdx = d.getDate() - 1;
+        if (dayIdx < 0 || dayIdx >= data.length) return;
+        data[dayIdx] += s.distance || 0;
+    });
+
+    if (charts.activitiesChart) charts.activitiesChart.destroy();
+
+    charts.activitiesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Km',
+                data,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${(ctx.raw || 0).toFixed(2)} km`
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: {
+                        color: 'white',
+                        maxRotation: 0,
+                        autoSkip: true,
+                        maxTicksLimit: 16
+                    },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
 }
 
 function getAvailableStatsYears() {

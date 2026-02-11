@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.2.11</span>
+                <span id="currentVersion">v1.2.12</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -42,26 +42,12 @@
             
             <!-- Menú desplegable -->
             <div id="menuDropdown" class="menu-dropdown">
-                <button type="button" id="exportJsonBtnMenu" class="menu-item">
-                    <span>📤</span> Exportar a JSON
+                <button type="button" id="exportAllBtnMenu" class="menu-item">
+                    <span>📤</span> Exportar (sesiones, carreras y récords)
                 </button>
-                <button type="button" id="exportCarrerasBtnMenu" class="menu-item">
-                    <span>📤</span> Exportar carreras
-                </button>
-                <button type="button" id="exportRecordsBtnMenu" class="menu-item">
-                    <span>📤</span> Exportar récords
-                </button>
-                <input type="file" id="importCarrerasFile" accept=".json" style="display: none;">
-                <button type="button" id="importCarrerasBtnMenu" class="menu-item">
-                    <span>📥</span> Importar carreras
-                </button>
-                <input type="file" id="importRecordsFile" accept=".json" style="display: none;">
-                <button type="button" id="importRecordsBtnMenu" class="menu-item">
-                    <span>📥</span> Importar récords
-                </button>
-                <input type="file" id="importJsonFile" accept=".json" style="display: none;">
-                <button type="button" id="importJsonBtnMenu" class="menu-item">
-                    <span>📥</span> Importar desde JSON
+                <input type="file" id="importAllFile" accept=".json" style="display: none;">
+                <button type="button" id="importAllBtnMenu" class="menu-item">
+                    <span>📥</span> Importar (sesiones, carreras y récords)
                 </button>
                 <input type="file" id="garminFile" accept=".tcx,.gpx,.csv" style="display: none;" multiple>
                 <button type="button" id="importGarminBtnMenu" class="menu-item">
@@ -230,6 +216,19 @@
                         </div>
                         <canvas id="paceChart"></canvas>
                     </div>
+
+                    <div class="chart-wrapper">
+                        <h3>Actividades (mes en curso)</h3>
+                        <div class="chart-month-control">
+                            <label for="activitiesMonthPicker">Mes</label>
+                            <div class="chart-month-controls">
+                                <button type="button" id="activitiesMonthPrev" class="btn btn-small btn-month-nav" aria-label="Mes anterior">◀</button>
+                                <input type="month" id="activitiesMonthPicker" class="chart-month-input" aria-label="Seleccionar mes de Actividades">
+                                <button type="button" id="activitiesMonthNext" class="btn btn-small btn-month-nav" aria-label="Mes siguiente">▶</button>
+                            </div>
+                        </div>
+                        <canvas id="activitiesChart"></canvas>
+                    </div>
                     
                 </div>
             </section>
@@ -332,6 +331,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.11"></script>
+    <script src="app.js?v=1.2.12"></script>
 </body>
 </html>
