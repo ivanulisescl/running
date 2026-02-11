@@ -437,6 +437,24 @@ header h1 {
     color: var(--text-primary);
 }
 
+.marca-card-stat-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.marca-card-stat-value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.marca-card-stat-unit {
+    margin-left: 6px;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
 .marca-card-stat strong {
     color: var(--primary-color);
 }
