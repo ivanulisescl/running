@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.2.20">
+    <link rel="stylesheet" href="styles.css?v=1.2.21">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.2.20</span>
+                <span id="currentVersion">v1.2.21</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -37,6 +37,9 @@
                 <div class="header-row-4">
                     <button id="recordsBtn" class="btn-header">Récords</button>
                     <button id="menuBtn" class="btn-header">Opciones</button>
+                </div>
+                <div class="header-row-5">
+                    <button id="planningBtn" class="btn-header">Planificación</button>
                 </div>
             </div>
             
@@ -241,6 +244,92 @@
                 </div>
             </section>
 
+            <!-- Planificación -->
+            <section id="planningSection" class="card main-section" style="display: none;">
+                <h2>Planificación</h2>
+                <p class="section-intro">Crea una planificación por semanas para cada carrera y marca automáticamente lo entrenado según tu historial.</p>
+
+                <div class="planning-controls">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="planningPlanSelect">Planificaciones</label>
+                            <select id="planningPlanSelect">
+                                <option value="">— Selecciona una planificación —</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <div class="planning-actions-inline">
+                                <button type="button" id="planningNewBtn" class="btn btn-primary btn-small">Nueva</button>
+                                <button type="button" id="planningEditBtn" class="btn btn-secondary btn-small">Editar</button>
+                                <button type="button" id="planningDeleteBtn" class="btn btn-danger btn-small">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="planningFormCard" class="planning-box" style="display:none;">
+                    <h3 id="planningFormTitle">Nueva planificación</h3>
+                    <form id="planningForm">
+                        <div class="form-group">
+                            <label for="planningRaceName">Nombre carrera</label>
+                            <input type="text" id="planningRaceName" required placeholder="Ej: Media Maratón de Gijón">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="planningWeeks">Semanas de entrenamiento</label>
+                                <input type="number" id="planningWeeks" min="1" max="52" required placeholder="Ej: 12">
+                            </div>
+                            <div class="form-group">
+                                <label for="planningDaysPerWeek">Días por semana</label>
+                                <input type="number" id="planningDaysPerWeek" min="1" max="7" required placeholder="Ej: 4">
+                            </div>
+                        </div>
+
+                        <div class="planning-template">
+                            <div class="planning-template-header">
+                                <h4>Plan por semanas (editable)</h4>
+                                <button type="button" id="planningGenerateBtn" class="btn btn-secondary btn-small">Generar plan base</button>
+                            </div>
+                            <p class="section-intro" style="margin-bottom: 10px;">Define kilómetros y tipo para cada <strong>Semana</strong> y <strong>Día 1…N</strong>. No es un día fijo del calendario: asignarás sesiones reales dentro de la semana cuando las completes.</p>
+                            <div id="planningScheduleGrid" class="planning-schedule-grid"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="planningStartDate">Fecha de comienzo</label>
+                                <input type="date" id="planningStartDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="planningRaceDate">Día de la carrera</label>
+                                <input type="date" id="planningRaceDate" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="planningRaceDistanceKm">Distancia de la carrera (km)</label>
+                                <input type="number" id="planningRaceDistanceKm" step="0.1" min="0" placeholder="Ej: 21.1 (opcional)">
+                            </div>
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <small style="color: var(--text-secondary);">Se usa para generar planes base (p. ej. medio maratón).</small>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="planningSubmitBtn" class="btn btn-primary">Crear planificación</button>
+                            <button type="button" id="planningCancelBtn" class="btn btn-secondary">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="planningView" class="planning-view">
+                    <p class="empty-state">Crea o selecciona una planificación para ver tu semana a semana.</p>
+                </div>
+            </section>
+
             <!-- Mensajes de estado (ocultos por defecto) -->
             <div id="syncStatus" class="status-message" style="display: none;"></div>
             <div id="importStatus" class="status-message" style="display: none;"></div>
@@ -331,6 +420,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.20"></script>
+    <script src="app.js?v=1.2.21"></script>
 </body>
 </html>

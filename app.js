@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.20'; // Versión actual de la app
+let currentAppVersion = '1.2.21'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -10,6 +10,11 @@ let equipmentList = []; // Lista de equipos disponibles
 let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
 let records = []; // Récords (incluidos en runmetrics.json)
 const RUNMETRICS_FILENAME = 'runmetrics.json';
+let planningPlans = []; // Planificaciones por carrera
+let selectedPlanningPlanId = null; // ID del plan seleccionado
+const PLANNING_PLANS_STORAGE_KEY = 'runningPlanningPlans';
+const PLANNING_SELECTED_PLAN_STORAGE_KEY = 'runningPlanningSelectedPlanId';
+let planningEditingPlanId = null; // ID del plan en edición (null = nuevo)
 let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado para Distancia total (por mes)
 let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
 let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
@@ -27,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSessions();
     loadMarcas();
     loadRecords();
+    loadPlanningPlans();
     loadRunmetricsFromRepoIfEmpty();
     setupForm();
     setupNewSessionButton();
@@ -45,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMenu();
     setupSync();
     setupGarminImport();
+    setupPlanningSection();
     updateStats();
     setupPWA();
     setupVersionCheck();
@@ -98,7 +105,8 @@ const MAIN_SECTIONS = {
     history: { btnId: 'historyBtn', sectionId: 'historySection' },
     equipment: { btnId: 'equipmentBtn', sectionId: 'equipmentSection' },
     marcas: { btnId: 'marcasBtn', sectionId: 'marcasSection' },
-    records: { btnId: 'recordsBtn', sectionId: 'recordsSection' }
+    records: { btnId: 'recordsBtn', sectionId: 'recordsSection' },
+    planning: { btnId: 'planningBtn', sectionId: 'planningSection' }
 };
 
 function hideAllMainSections() {
@@ -138,7 +146,7 @@ function toggleSection(sectionId) {
 }
 
 function setActiveNavButton(activeBtnId) {
-    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn'].forEach(id => {
+    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn', 'planningBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.classList.toggle('active', id === activeBtnId);
     });
@@ -169,10 +177,12 @@ function setupNavigationButtons() {
     const historyBtn = document.getElementById('historyBtn');
     const equipmentBtn = document.getElementById('equipmentBtn');
     const recordsBtn = document.getElementById('recordsBtn');
+    const planningBtn = document.getElementById('planningBtn');
     const statsSection = document.getElementById('statsSection');
     const historySection = document.getElementById('historySection');
     const equipmentSection = document.getElementById('equipmentSection');
     const recordsSection = document.getElementById('recordsSection');
+    const planningSection = document.getElementById('planningSection');
 
     if (statsBtn && statsSection) {
         statsBtn.addEventListener('click', () => {
@@ -197,6 +207,13 @@ function setupNavigationButtons() {
             toggleSection('recordsSection');
             setActiveNavButton(recordsSection.style.display !== 'none' ? 'recordsBtn' : null);
             if (recordsSection.style.display !== 'none') renderRecords();
+        });
+    }
+    if (planningBtn && planningSection) {
+        planningBtn.addEventListener('click', () => {
+            toggleSection('planningSection');
+            setActiveNavButton(planningSection.style.display !== 'none' ? 'planningBtn' : null);
+            if (planningSection.style.display !== 'none') renderPlanning();
         });
     }
     const marcasBtn = document.getElementById('marcasBtn');
@@ -260,8 +277,9 @@ function coerceRunmetricsPayload(data) {
         const carrerasArr = Array.isArray(data.carreras) ? data.carreras : [];
         const recordsArr = Array.isArray(data.records) ? data.records : [];
 
-        if (!sessionsArr.length && !carrerasArr.length && !recordsArr.length) {
-            throw new Error(`Archivo inválido: faltan sessions/carreras/records en ${RUNMETRICS_FILENAME}`);
+        const hasPlanning = !!(data.planning && typeof data.planning === 'object');
+        if (!sessionsArr.length && !carrerasArr.length && !recordsArr.length && !hasPlanning) {
+            throw new Error(`Archivo inválido: faltan sessions/carreras/records/planning en ${RUNMETRICS_FILENAME}`);
         }
 
         return { sessionsArr, carrerasArr, recordsArr };
@@ -282,7 +300,8 @@ async function loadRunmetricsFromRepoIfEmpty() {
     const hasLocal =
         (Array.isArray(sessions) && sessions.length > 0) ||
         (Array.isArray(marcas) && marcas.length > 0) ||
-        (Array.isArray(records) && records.length > 0);
+        (Array.isArray(records) && records.length > 0) ||
+        (Array.isArray(planningPlans) && planningPlans.length > 0);
     if (hasLocal) return;
 
     try {
@@ -294,16 +313,26 @@ async function loadRunmetricsFromRepoIfEmpty() {
             .filter(Boolean);
         marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
         records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
+        if (data && typeof data === 'object' && data.planning && typeof data.planning === 'object') {
+            const plansRaw = Array.isArray(data.planning.plans) ? data.planning.plans : [];
+            planningPlans = plansRaw.map(normalizePlanningPlan).filter(Boolean);
+            selectedPlanningPlanId = data.planning.selectedPlanId ? Number(data.planning.selectedPlanId) : null;
+            if (!selectedPlanningPlanId || !planningPlans.some(p => p.id === selectedPlanningPlanId)) {
+                selectedPlanningPlanId = planningPlans.length ? planningPlans[planningPlans.length - 1].id : null;
+            }
+        }
 
         saveSessions();
         saveMarcas();
         saveRecords();
+        savePlanningPlans();
 
         renderSessions();
         renderEquipmentList();
         updateEquipmentSelect();
         updateStats();
         renderMarcas();
+        renderPlanning();
     } catch (_) {
         // Silencioso: no bloquear si no hay repo/online
     }
@@ -1173,7 +1202,11 @@ function setupSync() {
             exportedAt: new Date().toISOString(),
             sessions: sessions || [],
             carreras: marcas || [],
-            records: records || []
+            records: records || [],
+            planning: {
+                plans: planningPlans || [],
+                selectedPlanId: selectedPlanningPlanId || null
+            }
         };
         const data = JSON.stringify(payload, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
@@ -1251,10 +1284,22 @@ function setupSync() {
                 .filter(Boolean);
             marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
             records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
+            if (data && typeof data === 'object' && data.planning && typeof data.planning === 'object') {
+                const plansRaw = Array.isArray(data.planning.plans) ? data.planning.plans : [];
+                planningPlans = plansRaw.map(normalizePlanningPlan).filter(Boolean);
+                selectedPlanningPlanId = data.planning.selectedPlanId ? Number(data.planning.selectedPlanId) : null;
+                if (!selectedPlanningPlanId || !planningPlans.some(p => p.id === selectedPlanningPlanId)) {
+                    selectedPlanningPlanId = planningPlans.length ? planningPlans[planningPlans.length - 1].id : null;
+                }
+            } else {
+                planningPlans = [];
+                selectedPlanningPlanId = null;
+            }
 
             saveSessions();
             saveMarcas();
             saveRecords();
+            savePlanningPlans();
 
             // Refresh UI
             renderSessions();
@@ -1264,9 +1309,10 @@ function setupSync() {
             renderMarcas();
             const recordsSection = document.getElementById('recordsSection');
             if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
+            renderPlanning();
 
             if (syncStatus) {
-                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}.</p>`;
+                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}.</p>`;
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         } catch (err) {
@@ -1922,6 +1968,847 @@ function updateStats() {
 
     // Actualizar gráficas
     updateCharts(filteredSessions);
+    // Si planificación está abierta, refrescar el marcado de entrenado
+    const planningSection = document.getElementById('planningSection');
+    if (planningSection && planningSection.style.display !== 'none') renderPlanning();
+}
+
+function normalizePlanningSessionType(type) {
+    const t = String(type || '').toLowerCase().trim();
+    if (t === 'series' || t === 'serie') return 'series';
+    if (t === 'carrera') return 'carrera';
+    return 'entrenamiento';
+}
+
+const PLANNING_RACE_KEY = 'RACE';
+function planningKey(weekIndex, dayIndex) {
+    return `W${weekIndex}D${dayIndex}`;
+}
+
+function normalizePlanningCell(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const plannedKm = raw.plannedKm === null || raw.plannedKm === undefined ? null : Number(raw.plannedKm);
+    const type = normalizePlanningSessionType(raw.type);
+    if (plannedKm !== null && (!Number.isFinite(plannedKm) || plannedKm < 0)) return null;
+    return { plannedKm, type };
+}
+
+function normalizePlanningSchedule(rawSchedule, weeks, daysPerWeek) {
+    if (!Array.isArray(rawSchedule)) return null;
+    if (!Number.isFinite(weeks) || weeks < 1 || weeks > 52) return null;
+    if (!Number.isFinite(daysPerWeek) || daysPerWeek < 1 || daysPerWeek > 7) return null;
+
+    const schedule = [];
+    for (let w = 0; w < weeks; w++) {
+        const row = rawSchedule[w];
+        if (!Array.isArray(row)) return null;
+        const outRow = [];
+        for (let d = 0; d < daysPerWeek; d++) {
+            const cell = normalizePlanningCell(row[d] || {});
+            if (!cell) return null;
+            outRow.push(cell);
+        }
+        schedule.push(outRow);
+    }
+    return schedule;
+}
+
+function normalizePlanningPlan(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const id = Number(raw.id);
+    const raceName = typeof raw.raceName === 'string' ? raw.raceName.trim() : '';
+    const weeks = Number(raw.weeks);
+    const daysPerWeek = Number(raw.daysPerWeek ?? (Array.isArray(raw.dayTemplates) ? raw.dayTemplates.length : (raw.schedule?.[0]?.length)));
+    const startDate = typeof raw.startDate === 'string' ? raw.startDate : '';
+    const raceDate = typeof raw.raceDate === 'string' ? raw.raceDate : '';
+    const raceDistanceKm = (raw.raceDistanceKm === null || raw.raceDistanceKm === undefined || raw.raceDistanceKm === '')
+        ? null
+        : Number(raw.raceDistanceKm);
+    if (!Number.isFinite(id) || id <= 0) return null;
+    if (!raceName) return null;
+    if (!Number.isFinite(weeks) || weeks < 1 || weeks > 52) return null;
+    if (!Number.isFinite(daysPerWeek) || daysPerWeek < 1 || daysPerWeek > 7) return null;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return null;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raceDate)) return null;
+    if (raceDistanceKm !== null && (!Number.isFinite(raceDistanceKm) || raceDistanceKm < 0)) return null;
+
+    // schedule (nuevo formato). Migrar desde dayTemplates o desde legacy.
+    let schedule = null;
+    if (Array.isArray(raw.schedule)) {
+        schedule = normalizePlanningSchedule(raw.schedule, weeks, daysPerWeek);
+    }
+    if (!schedule && Array.isArray(raw.dayTemplates)) {
+        // Migración de formato anterior "template": repetir en todas las semanas
+        const templates = raw.dayTemplates
+            .map((t, idx) => {
+                const plannedKm = t?.plannedKm === null || t?.plannedKm === undefined ? 0 : Number(t.plannedKm);
+                const type = normalizePlanningSessionType(t?.type);
+                if (!Number.isFinite(plannedKm) || plannedKm < 0) return null;
+                return { plannedKm, type };
+            })
+            .filter(Boolean);
+        if (templates.length !== daysPerWeek) return null;
+        schedule = Array.from({ length: weeks }, () => templates.map(c => ({ ...c })));
+    }
+    if (!schedule) {
+        // legacy: daysPerWeek + sessionType
+        const sessionType = normalizePlanningSessionType(raw.sessionType);
+        const baseRow = Array.from({ length: daysPerWeek }, () => ({ plannedKm: 0, type: sessionType }));
+        schedule = Array.from({ length: weeks }, () => baseRow.map(c => ({ ...c })));
+    }
+
+    // assignments: { key -> sessionId }
+    const assignmentsRaw = raw.assignments && typeof raw.assignments === 'object' ? raw.assignments : {};
+    const assignments = {};
+    Object.keys(assignmentsRaw).forEach(k => {
+        const v = Number(assignmentsRaw[k]);
+        if (Number.isFinite(v) && v > 0) assignments[k] = v;
+    });
+
+    return {
+        id,
+        raceName,
+        weeks,
+        daysPerWeek,
+        startDate,
+        raceDate,
+        raceDistanceKm: raceDistanceKm === null ? null : Number(raceDistanceKm.toFixed(1)),
+        schedule,
+        assignments
+    };
+}
+
+function hardcodedHalfMarathon14w3dSchedule() {
+    // Basado en la tabla que has compartido (editable después).
+    const day1 = [7.3, 6.0, 6.0, 6.5, 8.0, 8.0, 6.0, 7.5, 7.5, 8.0, 8.0, 8.0, 8.0, 6.5];
+    const day2 = [7.2, 6.0, 6.0, 6.5, 6.0, 6.0, 3.0, 7.5, 7.5, 8.0, 8.0, 8.0, 8.0, 3.0];
+    const day3 = [6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 11.8, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 21.1];
+    return Array.from({ length: 14 }, (_, i) => ([
+        { plannedKm: day1[i], type: 'entrenamiento' },
+        { plannedKm: day2[i], type: 'series' },
+        { plannedKm: day3[i], type: 'entrenamiento' }
+    ]));
+}
+
+function generateBaseSchedule(weeks, daysPerWeek, raceDistanceKm) {
+    const W = Math.max(1, Math.min(52, Number(weeks) || 1));
+    const D = Math.max(1, Math.min(7, Number(daysPerWeek) || 1));
+    const dist = (raceDistanceKm === null || raceDistanceKm === undefined || raceDistanceKm === '')
+        ? null
+        : Number(raceDistanceKm);
+
+    // Caso “como el de la imagen”
+    if (W === 14 && D === 3 && (dist === null || Math.abs(dist - 21.1) < 0.3)) {
+        return hardcodedHalfMarathon14w3dSchedule();
+    }
+
+    // Genérico: progresión suave, último día más largo.
+    const baseWeekly = Math.max(12, computeBaselineWeeklyKm());
+    const basePerDay = Math.max(4, baseWeekly / D);
+    const schedule = [];
+    for (let w = 0; w < W; w++) {
+        const factor = Math.min(1.55, 1 + 0.05 * w);
+        const weeklyKm = baseWeekly * factor;
+        const row = [];
+        for (let d = 0; d < D; d++) {
+            const isLong = d === D - 1;
+            const km = isLong ? weeklyKm * 0.38 : (weeklyKm * 0.62) / Math.max(1, D - 1);
+            row.push({
+                plannedKm: Number(Math.max(0, km).toFixed(1)),
+                type: (d === 1 && D >= 3) ? 'series' : 'entrenamiento'
+            });
+        }
+        schedule.push(row);
+    }
+    // Si hay distancia de carrera, aproximar el último día de la última semana
+    if (dist && schedule.length) {
+        schedule[W - 1][D - 1].plannedKm = Number(dist.toFixed(1));
+        schedule[W - 1][D - 1].type = 'carrera';
+    }
+    return schedule;
+}
+
+function loadPlanningPlans() {
+    const saved = localStorage.getItem(PLANNING_PLANS_STORAGE_KEY);
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+                planningPlans = parsed.map(normalizePlanningPlan).filter(Boolean);
+            }
+        } catch (_) {
+            planningPlans = [];
+        }
+    }
+    const selected = localStorage.getItem(PLANNING_SELECTED_PLAN_STORAGE_KEY);
+    selectedPlanningPlanId = selected ? Number(selected) : null;
+    if (!selectedPlanningPlanId || !planningPlans.some(p => p.id === selectedPlanningPlanId)) {
+        selectedPlanningPlanId = planningPlans.length ? planningPlans[planningPlans.length - 1].id : null;
+    }
+}
+
+function savePlanningPlans() {
+    localStorage.setItem(PLANNING_PLANS_STORAGE_KEY, JSON.stringify(planningPlans));
+    if (selectedPlanningPlanId) {
+        localStorage.setItem(PLANNING_SELECTED_PLAN_STORAGE_KEY, String(selectedPlanningPlanId));
+    } else {
+        localStorage.removeItem(PLANNING_SELECTED_PLAN_STORAGE_KEY);
+    }
+}
+
+function getSelectedPlanningPlan() {
+    if (!selectedPlanningPlanId) return null;
+    return planningPlans.find(p => p.id === selectedPlanningPlanId) || null;
+}
+
+function setupPlanningSection() {
+    const select = document.getElementById('planningPlanSelect');
+    const newBtn = document.getElementById('planningNewBtn');
+    const editBtn = document.getElementById('planningEditBtn');
+    const delBtn = document.getElementById('planningDeleteBtn');
+    const formCard = document.getElementById('planningFormCard');
+    const cancelBtn = document.getElementById('planningCancelBtn');
+    const form = document.getElementById('planningForm');
+    const scheduleGrid = document.getElementById('planningScheduleGrid');
+    const generateBtn = document.getElementById('planningGenerateBtn');
+    const formTitle = document.getElementById('planningFormTitle');
+    const submitBtn = document.getElementById('planningSubmitBtn');
+
+    if (!select || !newBtn || !editBtn || !delBtn || !formCard || !cancelBtn || !form || !scheduleGrid || !generateBtn || !formTitle || !submitBtn) return;
+
+    const startInput = document.getElementById('planningStartDate');
+    const raceInput = document.getElementById('planningRaceDate');
+    const daysPerWeekInput = document.getElementById('planningDaysPerWeek');
+    const weeksInput = document.getElementById('planningWeeks');
+    const distanceInput = document.getElementById('planningRaceDistanceKm');
+
+    // Defaults de fechas
+    const today = new Date().toISOString().split('T')[0];
+    if (startInput && !startInput.value) startInput.value = today;
+    if (raceInput && !raceInput.value) {
+        const d = new Date();
+        d.setDate(d.getDate() + 56); // 8 semanas por defecto
+        raceInput.value = d.toISOString().split('T')[0];
+    }
+
+    const readScheduleFromGrid = () => {
+        const W = Math.max(1, Math.min(52, Number(weeksInput?.value) || 1));
+        const D = Math.max(1, Math.min(7, Number(daysPerWeekInput?.value) || 1));
+        const schedule = Array.from({ length: W }, () => Array.from({ length: D }, () => ({ plannedKm: 0, type: 'entrenamiento' })));
+        const cells = Array.from(scheduleGrid.querySelectorAll('.planning-schedule-cell'));
+        cells.forEach(cell => {
+            const w = Number(cell.getAttribute('data-week'));
+            const d = Number(cell.getAttribute('data-day'));
+            const kmRaw = cell.querySelector('input')?.value;
+            const typeRaw = cell.querySelector('select')?.value;
+            if (!Number.isFinite(w) || !Number.isFinite(d)) return;
+            if (w < 1 || w > W || d < 1 || d > D) return;
+            const plannedKm = (kmRaw === '' || kmRaw === null || kmRaw === undefined) ? 0 : Number(kmRaw);
+            schedule[w - 1][d - 1] = {
+                plannedKm: Number.isFinite(plannedKm) ? plannedKm : 0,
+                type: normalizePlanningSessionType(typeRaw)
+            };
+        });
+        return schedule;
+    };
+
+    const renderScheduleGrid = (W, D, schedule) => {
+        const weeks = Math.max(1, Math.min(52, Number(W) || 1));
+        const days = Math.max(1, Math.min(7, Number(D) || 1));
+        const safeSchedule = normalizePlanningSchedule(schedule, weeks, days) || generateBaseSchedule(weeks, days, distanceInput?.value || null);
+
+        const theadDays = Array.from({ length: days }, (_, i) => `<th>Día ${i + 1}</th>`).join('');
+        const tbody = Array.from({ length: weeks }, (_, wi) => {
+            const tds = Array.from({ length: days }, (_, di) => {
+                const cell = safeSchedule[wi]?.[di] || { plannedKm: 0, type: 'entrenamiento' };
+                const km = (cell.plannedKm ?? 0);
+                const type = normalizePlanningSessionType(cell.type);
+                return `
+                    <td>
+                        <div class="planning-schedule-cell" data-week="${wi + 1}" data-day="${di + 1}">
+                            <input type="number" step="0.1" min="0" value="${escapeHtml(String(km))}">
+                            <select>
+                                <option value="entrenamiento" ${type === 'entrenamiento' ? 'selected' : ''}>Entrenamiento</option>
+                                <option value="series" ${type === 'series' ? 'selected' : ''}>Series</option>
+                                <option value="carrera" ${type === 'carrera' ? 'selected' : ''}>Carrera</option>
+                            </select>
+                        </div>
+                    </td>
+                `;
+            }).join('');
+            return `<tr><td class="planning-schedule-weekcell">Semana ${wi + 1}</td>${tds}</tr>`;
+        }).join('');
+
+        scheduleGrid.innerHTML = `
+            <div class="planning-schedule-grid">
+                <table class="planning-schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Semana</th>
+                            ${theadDays}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tbody}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    };
+
+    const currentDims = () => {
+        const W = Math.max(1, Math.min(52, Number(weeksInput?.value) || 1));
+        const D = Math.max(1, Math.min(7, Number(daysPerWeekInput?.value) || 1));
+        return { W, D };
+    };
+
+    // Inicializar grid con valores por defecto
+    const initW = weeksInput?.value ? Number(weeksInput.value) : 12;
+    const initD = daysPerWeekInput?.value ? Number(daysPerWeekInput.value) : 3;
+    renderScheduleGrid(initW, initD, null);
+
+    const refreshSelect = () => {
+        select.innerHTML = `<option value="">— Selecciona una planificación —</option>` +
+            planningPlans
+                .slice()
+                .sort((a, b) => a.raceDate.localeCompare(b.raceDate))
+                .map(p => {
+                    const label = `${p.raceName} · ${p.startDate} → ${p.raceDate}`;
+                    const selectedAttr = (p.id === selectedPlanningPlanId) ? 'selected' : '';
+                    return `<option value="${p.id}" ${selectedAttr}>${escapeHtml(label)}</option>`;
+                })
+                .join('');
+    };
+
+    refreshSelect();
+
+    select.addEventListener('change', () => {
+        const v = select.value ? Number(select.value) : null;
+        selectedPlanningPlanId = (v && Number.isFinite(v)) ? v : null;
+        savePlanningPlans();
+        if (selectedPlanningPlanId) formCard.style.display = 'none';
+        planningEditingPlanId = null;
+        renderPlanning();
+    });
+
+    const openFormForNew = () => {
+        planningEditingPlanId = null;
+        form.reset();
+        formTitle.textContent = 'Nueva planificación';
+        submitBtn.textContent = 'Crear planificación';
+        if (startInput) startInput.value = today;
+        if (raceInput) {
+            const d = new Date();
+            d.setDate(d.getDate() + 56);
+            raceInput.value = d.toISOString().split('T')[0];
+        }
+        if (weeksInput && !weeksInput.value) weeksInput.value = '12';
+        if (daysPerWeekInput && !daysPerWeekInput.value) daysPerWeekInput.value = '3';
+        renderScheduleGrid(currentDims().W, currentDims().D, null);
+        formCard.style.display = 'block';
+        select.value = '';
+        selectedPlanningPlanId = null;
+        savePlanningPlans();
+        renderPlanning();
+    };
+
+    const openFormForEdit = (plan) => {
+        if (!plan) return;
+        planningEditingPlanId = plan.id;
+        formTitle.textContent = 'Editar planificación';
+        submitBtn.textContent = 'Guardar cambios';
+        document.getElementById('planningRaceName').value = plan.raceName || '';
+        weeksInput.value = String(plan.weeks || 1);
+        daysPerWeekInput.value = String(plan.daysPerWeek || (plan.schedule?.[0]?.length || 1));
+        if (startInput) startInput.value = plan.startDate || today;
+        if (raceInput) raceInput.value = plan.raceDate || today;
+        if (distanceInput) distanceInput.value = plan.raceDistanceKm === null || plan.raceDistanceKm === undefined ? '' : String(plan.raceDistanceKm);
+        renderScheduleGrid(plan.weeks, plan.daysPerWeek, plan.schedule);
+        formCard.style.display = 'block';
+    };
+
+    newBtn.addEventListener('click', () => {
+        openFormForNew();
+    });
+
+    editBtn.addEventListener('click', () => {
+        const plan = getSelectedPlanningPlan();
+        if (!plan) return alert('Selecciona una planificación para editar.');
+        openFormForEdit(plan);
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        formCard.style.display = 'none';
+        planningEditingPlanId = null;
+        refreshSelect();
+        renderPlanning();
+    });
+
+    delBtn.addEventListener('click', () => {
+        const plan = getSelectedPlanningPlan();
+        if (!plan) {
+            alert('Selecciona una planificación para eliminar.');
+            return;
+        }
+        if (!confirm(`¿Eliminar la planificación "${plan.raceName}"?`)) return;
+        planningPlans = planningPlans.filter(p => p.id !== plan.id);
+        selectedPlanningPlanId = planningPlans.length ? planningPlans[planningPlans.length - 1].id : null;
+        savePlanningPlans();
+        refreshSelect();
+        renderPlanning();
+    });
+
+    const rerenderPreserving = () => {
+        const prev = readScheduleFromGrid();
+        const { W, D } = currentDims();
+        // Intentar preservar el máximo solapamiento; para celdas nuevas, 0/entrenamiento
+        const next = Array.from({ length: W }, (_, wi) =>
+            Array.from({ length: D }, (_, di) =>
+                prev?.[wi]?.[di]
+                    ? { plannedKm: Number(prev[wi][di].plannedKm) || 0, type: normalizePlanningSessionType(prev[wi][di].type) }
+                    : { plannedKm: 0, type: 'entrenamiento' }
+            )
+        );
+        renderScheduleGrid(W, D, next);
+    };
+
+    if (weeksInput) {
+        weeksInput.addEventListener('change', rerenderPreserving);
+        weeksInput.addEventListener('input', rerenderPreserving);
+    }
+    if (daysPerWeekInput) {
+        daysPerWeekInput.addEventListener('change', rerenderPreserving);
+        daysPerWeekInput.addEventListener('input', rerenderPreserving);
+    }
+
+    generateBtn.addEventListener('click', () => {
+        const { W, D } = currentDims();
+        const dist = distanceInput?.value || null;
+        const base = generateBaseSchedule(W, D, dist);
+        renderScheduleGrid(W, D, base);
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const raceName = (document.getElementById('planningRaceName')?.value || '').trim();
+        const weeks = Number(document.getElementById('planningWeeks')?.value || '');
+        const daysPerWeek = Number(document.getElementById('planningDaysPerWeek')?.value || '');
+        const startDate = (document.getElementById('planningStartDate')?.value || '').trim();
+        const raceDate = (document.getElementById('planningRaceDate')?.value || '').trim();
+        const raceDistanceKmRaw = (document.getElementById('planningRaceDistanceKm')?.value || '').trim();
+        const raceDistanceKm = raceDistanceKmRaw ? Number(raceDistanceKmRaw) : null;
+
+        if (!raceName) return alert('Indica el nombre de la carrera.');
+        if (!Number.isFinite(weeks) || weeks < 1 || weeks > 52) return alert('Semanas de entrenamiento inválidas.');
+        if (!Number.isFinite(daysPerWeek) || daysPerWeek < 1 || daysPerWeek > 7) return alert('Días por semana inválidos.');
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return alert('Fecha de comienzo inválida.');
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(raceDate)) return alert('Día de carrera inválido.');
+        if (raceDistanceKm !== null && (!Number.isFinite(raceDistanceKm) || raceDistanceKm <= 0)) {
+            return alert('Distancia de carrera inválida (si la rellenas, debe ser > 0).');
+        }
+
+        const start = new Date(startDate + 'T00:00:00');
+        const race = new Date(raceDate + 'T00:00:00');
+        if (race < start) return alert('El día de la carrera no puede ser anterior al comienzo del entrenamiento.');
+
+        const schedule = readScheduleFromGrid();
+        // Validación mínima: km no negativos y tipos válidos
+        for (let w = 0; w < weeks; w++) {
+            for (let d = 0; d < daysPerWeek; d++) {
+                const cell = schedule?.[w]?.[d];
+                if (!cell) return alert('Plan por semanas inválido.');
+                const km = Number(cell.plannedKm);
+                if (!Number.isFinite(km) || km < 0) return alert('Hay kilómetros inválidos (usa valores >= 0).');
+            }
+        }
+
+        const id = planningEditingPlanId ? Number(planningEditingPlanId) : Date.now();
+        const existing = planningEditingPlanId ? (planningPlans.find(p => p.id === id) || null) : null;
+
+        // Si cambian semanas/días, podar asignaciones fuera de rango
+        const assignments = { ...(existing?.assignments || {}) };
+        Object.keys(assignments).forEach(k => {
+            if (k === PLANNING_RACE_KEY) return;
+            const m = /^W(\d+)D(\d+)$/.exec(k);
+            if (!m) return;
+            const wk = Number(m[1]);
+            const dy = Number(m[2]);
+            if (wk > weeks || dy > daysPerWeek) delete assignments[k];
+        });
+
+        const plan = normalizePlanningPlan({
+            id,
+            raceName,
+            weeks,
+            daysPerWeek,
+            startDate,
+            raceDate,
+            raceDistanceKm: raceDistanceKm === null ? null : raceDistanceKm,
+            schedule,
+            assignments
+        });
+        if (!plan) return alert('No se pudo crear la planificación (datos inválidos).');
+
+        if (planningEditingPlanId && existing) {
+            planningPlans = planningPlans.map(p => (p.id === existing.id ? plan : p));
+        } else {
+            planningPlans.push(plan);
+        }
+        selectedPlanningPlanId = plan.id;
+        planningEditingPlanId = null;
+        savePlanningPlans();
+        formCard.style.display = 'none';
+        refreshSelect();
+        renderPlanning();
+    });
+
+    // Delegación de eventos para asignar/quitar sesiones a días planificados
+    const view = document.getElementById('planningView');
+    if (view && !view.__planningBound) {
+        view.__planningBound = true;
+        view.addEventListener('click', (ev) => {
+            const btn = ev.target?.closest?.('button');
+            if (!btn) return;
+            const key = btn.getAttribute('data-key');
+            const plan = getSelectedPlanningPlan();
+            if (!plan || !key) return;
+
+            if (btn.classList.contains('planning-assign-btn')) {
+                const row = btn.closest('.planning-session');
+                const sel = row ? row.querySelector('select[data-key="' + key + '"]') : null;
+                const sessionId = sel && sel.value ? Number(sel.value) : null;
+                if (!sessionId || !Number.isFinite(sessionId)) {
+                    alert('Selecciona una sesión para asignar.');
+                    return;
+                }
+                // No permitir reutilizar la misma sesión en otro día del mismo plan
+                const used = Object.keys(plan.assignments || {}).some(k => k !== key && Number(plan.assignments[k]) === sessionId);
+                if (used) {
+                    alert('Esa sesión ya está asignada a otro día de esta planificación.');
+                    return;
+                }
+                plan.assignments = plan.assignments || {};
+                plan.assignments[key] = sessionId;
+                savePlanningPlans();
+                renderPlanning();
+            }
+
+            if (btn.classList.contains('planning-unassign-btn')) {
+                if (plan.assignments && plan.assignments[key]) {
+                    delete plan.assignments[key];
+                    savePlanningPlans();
+                    renderPlanning();
+                }
+            }
+        });
+    }
+}
+
+function startOfWeekMonday(dateObj) {
+    const d = new Date(dateObj);
+    d.setHours(0, 0, 0, 0);
+    const day = d.getDay(); // 0=domingo
+    const diff = (day === 0 ? -6 : 1) - day;
+    d.setDate(d.getDate() + diff);
+    return d;
+}
+
+function addDays(dateObj, n) {
+    const d = new Date(dateObj);
+    d.setDate(d.getDate() + n);
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+function toIsoDate(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+function getSessionTimeDisplay(s) {
+    if (!s) return '—';
+    if (typeof s.time === 'string') return s.time;
+    if (typeof s.timeInMinutes === 'number') return minutesToTime(s.timeInMinutes);
+    if (typeof s.time === 'number') return minutesToTime(s.time);
+    return '—';
+}
+
+function getSessionElevationText(s) {
+    const up = Number(s?.elevationGain) || 0;
+    const down = Number(s?.elevationLoss) || 0;
+    if (!up && !down) return '';
+    return ` · +${up.toFixed(0)}m / -${down.toFixed(0)}m`;
+}
+
+function sessionOptionLabel(s) {
+    const date = s?.date ? String(s.date).slice(0, 10) : '';
+    const km = Number(s?.distance) || 0;
+    const time = getSessionTimeDisplay(s);
+    const type = normalizePlanningSessionType(s?.type);
+    return `${date} · ${km.toFixed(2)} km · ${time} · ${type}`;
+}
+
+function getSessionsInRange(startDateIso, endDateIso) {
+    const start = new Date(startDateIso + 'T00:00:00');
+    const end = new Date(endDateIso + 'T23:59:59');
+    return (sessions || [])
+        .filter(s => s && s.date)
+        .map(s => ({ ...s, _d: new Date(String(s.date).slice(0, 10) + 'T00:00:00') }))
+        .filter(s => s._d instanceof Date && !Number.isNaN(s._d.getTime()) && s._d >= start && s._d <= end)
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
+function renderPlanning() {
+    const container = document.getElementById('planningView');
+    const select = document.getElementById('planningPlanSelect');
+    const delBtn = document.getElementById('planningDeleteBtn');
+    if (!container) return;
+
+    // Mantener el selector en sync aunque el estado cambie por import/reset
+    if (select) {
+        const expectedOptions = (planningPlans?.length || 0) + 1;
+        if (select.options.length !== expectedOptions) {
+            select.innerHTML = `<option value="">— Selecciona una planificación —</option>` +
+                (planningPlans || [])
+                    .slice()
+                    .sort((a, b) => a.raceDate.localeCompare(b.raceDate))
+                    .map(p => {
+                        const label = `${p.raceName} · ${p.startDate} → ${p.raceDate}`;
+                        const selectedAttr = (p.id === selectedPlanningPlanId) ? 'selected' : '';
+                        return `<option value="${p.id}" ${selectedAttr}>${escapeHtml(label)}</option>`;
+                    })
+                    .join('');
+        }
+    }
+
+    const plan = getSelectedPlanningPlan();
+    if (delBtn) delBtn.disabled = !plan;
+    if (select && plan) select.value = String(plan.id);
+    if (select && !plan) select.value = '';
+
+    if (!plan) {
+        container.innerHTML = `<p class="empty-state">Crea o selecciona una planificación para ver tu semana a semana.</p>`;
+        return;
+    }
+
+    const start = new Date(plan.startDate + 'T00:00:00');
+    const race = new Date(plan.raceDate + 'T00:00:00');
+    const schedule = normalizePlanningSchedule(plan.schedule, plan.weeks, plan.daysPerWeek) || generateBaseSchedule(plan.weeks, plan.daysPerWeek, plan.raceDistanceKm);
+    const weeks = Array.from({ length: plan.weeks }, (_, idx) => {
+        const weekIndex = idx + 1;
+        const weekStart = addDays(start, idx * 7);
+        const weekEnd = addDays(weekStart, 6);
+        const plannedKm = (schedule[idx] || []).reduce((sum, c) => sum + (Number(c?.plannedKm) || 0), 0);
+        return { weekIndex, weekStart, weekEnd, plannedKm: Number(plannedKm.toFixed(1)) };
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const planSessions = getSessionsInRange(plan.startDate, plan.raceDate);
+    const allSessions = (sessions || [])
+        .filter(s => s && s.id)
+        .map(s => ({ ...s, _d: new Date(String(s.date).slice(0, 10) + 'T00:00:00') }))
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    const sessionById = new Map(allSessions.map(s => [Number(s.id), s]));
+
+    const assignments = plan.assignments || {};
+    const usedSessionIds = new Set(Object.keys(assignments).map(k => Number(assignments[k])).filter(v => Number.isFinite(v) && v > 0));
+
+    let plannedCount = 0;      // nº de días planificados (entrenamiento/series/carrera dentro de la semana)
+    let doneCount = 0;         // nº de días con sesión asignada
+    let plannedKmTotal = 0;    // suma de km planificados (solo días con km)
+    let actualKmTotal = 0;     // suma de km hechos (sesiones asignadas)
+
+    weeks.forEach(w => {
+        for (let dayIdx = 0; dayIdx < plan.daysPerWeek; dayIdx++) {
+            const t = schedule[w.weekIndex - 1]?.[dayIdx] || { plannedKm: 0, type: 'entrenamiento' };
+            plannedCount++;
+            plannedKmTotal += Number(t.plannedKm) || 0;
+            const key = planningKey(w.weekIndex, dayIdx + 1);
+            const sid = Number(assignments[key]);
+            if (sid && sessionById.has(sid)) {
+                doneCount++;
+                actualKmTotal += Number(sessionById.get(sid).distance) || 0;
+            }
+        }
+    });
+
+    const progress = plannedCount ? Math.round((doneCount / plannedCount) * 100) : 0;
+    const startLabel = formatDate(plan.startDate);
+    const raceLabel = formatDate(plan.raceDate);
+
+    const summaryHtml = `
+        <div class="planning-summary">
+            <div class="planning-kpi">
+                <div class="planning-kpi-value">${escapeHtml(String(progress))}%</div>
+                <div class="planning-kpi-label">Completado</div>
+            </div>
+            <div class="planning-kpi">
+                <div class="planning-kpi-value">${escapeHtml(String(doneCount))}/${escapeHtml(String(plannedCount))}</div>
+                <div class="planning-kpi-label">Sesiones</div>
+            </div>
+            <div class="planning-kpi">
+                <div class="planning-kpi-value">${escapeHtml(plannedKmTotal.toFixed(1))} km</div>
+                <div class="planning-kpi-label">Plan (aprox.)</div>
+            </div>
+            <div class="planning-kpi">
+                <div class="planning-kpi-value">${escapeHtml(actualKmTotal.toFixed(1))} km</div>
+                <div class="planning-kpi-label">Hecho</div>
+            </div>
+        </div>
+    `;
+
+    const buildOptionsHtml = (allowedIdsSet, currentId) => {
+        const opts = [`<option value="">— Selecciona sesión —</option>`];
+        allSessions.forEach(s => {
+            const sid = Number(s.id);
+            if (!sid) return;
+            const usedElsewhere = usedSessionIds.has(sid) && sid !== currentId;
+            if (usedElsewhere) return;
+            if (allowedIdsSet && !allowedIdsSet.has(sid) && sid !== currentId) return;
+            const selected = sid === currentId ? 'selected' : '';
+            opts.push(`<option value="${sid}" ${selected}>${escapeHtml(sessionOptionLabel(s))}</option>`);
+        });
+        return opts.join('');
+    };
+
+    const weeksHtml = weeks.map(w => {
+        const range = `${w.weekStart.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} – ${w.weekEnd.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}`;
+        const overdue = w.weekEnd < today;
+
+        // Sesiones disponibles para esta semana (por rango de fecha)
+        const allowedIds = new Set(
+            planSessions
+                .filter(s => s._d >= w.weekStart && s._d <= w.weekEnd)
+                .map(s => Number(s.id))
+                .filter(v => Number.isFinite(v) && v > 0)
+        );
+
+        let weekPlannedKm = 0;
+        let weekActualKm = 0;
+
+        const sessionsHtml = Array.from({ length: plan.daysPerWeek }, (_, di) => {
+            const t = schedule[w.weekIndex - 1]?.[di] || { plannedKm: 0, type: 'entrenamiento' };
+            const key = planningKey(w.weekIndex, di + 1);
+            const assignedId = Number(assignments[key]) || null;
+            const assignedSession = assignedId ? sessionById.get(assignedId) : null;
+            const isDone = !!assignedSession;
+            if (t.plannedKm) weekPlannedKm += Number(t.plannedKm) || 0;
+            if (assignedSession) weekActualKm += Number(assignedSession.distance) || 0;
+
+            const klass = isDone ? 'planning-done' : (overdue ? 'planning-missed' : '');
+            const statusText = isDone ? 'Finalizado' : (overdue ? 'Pendiente' : 'Por hacer');
+
+            const plannedText = `Plan: ${(Number(t.plannedKm) || 0).toFixed(1)} km`;
+            const actualText = assignedSession
+                ? `Hecho: ${(Number(assignedSession.distance) || 0).toFixed(2)} km · ${escapeHtml(getSessionTimeDisplay(assignedSession))}${escapeHtml(getSessionElevationText(assignedSession))}`
+                : '';
+
+            const assignControls = assignedSession
+                ? `
+                    <div class="planning-assign">
+                        <span class="planning-session-actual">${escapeHtml(String(assignedSession.date).slice(0, 10))}</span>
+                        <button type="button" class="btn btn-secondary btn-small planning-unassign-btn" data-key="${escapeHtml(key)}">Quitar</button>
+                    </div>
+                `
+                : `
+                    <div class="planning-assign">
+                        <select data-key="${escapeHtml(key)}">
+                            ${buildOptionsHtml(allowedIds.size ? allowedIds : null, null)}
+                        </select>
+                        <button type="button" class="btn btn-primary btn-small planning-assign-btn" data-key="${escapeHtml(key)}">Asignar</button>
+                    </div>
+                `;
+
+            return `
+                <div class="planning-session ${klass}">
+                    <div class="planning-session-left">
+                        <div class="planning-session-date">Día ${escapeHtml(String(di + 1))}</div>
+                        <div class="planning-session-sub">
+                            <span class="planning-badge">${escapeHtml(t.type)}</span>
+                            <span>${escapeHtml(`· ${plannedText}`)}${actualText ? ` · ${actualText}` : ''}</span>
+                        </div>
+                    </div>
+                    <div class="planning-status">${escapeHtml(statusText)}</div>
+                    ${assignControls}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="planning-week">
+                <div class="planning-week-header">
+                    <div>
+                        <div class="planning-week-title">Semana ${escapeHtml(String(w.weekIndex))}</div>
+                        <div class="planning-week-meta">${escapeHtml(range)}</div>
+                    </div>
+                    <div class="planning-week-km">${escapeHtml(weekActualKm.toFixed(1))}/${escapeHtml(weekPlannedKm.toFixed(1))} km</div>
+                </div>
+                <div class="planning-sessions">
+                    ${sessionsHtml}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Carrera (asignable también)
+    const raceAssignedId = Number(assignments[PLANNING_RACE_KEY]) || null;
+    const raceSession = raceAssignedId ? sessionById.get(raceAssignedId) : null;
+    const raceAllowedIds = new Set(
+        planSessions
+            .filter(s => String(s.date).slice(0, 10) === plan.raceDate)
+            .map(s => Number(s.id))
+            .filter(v => Number.isFinite(v) && v > 0)
+    );
+    const raceControls = raceSession
+        ? `
+            <div class="planning-assign">
+                <span class="planning-session-actual">${escapeHtml(String(raceSession.date).slice(0, 10))}</span>
+                <button type="button" class="btn btn-secondary btn-small planning-unassign-btn" data-key="${escapeHtml(PLANNING_RACE_KEY)}">Quitar</button>
+            </div>
+        `
+        : `
+            <div class="planning-assign">
+                <select data-key="${escapeHtml(PLANNING_RACE_KEY)}">
+                    ${buildOptionsHtml(raceAllowedIds.size ? raceAllowedIds : null, null)}
+                </select>
+                <button type="button" class="btn btn-primary btn-small planning-assign-btn" data-key="${escapeHtml(PLANNING_RACE_KEY)}">Asignar</button>
+            </div>
+        `;
+    const raceRow = `
+        <div class="planning-week">
+            <div class="planning-week-header">
+                <div>
+                    <div class="planning-week-title">Carrera</div>
+                    <div class="planning-week-meta">${escapeHtml(formatDate(plan.raceDate))}</div>
+                </div>
+                <div class="planning-week-km">${raceSession ? escapeHtml((Number(raceSession.distance) || 0).toFixed(2)) + ' km' : '—'}</div>
+            </div>
+            <div class="planning-sessions">
+                <div class="planning-session ${raceSession ? 'planning-done' : ''}">
+                    <div class="planning-session-left">
+                        <div class="planning-session-date">${escapeHtml(plan.raceName)}</div>
+                        <div class="planning-session-sub">
+                            <span class="planning-badge">carrera</span>
+                            <span>${raceSession ? escapeHtml(`· Hecho: ${(Number(raceSession.distance) || 0).toFixed(2)} km · ${getSessionTimeDisplay(raceSession)}${getSessionElevationText(raceSession)}`) : 'Asigna la sesión de carrera cuando la tengas.'}</span>
+                        </div>
+                    </div>
+                    <div class="planning-status">${raceSession ? 'Finalizado' : '—'}</div>
+                    ${raceControls}
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = `
+        <p class="section-intro"><strong>${escapeHtml(plan.raceName)}</strong> · ${escapeHtml(startLabel)} → ${escapeHtml(raceLabel)} · ${escapeHtml(String(plan.weeks))} semanas · ${escapeHtml(String(plan.daysPerWeek))} días/sem.${plan.raceDistanceKm ? ` · ${escapeHtml(String(plan.raceDistanceKm))} km` : ''}</p>
+        ${summaryHtml}
+        ${weeksHtml}
+        ${raceRow}
+    `;
 }
 
 // Actualizar todas las gráficas
