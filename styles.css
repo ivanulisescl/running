@@ -1559,6 +1559,42 @@ header h1 {
     .add-equipment-form {
         flex-direction: column;
     }
+
+    /* Carreras: mejorar legibilidad en móvil (km/tiempo/ritmo) */
+    .marca-card {
+        padding: 16px 16px;
+    }
+
+    .marca-card-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .marca-card-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        font-size: 1em;
+    }
+
+    .marca-card-stat strong {
+        font-size: 1.2em;
+        font-weight: 800;
+    }
+
+    .marca-card-km strong {
+        font-size: 1.45em;
+    }
+
+    .marca-card-stats .marca-card-stat:nth-child(2) strong,
+    .marca-card-stats .marca-card-stat:nth-child(3) strong {
+        color: var(--primary-dark);
+    }
 }
 
 /* PWA Install Prompt */

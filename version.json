@@ -1,7 +1,8 @@
 {
-  "version": "1.2.17",
+  "version": "1.2.18",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Carreras (móvil): km/tiempo/ritmo más destacados y en líneas separadas",
     "Carreras: usar localizacion antes que Localidad (evita 'Media' cuando hay ubicación real)",
     "Carreras: mostrar ritmo en tarjeta (mm:ss /km)",
     "Historial: las fichas muestran la Localidad (campo Localidad de runmetrics.json)",
