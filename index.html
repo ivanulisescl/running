@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.2.10</span>
+                <span id="currentVersion">v1.2.11</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -188,29 +188,49 @@
                 
                 <div class="charts-container">
                     <div class="chart-wrapper">
-                        <h3>Distancia total</h3>
+                        <h3>Distancia total (por mes)</h3>
+                        <div class="chart-year-control">
+                            <label for="totalDistanceYearSelect">Año</label>
+                            <select id="totalDistanceYearSelect" class="chart-year-select" aria-label="Seleccionar año de Distancia total">
+                                <!-- Se rellena dinámicamente -->
+                            </select>
+                        </div>
                         <canvas id="totalDistanceChart"></canvas>
                     </div>
                     
                     <div class="chart-wrapper">
-                        <h3>Evolución de Distancia</h3>
-                        <canvas id="distanceChart"></canvas>
+                        <h3>Desnivel acumulado (por mes)</h3>
+                        <div class="chart-year-control">
+                            <label for="totalElevationYearSelect">Año</label>
+                            <select id="totalElevationYearSelect" class="chart-year-select" aria-label="Seleccionar año de Desnivel acumulado">
+                                <!-- Se rellena dinámicamente -->
+                            </select>
+                        </div>
+                        <canvas id="totalElevationChart"></canvas>
                     </div>
-                    
+
                     <div class="chart-wrapper">
-                        <h3>Tipos de Entrenamiento</h3>
+                        <h3>Tipo de entrenamiento</h3>
+                        <div class="chart-year-control">
+                            <label for="typeYearSelect">Año</label>
+                            <select id="typeYearSelect" class="chart-year-select" aria-label="Seleccionar año de Tipo de entrenamiento">
+                                <!-- Se rellena dinámicamente -->
+                            </select>
+                        </div>
                         <canvas id="typeChart"></canvas>
                     </div>
-                    
+
                     <div class="chart-wrapper">
                         <h3>Evolución del Ritmo</h3>
+                        <div class="chart-year-control">
+                            <label for="paceYearSelect">Año</label>
+                            <select id="paceYearSelect" class="chart-year-select" aria-label="Seleccionar año de Evolución del ritmo">
+                                <!-- Se rellena dinámicamente -->
+                            </select>
+                        </div>
                         <canvas id="paceChart"></canvas>
                     </div>
                     
-                    <div class="chart-wrapper">
-                        <h3>Desnivel Acumulado</h3>
-                        <canvas id="elevationChart"></canvas>
-                    </div>
                 </div>
             </section>
 
@@ -312,6 +332,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.10"></script>
+    <script src="app.js?v=1.2.11"></script>
 </body>
 </html>

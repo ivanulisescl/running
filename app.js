@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.10'; // Versión actual de la app
+let currentAppVersion = '1.2.11'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -9,6 +9,10 @@ let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
 let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
 let records = []; // Récords (tabla editable desde records.json)
+let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado para Distancia total (por mes)
+let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
+let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
+let paceSelectedYear = new Date().getFullYear(); // Año seleccionado para Evolución del ritmo (por mes)
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,6 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setupNewSessionButton();
     setupNavigationButtons();
     setupStatsFilters();
+    setupTotalDistanceYearSelector();
+    setupTotalElevationYearSelector();
+    setupTypeYearSelector();
+    setupPaceYearSelector();
     setupEquipmentSection();
     setupMarcaForm();
     setupClearButton();
@@ -1932,74 +1940,176 @@ function updateStats() {
     document.getElementById('totalTime').textContent = totalTimeFormatted;
     document.getElementById('avgPace').textContent = avgPace;
     
+    // Selector de año (Distancia total por mes) es independiente del período
+    refreshTotalDistanceYearOptions();
+    refreshTotalElevationYearOptions();
+    refreshTypeYearOptions();
+    refreshPaceYearOptions();
+
     // Actualizar gráficas
     updateCharts(filteredSessions);
 }
 
 // Actualizar todas las gráficas
 function updateCharts(filteredSessions) {
-    updateTotalDistanceChart(filteredSessions);
-    updateDistanceChart(filteredSessions);
-    updateTypeChart(filteredSessions);
-    updatePaceChart(filteredSessions);
-    updateElevationChart(filteredSessions);
+    updateTotalDistanceYearChart();
+    updateTotalElevationYearChart();
+    updateTypeYearChart();
+    updatePaceYearChart();
 }
 
-// Gráfica de barras: Distancia total por día de la semana (1 sem), por últimas 4 semanas (1 mes), o por mes (1 año / Todo)
-function updateTotalDistanceChart(sessions) {
+function getAvailableStatsYears() {
+    const currentYear = new Date().getFullYear();
+    const yearsSet = new Set([currentYear]);
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const y = new Date(s.date + 'T00:00:00').getFullYear();
+        if (!isNaN(y)) yearsSet.add(y);
+    });
+    return { currentYear, years: Array.from(yearsSet).sort((a, b) => b - a) };
+}
+
+function setupTotalDistanceYearSelector() {
+    const select = document.getElementById('totalDistanceYearSelect');
+    if (!select) return;
+    const saved = localStorage.getItem('totalDistanceSelectedYear');
+    if (saved && /^\d{4}$/.test(saved)) totalDistanceSelectedYear = parseInt(saved, 10);
+    select.addEventListener('change', () => {
+        const y = parseInt(select.value, 10);
+        if (!isNaN(y)) {
+            totalDistanceSelectedYear = y;
+            localStorage.setItem('totalDistanceSelectedYear', String(y));
+            updateTotalDistanceYearChart();
+        }
+    });
+}
+
+function refreshTotalDistanceYearOptions() {
+    const select = document.getElementById('totalDistanceYearSelect');
+    if (!select) return;
+    const { currentYear, years } = getAvailableStatsYears();
+    if (!years.includes(totalDistanceSelectedYear)) totalDistanceSelectedYear = years[0] || currentYear;
+
+    const existing = new Set(Array.from(select.options).map(o => parseInt(o.value, 10)));
+    const shouldRebuild = years.length !== select.options.length || years.some(y => !existing.has(y));
+    if (!shouldRebuild) {
+        select.value = String(totalDistanceSelectedYear);
+        return;
+    }
+
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    select.value = String(totalDistanceSelectedYear);
+}
+
+function setupTotalElevationYearSelector() {
+    const select = document.getElementById('totalElevationYearSelect');
+    if (!select) return;
+    const saved = localStorage.getItem('totalElevationSelectedYear');
+    if (saved && /^\d{4}$/.test(saved)) totalElevationSelectedYear = parseInt(saved, 10);
+    select.addEventListener('change', () => {
+        const y = parseInt(select.value, 10);
+        if (!isNaN(y)) {
+            totalElevationSelectedYear = y;
+            localStorage.setItem('totalElevationSelectedYear', String(y));
+            updateTotalElevationYearChart();
+        }
+    });
+}
+
+function refreshTotalElevationYearOptions() {
+    const select = document.getElementById('totalElevationYearSelect');
+    if (!select) return;
+    const { currentYear, years } = getAvailableStatsYears();
+    if (!years.includes(totalElevationSelectedYear)) totalElevationSelectedYear = years[0] || currentYear;
+
+    const existing = new Set(Array.from(select.options).map(o => parseInt(o.value, 10)));
+    const shouldRebuild = years.length !== select.options.length || years.some(y => !existing.has(y));
+    if (!shouldRebuild) {
+        select.value = String(totalElevationSelectedYear);
+        return;
+    }
+
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    select.value = String(totalElevationSelectedYear);
+}
+
+function setupTypeYearSelector() {
+    const select = document.getElementById('typeYearSelect');
+    if (!select) return;
+    const saved = localStorage.getItem('typeSelectedYear');
+    if (saved && /^\d{4}$/.test(saved)) typeSelectedYear = parseInt(saved, 10);
+    select.addEventListener('change', () => {
+        const y = parseInt(select.value, 10);
+        if (!isNaN(y)) {
+            typeSelectedYear = y;
+            localStorage.setItem('typeSelectedYear', String(y));
+            updateTypeYearChart();
+        }
+    });
+}
+
+function refreshTypeYearOptions() {
+    const select = document.getElementById('typeYearSelect');
+    if (!select) return;
+    const { currentYear, years } = getAvailableStatsYears();
+    if (!years.includes(typeSelectedYear)) typeSelectedYear = years[0] || currentYear;
+
+    const existing = new Set(Array.from(select.options).map(o => parseInt(o.value, 10)));
+    const shouldRebuild = years.length !== select.options.length || years.some(y => !existing.has(y));
+    if (!shouldRebuild) {
+        select.value = String(typeSelectedYear);
+        return;
+    }
+
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    select.value = String(typeSelectedYear);
+}
+
+function setupPaceYearSelector() {
+    const select = document.getElementById('paceYearSelect');
+    if (!select) return;
+    const saved = localStorage.getItem('paceSelectedYear');
+    if (saved && /^\d{4}$/.test(saved)) paceSelectedYear = parseInt(saved, 10);
+    select.addEventListener('change', () => {
+        const y = parseInt(select.value, 10);
+        if (!isNaN(y)) {
+            paceSelectedYear = y;
+            localStorage.setItem('paceSelectedYear', String(y));
+            updatePaceYearChart();
+        }
+    });
+}
+
+function refreshPaceYearOptions() {
+    const select = document.getElementById('paceYearSelect');
+    if (!select) return;
+    const { currentYear, years } = getAvailableStatsYears();
+    if (!years.includes(paceSelectedYear)) paceSelectedYear = years[0] || currentYear;
+
+    const existing = new Set(Array.from(select.options).map(o => parseInt(o.value, 10)));
+    const shouldRebuild = years.length !== select.options.length || years.some(y => !existing.has(y));
+    if (!shouldRebuild) {
+        select.value = String(paceSelectedYear);
+        return;
+    }
+
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    select.value = String(paceSelectedYear);
+}
+
+// Gráfica de barras: Distancia total por mes del año seleccionado (independiente del filtro de período)
+function updateTotalDistanceYearChart() {
     const ctx = document.getElementById('totalDistanceChart');
     if (!ctx) return;
     
-    const period = currentStatsPeriod;
-    let labels;
-    let data;
-    let xMaxRotation = 0;
-    
-    if (period === 'week') {
-        labels = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-        data = [0, 0, 0, 0, 0, 0, 0];
-        sessions.forEach(s => {
-            const d = new Date(s.date + 'T00:00:00');
-            const weekdayIndex = (d.getDay() + 6) % 7; // 0 = Lunes, 6 = Domingo
-            data[weekdayIndex] += s.distance || 0;
-        });
-    } else if (period === 'month') {
-        // Últimas 4 semanas: eje de izquierda a derecha = más antigua a más reciente
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const weekRanges = []; // [0]=semana más antigua (4.ª), [3]=más reciente (1.ª)
-        for (let w = 0; w < 4; w++) {
-            const start = new Date(today);
-            start.setDate(today.getDate() - (w + 1) * 7 + 1);
-            const end = new Date(today);
-            end.setDate(today.getDate() - w * 7);
-            weekRanges.push({ start, end });
-        }
-        const fmt = (d) => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-        labels = weekRanges.map(ws => `${fmt(ws.start)} - ${fmt(ws.end)}`);
-        data = [0, 0, 0, 0];
-        sessions.forEach(s => {
-            const d = new Date(s.date + 'T00:00:00');
-            const t = d.getTime();
-            for (let w = 0; w < 4; w++) {
-                const start = weekRanges[w].start.getTime();
-                const end = weekRanges[w].end.getTime();
-                if (t >= start && t <= end) {
-                    data[w] += s.distance || 0;
-                    break;
-                }
-            }
-        });
-        xMaxRotation = 25;
-    } else {
-        labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        sessions.forEach(s => {
-            const d = new Date(s.date + 'T00:00:00');
-            data[d.getMonth()] += s.distance || 0;
-        });
-        xMaxRotation = 45;
-    }
+    const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const d = new Date(s.date + 'T00:00:00');
+        if (d.getFullYear() !== totalDistanceSelectedYear) return;
+        data[d.getMonth()] += s.distance || 0;
+    });
     
     if (charts.totalDistanceChart) {
         charts.totalDistanceChart.destroy();
@@ -2010,7 +2120,7 @@ function updateTotalDistanceChart(sessions) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Km',
+                label: `Km (${totalDistanceSelectedYear})`,
                 data: data,
                 backgroundColor: 'rgba(255, 255, 255, 0.7)',
                 borderColor: 'rgba(255, 255, 255, 0.9)',
@@ -2032,7 +2142,69 @@ function updateTotalDistanceChart(sessions) {
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
                 x: {
-                    ticks: { color: 'white', maxRotation: xMaxRotation },
+                    ticks: { color: 'white', maxRotation: 45 },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de barras: Desnivel acumulado (+/-) por mes del año seleccionado (independiente del filtro de período)
+function updateTotalElevationYearChart() {
+    const ctx = document.getElementById('totalElevationChart');
+    if (!ctx) return;
+
+    const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const gainData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const lossData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const d = new Date(s.date + 'T00:00:00');
+        if (d.getFullYear() !== totalElevationSelectedYear) return;
+        const m = d.getMonth();
+        gainData[m] += s.elevationGain || 0;
+        lossData[m] += s.elevationLoss || 0;
+    });
+
+    if (charts.totalElevationChart) {
+        charts.totalElevationChart.destroy();
+    }
+
+    charts.totalElevationChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: `Desnivel + (m) (${totalElevationSelectedYear})`,
+                data: gainData,
+                backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                borderColor: 'rgb(16, 185, 129)',
+                borderWidth: 2
+            }, {
+                label: `Desnivel - (m) (${totalElevationSelectedYear})`,
+                data: lossData.map(v => -v),
+                backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                borderColor: 'rgb(239, 68, 68)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'white' }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white', maxRotation: 45 },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 }
             }
@@ -2095,8 +2267,8 @@ function updateDistanceChart(sessions) {
     });
 }
 
-// Gráfica de tipos de entrenamiento (pie chart)
-function updateTypeChart(sessions) {
+// Gráfica de tipos de entrenamiento (pie chart) por año (independiente del filtro de período)
+function updateTypeYearChart() {
     const ctx = document.getElementById('typeChart');
     if (!ctx) return;
     
@@ -2106,7 +2278,10 @@ function updateTypeChart(sessions) {
         'carrera': 0
     };
     
-    sessions.forEach(session => {
+    (sessions || []).forEach(session => {
+        if (!session || !session.date) return;
+        const d = new Date(session.date + 'T00:00:00');
+        if (d.getFullYear() !== typeSelectedYear) return;
         const t = (session.type === 'rodaje' || session.type === 'tirada-larga') ? 'entrenamiento' : (session.type === 'ritmo-carrera' ? 'carrera' : session.type);
         if (typeCounts.hasOwnProperty(t)) typeCounts[t]++;
     });
@@ -2151,37 +2326,47 @@ function updateTypeChart(sessions) {
     });
 }
 
-// Gráfica de evolución del ritmo
-function updatePaceChart(sessions) {
+function getSessionTimeMinutes(session) {
+    if (!session) return 0;
+    if (typeof session.timeInMinutes === 'number' && !isNaN(session.timeInMinutes)) return session.timeInMinutes;
+    if (typeof session.time === 'string') return timeToMinutes(session.time);
+    if (typeof session.time === 'number') return session.time;
+    return 0;
+}
+
+// Evolución del ritmo por mes del año seleccionado (independiente del filtro de período)
+function updatePaceYearChart() {
     const ctx = document.getElementById('paceChart');
     if (!ctx) return;
-    
-    // Ordenar sesiones por fecha
-    const sortedSessions = [...sessions].sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-    const labels = sortedSessions.map(s => {
-        const date = new Date(s.date + 'T00:00:00');
-        return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+
+    const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const totalKmByMonth = Array(12).fill(0);
+    const totalMinByMonth = Array(12).fill(0);
+
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const d = new Date(s.date + 'T00:00:00');
+        if (d.getFullYear() !== paceSelectedYear) return;
+        const km = s.distance || 0;
+        if (km <= 0) return;
+        const minutes = getSessionTimeMinutes(s);
+        if (minutes <= 0) return;
+        const m = d.getMonth();
+        totalKmByMonth[m] += km;
+        totalMinByMonth[m] += minutes;
     });
-    
-    const paces = sortedSessions.map(s => {
-        const timeInMinutes = s.timeInMinutes || (typeof s.time === 'string' ? timeToMinutes(s.time) : s.time);
-        return s.distance > 0 ? (timeInMinutes / s.distance).toFixed(2) : null;
-    }).filter(p => p !== null);
-    
-    const validLabels = labels.filter((_, i) => sortedSessions[i].distance > 0);
-    
-    if (charts.paceChart) {
-        charts.paceChart.destroy();
-    }
-    
+
+    const paceMinPerKm = totalKmByMonth.map((km, i) => (km > 0 ? (totalMinByMonth[i] / km) : null));
+
+    if (charts.paceChart) charts.paceChart.destroy();
+
     charts.paceChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: validLabels,
+            labels,
             datasets: [{
-                label: 'Ritmo (min/km)',
-                data: paces,
+                label: `Ritmo (min/km) (${paceSelectedYear})`,
+                data: paceMinPerKm,
                 borderColor: 'rgba(255, 255, 255, 0.9)',
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 tension: 0.4,
@@ -2199,7 +2384,16 @@ function updatePaceChart(sessions) {
             scales: {
                 y: {
                     reverse: true, // Menor ritmo es mejor, así que invertimos el eje
-                    ticks: { color: 'white' },
+                    ticks: {
+                        color: 'white',
+                        callback: (value) => {
+                            const v = typeof value === 'number' ? value : parseFloat(value);
+                            if (!isFinite(v)) return value;
+                            const mins = Math.floor(v);
+                            const secs = Math.round((v - mins) * 60);
+                            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                        }
+                    },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
                 x: {

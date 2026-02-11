@@ -1,7 +1,8 @@
 {
-  "version": "1.2.10",
+  "version": "1.2.11",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Estadísticas: gráficos por mes con selector de año (Distancia, Desnivel, Ritmo) y Tipo por año",
     "Récords: sección + records.json editable; Importar/Exportar récords",
     "Carreras: lugar destacado con icono 📍",
     "Sesiones: campo Distancia (km) acepta 2 decimales",
