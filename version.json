@@ -1,7 +1,8 @@
 {
-  "version": "1.2.18",
+  "version": "1.2.19",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Cache: bust de styles.css para asegurar que móvil carga el CSS nuevo",
     "Carreras (móvil): km/tiempo/ritmo más destacados y en líneas separadas",
     "Carreras: usar localizacion antes que Localidad (evita 'Media' cuando hay ubicación real)",
     "Carreras: mostrar ritmo en tarjeta (mm:ss /km)",
