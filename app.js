@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.21'; // Versión actual de la app
+let currentAppVersion = '1.2.22'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2525,6 +2525,27 @@ function toIsoDate(d) {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+}
+
+function computeBaselineWeeklyKm() {
+    // Promedio de km/semana en las últimas 4 semanas (lun-dom). Si no hay, valor base.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = addDays(today, -28);
+    const totals = new Map();
+
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const d = new Date(String(s.date).slice(0, 10) + 'T00:00:00');
+        if (Number.isNaN(d.getTime()) || d < start || d > today) return;
+        const wk = toIsoDate(startOfWeekMonday(d));
+        totals.set(wk, (totals.get(wk) || 0) + (Number(s.distance) || 0));
+    });
+
+    const vals = Array.from(totals.values()).filter(v => Number.isFinite(v) && v > 0);
+    if (!vals.length) return 15; // base razonable si no hay histórico
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    return Math.max(8, avg);
 }
 
 function getSessionTimeDisplay(s) {
