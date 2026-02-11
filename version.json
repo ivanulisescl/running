@@ -1,7 +1,8 @@
 {
-  "version": "1.2.15",
+  "version": "1.2.16",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Carreras: mostrar ritmo en tarjeta (mm:ss /km)",
     "Historial: las fichas muestran la Localidad (campo Localidad de runmetrics.json)",
     "Datos: unificación total en runmetrics.json (sesiones, carreras y récords). Exportar/Importar/Resetear usan solo ese archivo",
     "Header: al abrir secciones (excepto Opciones) hace scroll al apartado",
