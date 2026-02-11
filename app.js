@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.8'; // Versión actual de la app
+let currentAppVersion = '1.2.9'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -444,7 +444,7 @@ function validateTimeFormat(timeString) {
 // Agregar nueva sesión o actualizar sesión existente
 function addSession() {
     const date = document.getElementById('date').value;
-    const distance = parseFloat(document.getElementById('distance').value);
+    const distance = parseFloat(parseFloat(document.getElementById('distance').value).toFixed(2));
     const timeHours = parseInt(document.getElementById('timeHours').value) || 0;
     const timeMinutes = parseInt(document.getElementById('timeMinutes').value) || 0;
     const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
@@ -598,7 +598,7 @@ function editSession(id) {
 
     // Cargar datos en el formulario
     document.getElementById('date').value = session.date;
-    document.getElementById('distance').value = session.distance;
+    document.getElementById('distance').value = Number(session.distance).toFixed(2);
     const typeVal = (session.type === 'rodaje' || session.type === 'tirada-larga') ? 'entrenamiento' : (session.type === 'ritmo-carrera' ? 'carrera' : session.type);
     document.getElementById('type').value = ['entrenamiento', 'series', 'carrera'].includes(typeVal) ? typeVal : 'entrenamiento';
     document.getElementById('equipo').value = session.equipo || '';
