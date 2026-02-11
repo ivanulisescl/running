@@ -62,14 +62,14 @@ Aplicación web progresiva (PWA) para controlar tus sesiones de entrenamiento de
 
 ## Sincronizar entre dispositivos
 
-Los datos se guardan en el navegador (localStorage) y además puedes usar un JSON en el proyecto para sincronizar:
+Los datos se guardan en el navegador (localStorage) y además puedes usar **un único JSON** en el proyecto para sincronizar entre dispositivos:
 
-1. **En el proyecto**: existe `data/sessions.json`. Al abrir la app, se cargan automáticamente las sesiones que haya en ese archivo y se fusionan con las del dispositivo.
-2. **Exportar**: en la app, "Exportar a JSON" descarga `sessions.json`. Guarda ese archivo en `data/sessions.json` del proyecto y haz commit/push.
-3. **En otro dispositivo**: clona el repo o haz pull, abre la app y las sesiones de `data/sessions.json` se cargan al iniciar. Si prefieres, usa "Importar desde JSON" y selecciona `data/sessions.json`.
+1. **En el proyecto**: existe `runmetrics.json` (contiene `sessions`, `carreras` y `records`).
+2. **Exportar**: en la app, en Opciones → Exportar, se descarga `runmetrics.json`. Súbelo al repo (commit/push) si quieres usar GitHub como “origen central”.
+3. **En otro dispositivo**: abre la app y usa Opciones → Importar para cargar `runmetrics.json`. Si el dispositivo está vacío, la app intentará cargar `runmetrics.json` del repo automáticamente.
 
 Así puedes tener el mismo historial en todos los dispositivos usando el repositorio (o copiando el JSON por nube).
 
 ## Notas
 
-Los datos se almacenan localmente en el navegador usando localStorage. Si limpias los datos del navegador, perderás las sesiones de ese dispositivo; si tienes `data/sessions.json` actualizado, puedes volver a importarlo.
+Los datos se almacenan localmente en el navegador usando localStorage. Si limpias los datos del navegador, perderás los datos de ese dispositivo; si tienes `runmetrics.json` actualizado, puedes volver a importarlo o usar “Resetear (desde repositorio)”.

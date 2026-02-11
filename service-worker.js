@@ -1,12 +1,10 @@
-const CACHE_NAME = 'running-v1.2.13';
+const CACHE_NAME = 'running-v1.2.14';
 const urlsToCache = [
   './styles.css',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  './records.json',
-  './data/sessions.json',
-  './sessions.json'
+  './runmetrics.json'
   // NO cachear: ./ , index.html, app.js, version.json → siempre desde red para no revertir versión
 ];
 

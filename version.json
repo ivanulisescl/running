@@ -1,20 +1,21 @@
 {
-  "version": "1.2.13",
+  "version": "1.2.14",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Datos: unificación total en runmetrics.json (sesiones, carreras y récords). Exportar/Importar/Resetear usan solo ese archivo",
     "Header: al abrir secciones (excepto Opciones) hace scroll al apartado",
-    "Resetear: también trae records.json del repositorio",
+    "Resetear: también trae récords del repositorio",
     "Estadísticas: gráfico Actividades (km por día) con selector de mes",
     "Opciones: Exportar/Importar unificado (sesiones, carreras, récords) con reemplazo total al importar",
     "Estadísticas: gráficos por mes con selector de año (Distancia, Desnivel, Ritmo) y Tipo por año",
-    "Récords: sección + records.json editable; Importar/Exportar récords",
+    "Récords: sección + Importar/Exportar (incluido en runmetrics.json)",
     "Carreras: lugar destacado con icono 📍",
     "Sesiones: campo Distancia (km) acepta 2 decimales",
     "Ficha carreras: % tras puesto categoría (cuando hay participantes categoría)",
-    "Resetear: trae sesiones y carreras del repositorio (sessions.json + carreras.json)",
+    "Resetear: trae datos del repositorio",
     "Ficha carreras: nombre en azul, km en rojo, Tiempo: prefix, % tras puesto general",
     "Fichas carreras: nombre (nota) resaltado, diseño reordenado; ritmo en sesiones mm:ss; logo más grande",
-    "marcas.json renombrado a carreras.json; botón Carreras, Exportar/Importar carreras",
+    "Marcas: renombrado a Carreras; botón Carreras",
     "Marcas: campo Participantes categoría en JSON y formularios",
     "Opciones: botón Exportar marcas (descarga marcas.json)",
     "marcas.json: entradas por sesiones tipo carrera (ids rellenados)",
@@ -27,7 +28,7 @@
     "Estadísticas: gráfico de barras Distancia total (km por día de la semana o por mes según período)",
     "Campo Localización en sesiones (independiente de Notas); migración desde notes",
     "Tipos de entrenamiento: Entrenamiento, Series, Carrera (rodaje→entrenamiento, ritmo carrera→carrera)",
-    "Resetear: si data/sessions.json está vacío, cargar desde sessions.json de la raíz",
+    "Resetear: carga datos del repositorio como base",
     "Forzar actualización: recarga con ?nocache y app.js?v= para evitar que en PC vuelva a versión anterior",
     "Móvil: Historial con Detallada/Compacta/Limpiar en una línea bajo el título; vista compacta con Editar/Eliminar solo icono",
     "Nombre PWA RunCode, subtítulo PWA Trainer",
@@ -47,7 +48,7 @@
     "Versión inicial con registro de sesiones",
     "Importación desde Garmin Connect (TCX, GPX, CSV)",
     "Sincronización entre dispositivos con JSON",
-    "Mejora: carga automática mejorada de sessions.json desde raíz y data/",
+    "Mejora: carga automática de datos del proyecto",
     "Actualización automática: la app se actualiza automáticamente sin notificaciones",
     "Menú de tres puntos con opciones de importar/exportar",
     "Mejoras de diseño responsive: campos en la misma fila en móvil",
@@ -68,6 +69,6 @@
     "Campo Equipo en formulario y gestión (añadir, estado Activo/Retirado/Activo por defecto)",
     "Kilómetros y Actividades por equipo calculados desde sesiones",
     "Campo Equipo en historial (misma línea que descripción)",
-    "sessions.json: equipos por antigüedad (105 Asics negras, 112 azules, resto Hokka)"
+    "Datos: equipos por antigüedad (105 Asics negras, 112 azules, resto Hokka)"
   ]
 }

@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.13'; // Versión actual de la app
+let currentAppVersion = '1.2.14'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -8,7 +8,8 @@ let historyTypeFilter = ''; // '' = todos, 'entrenamiento' | 'series' | 'carrera
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
 let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
-let records = []; // Récords (tabla editable desde records.json)
+let records = []; // Récords (incluidos en runmetrics.json)
+const RUNMETRICS_FILENAME = 'runmetrics.json';
 let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado para Distancia total (por mes)
 let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
 let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
@@ -24,10 +25,9 @@ let activitiesSelectedMonth = (() => {
 document.addEventListener('DOMContentLoaded', () => {
     loadEquipment();
     loadSessions();
-    loadSessionsFromProject();
     loadMarcas();
     loadRecords();
-    loadRecordsFromProject();
+    loadRunmetricsFromRepoIfEmpty();
     setupForm();
     setupNewSessionButton();
     setupNavigationButtons();
@@ -226,18 +226,87 @@ function loadRecords() {
     } catch (_) {}
 }
 
-// Cargar récords desde records.json del proyecto (sincronización)
-function loadRecordsFromProject() {
-    fetch('./records.json?' + Date.now())
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-            if (!Array.isArray(data)) return;
-            records = data.map(r => ({ ...r }));
-            saveRecords();
-            const recordsSection = document.getElementById('recordsSection');
-            if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
-        })
-        .catch(() => {});
+function normalizeSessionFromExternal(s) {
+    if (!s || typeof s !== 'object') return null;
+
+    // Migración básica de tiempo
+    if (!s.timeInMinutes && typeof s.time === 'number') {
+        s.timeInMinutes = s.time;
+        s.time = minutesToTime(s.time);
+    } else if (!s.timeInMinutes && typeof s.time === 'string') {
+        s.timeInMinutes = timeToMinutes(s.time);
+    }
+
+    if (s.elevationGain === undefined) s.elevationGain = 0;
+    if (s.elevationLoss === undefined) s.elevationLoss = 0;
+    if (s.equipo === undefined) s.equipo = '';
+    if (!('localizacion' in s) || s.localizacion === undefined) {
+        s.localizacion = (s.notes || '').trim();
+    }
+    return s;
+}
+
+function coerceRunmetricsPayload(data) {
+    // Formato legacy: array de sesiones
+    if (Array.isArray(data)) {
+        return { sessionsArr: data, carrerasArr: [], recordsArr: [] };
+    }
+
+    // Formato nuevo: { sessions, carreras, records }
+    if (data && typeof data === 'object') {
+        const sessionsArr = Array.isArray(data.sessions)
+            ? data.sessions
+            : (Array.isArray(data.sesiones) ? data.sesiones : []);
+        const carrerasArr = Array.isArray(data.carreras) ? data.carreras : [];
+        const recordsArr = Array.isArray(data.records) ? data.records : [];
+
+        if (!sessionsArr.length && !carrerasArr.length && !recordsArr.length) {
+            throw new Error(`Archivo inválido: faltan sessions/carreras/records en ${RUNMETRICS_FILENAME}`);
+        }
+
+        return { sessionsArr, carrerasArr, recordsArr };
+    }
+
+    throw new Error(`Archivo inválido: formato no reconocido (${RUNMETRICS_FILENAME})`);
+}
+
+async function fetchRunmetricsFromRepo() {
+    const cacheBust = '?t=' + Date.now();
+    const res = await fetch('./' + RUNMETRICS_FILENAME + cacheBust, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`No se encontró ${RUNMETRICS_FILENAME} en el repositorio`);
+    return await res.json();
+}
+
+// Si el dispositivo está vacío, trae runmetrics.json del repo como "seed"
+async function loadRunmetricsFromRepoIfEmpty() {
+    const hasLocal =
+        (Array.isArray(sessions) && sessions.length > 0) ||
+        (Array.isArray(marcas) && marcas.length > 0) ||
+        (Array.isArray(records) && records.length > 0);
+    if (hasLocal) return;
+
+    try {
+        const data = await fetchRunmetricsFromRepo();
+        const { sessionsArr, carrerasArr, recordsArr } = coerceRunmetricsPayload(data);
+
+        sessions = (sessionsArr || [])
+            .map(normalizeSessionFromExternal)
+            .filter(Boolean);
+        marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
+        records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
+
+        saveSessions();
+        saveMarcas();
+        saveRecords();
+
+        renderSessions();
+        renderEquipmentList();
+        updateEquipmentSelect();
+        updateStats();
+        renderMarcas();
+    } catch (_) {
+        // Silencioso: no bloquear si no hay repo/online
+    }
 }
 
 function renderRecords() {
@@ -246,7 +315,7 @@ function renderRecords() {
 
     if (!Array.isArray(records) || records.length === 0) {
         container.innerHTML = `
-            <p class="section-intro">Edita <strong>records.json</strong> para definir tus récords.</p>
+            <p class="section-intro">Importa <strong>${RUNMETRICS_FILENAME}</strong> para cargar tus récords.</p>
             <p class="empty-state">No hay récords cargados.</p>
         `;
         return;
@@ -961,124 +1030,48 @@ function setupMarcaForm() {
     }
 }
 
-// Traer sesiones y carreras del repositorio y reemplazar datos locales (botón Resetear)
-function resetFromRepository() {
+// Traer runmetrics.json del repositorio y reemplazar datos locales (botón Resetear)
+async function resetFromRepository() {
     const syncStatus = document.getElementById('syncStatus');
-    if (syncStatus) {
-        syncStatus.style.display = 'block';
-        syncStatus.innerHTML = '<p style="color: var(--primary-color);">Buscando sesiones y carreras en el repositorio...</p>';
-    }
-    const cacheBust = '?t=' + Date.now();
-    const opts = { cache: 'no-store' };
-
-    fetch('./data/sessions.json' + cacheBust, opts)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-            if (Array.isArray(data) && data.length > 0) return data;
-            return fetch('./sessions.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
-        })
-        .then(sessionsData => {
-            if (!Array.isArray(sessionsData)) {
-                if (syncStatus) {
-                    syncStatus.style.display = 'block';
-                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ No se encontró sessions.json en el repositorio o está vacío.</p>';
-                    setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
-                }
-                return;
-            }
-            sessions = sessionsData.map(s => {
-                if (s.equipo === undefined) s.equipo = '';
-                if (!('localizacion' in s) || s.localizacion === undefined) s.localizacion = (s.notes || '').trim();
-                return s;
-            });
-            saveSessions();
-            renderSessions();
-            renderEquipmentList();
-            updateStats();
-            updateEquipmentSelect();
-            return fetch('./carreras.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
-        })
-        .then(carrerasData => {
-            if (Array.isArray(carrerasData)) {
-                marcas = carrerasData.map(m => ({ ...m }));
-                saveMarcas();
-                renderMarcas();
-            }
-            return fetch('./records.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
-        })
-        .then(recordsData => {
-            if (Array.isArray(recordsData)) {
-                records = recordsData.map(r => ({ ...r }));
-                saveRecords();
-                renderRecords();
-            }
-            if (syncStatus) {
-                syncStatus.style.display = 'block';
-                const carrerasMsg = Array.isArray(carrerasData) ? ', ' + marcas.length + ' carrera(s)' : '';
-                const recordsMsg = Array.isArray(recordsData) ? ', ' + records.length + ' récord(s)' : '';
-                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Resetear hecho. ' + sessions.length + ' sesión(es)' + carrerasMsg + recordsMsg + ' cargadas del repositorio.</p>';
-                setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
-            }
-        })
-        .catch(err => {
-            if (syncStatus) {
-                syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error: ' + (err.message || 'Revisa la conexión') + '</p>';
-                setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
-            }
-        });
-}
-
-// Cargar sesiones desde data/sessions.json o sessions.json del proyecto (sincronización)
-function loadSessionsFromProject() {
-    // Intentar cargar desde data/sessions.json primero
-    fetch('./data/sessions.json?' + Date.now())
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-            if (Array.isArray(data) && data.length > 0) {
-                mergeSessions(data);
-            }
-            // También intentar cargar desde sessions.json en la raíz
-            return fetch('./sessions.json?' + Date.now());
-        })
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-            if (Array.isArray(data) && data.length > 0) {
-                mergeSessions(data);
-            }
-        })
-        .catch(() => {});
-}
-
-// Fusionar sesiones desde un array externo (añade nuevas y actualiza equipo en existentes)
-function mergeSessions(externalSessions) {
-    const existingById = new Map(sessions.map(s => [s.id, s]));
-    let merged = false;
-    
-    externalSessions.forEach(session => {
-        if (session.id == null) return;
-        if (session.equipo === undefined) session.equipo = '';
-        if (!('localizacion' in session) || session.localizacion === undefined) session.localizacion = (session.notes || '').trim();
-        const local = existingById.get(session.id);
-        if (!local) {
-            sessions.push(session);
-            existingById.set(session.id, session);
-            merged = true;
-        } else {
-            // Actualizar campos del repositorio en la sesión local (ej. equipo)
-            if ((session.equipo || '').trim() !== (local.equipo || '').trim()) {
-                local.equipo = session.equipo || '';
-                merged = true;
-            }
+    try {
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML = `<p style="color: var(--primary-color);">Buscando <code>${RUNMETRICS_FILENAME}</code> en el repositorio...</p>`;
         }
-    });
-    
-    if (merged) {
+
+        const data = await fetchRunmetricsFromRepo();
+        const { sessionsArr, carrerasArr, recordsArr } = coerceRunmetricsPayload(data);
+
+        sessions = (sessionsArr || [])
+            .map(normalizeSessionFromExternal)
+            .filter(Boolean);
+        marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
+        records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
+
         saveSessions();
+        saveMarcas();
+        saveRecords();
+
         renderSessions();
         renderEquipmentList();
+        updateEquipmentSelect();
         updateStats();
-        console.log('✅ Sesiones sincronizadas con el proyecto');
+        renderMarcas();
+        renderRecords();
+
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML =
+                `<p style="color: var(--secondary-color);">✅ Resetear hecho desde <code>${RUNMETRICS_FILENAME}</code>. ` +
+                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}.</p>`;
+            setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+        }
+    } catch (err) {
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error: ${err.message || 'Revisa la conexión'}</p>`;
+            setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+        }
     }
 }
 
@@ -1142,7 +1135,7 @@ function setupSync() {
 
     if (exportAllBtn) exportAllBtn.addEventListener('click', () => {
         document.getElementById('menuDropdown').style.display = 'none';
-        const backup = {
+        const payload = {
             app: 'RunMetrics',
             version: currentAppVersion,
             exportedAt: new Date().toISOString(),
@@ -1150,17 +1143,17 @@ function setupSync() {
             carreras: marcas || [],
             records: records || []
         };
-        const data = JSON.stringify(backup, null, 2);
+        const data = JSON.stringify(payload, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'runmetrics-backup.json';
+        a.download = RUNMETRICS_FILENAME;
         a.click();
         URL.revokeObjectURL(url);
         if (syncStatus) {
             syncStatus.style.display = 'block';
-            syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Backup descargado (<code>runmetrics-backup.json</code>).</p>';
+            syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Exportado <code>${RUNMETRICS_FILENAME}</code>.</p>`;
             setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
         }
     });
@@ -1191,7 +1184,7 @@ function setupSync() {
         if (!file) return;
         if (syncStatus) {
             syncStatus.style.display = 'block';
-            syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando backup...</p>';
+            syncStatus.innerHTML = `<p style="color: var(--primary-color);">Procesando <code>${RUNMETRICS_FILENAME}</code>...</p>`;
         }
         try {
             const text = await file.text();
@@ -1201,22 +1194,8 @@ function setupSync() {
             if (Array.isArray(data)) {
                 sessions = data
                     .filter(Boolean)
-                    .map(s => {
-                        // Normalizar campos mínimos (migración básica)
-                        if (!s.timeInMinutes && typeof s.time === 'number') {
-                            s.timeInMinutes = s.time;
-                            s.time = minutesToTime(s.time);
-                        } else if (!s.timeInMinutes && typeof s.time === 'string') {
-                            s.timeInMinutes = timeToMinutes(s.time);
-                        }
-                        if (s.elevationGain === undefined) s.elevationGain = 0;
-                        if (s.elevationLoss === undefined) s.elevationLoss = 0;
-                        if (s.equipo === undefined) s.equipo = '';
-                        if (!('localizacion' in s) || s.localizacion === undefined) {
-                            s.localizacion = (s.notes || '').trim();
-                        }
-                        return s;
-                    });
+                    .map(normalizeSessionFromExternal)
+                    .filter(Boolean);
                 saveSessions();
                 renderSessions();
                 renderEquipmentList();
@@ -1230,33 +1209,14 @@ function setupSync() {
                 return;
             }
 
-            // Formato backup: { sessions, carreras, records }
-            const sessionsArr = Array.isArray(data.sessions) ? data.sessions : (Array.isArray(data.sesiones) ? data.sesiones : null);
-            const carrerasArr = Array.isArray(data.carreras) ? data.carreras : null;
-            const recordsArr = Array.isArray(data.records) ? data.records : null;
+            // Formato runmetrics.json: { sessions, carreras, records }
+            const { sessionsArr, carrerasArr, recordsArr } = coerceRunmetricsPayload(data);
 
-            if (!sessionsArr && !carrerasArr && !recordsArr) {
-                throw new Error('Backup inválido: faltan sessions/carreras/records');
-            }
-
-            // Reemplazar TODO con el contenido del backup (si alguna sección falta, se deja vacía)
+            // Reemplazar TODO con el contenido del archivo (si alguna sección falta, se deja vacía)
             sessions = (sessionsArr || [])
                 .filter(Boolean)
-                .map(s => {
-                    if (!s.timeInMinutes && typeof s.time === 'number') {
-                        s.timeInMinutes = s.time;
-                        s.time = minutesToTime(s.time);
-                    } else if (!s.timeInMinutes && typeof s.time === 'string') {
-                        s.timeInMinutes = timeToMinutes(s.time);
-                    }
-                    if (s.elevationGain === undefined) s.elevationGain = 0;
-                    if (s.elevationLoss === undefined) s.elevationLoss = 0;
-                    if (s.equipo === undefined) s.equipo = '';
-                    if (!('localizacion' in s) || s.localizacion === undefined) {
-                        s.localizacion = (s.notes || '').trim();
-                    }
-                    return s;
-                });
+                .map(normalizeSessionFromExternal)
+                .filter(Boolean);
             marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
             records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
 
@@ -1274,13 +1234,13 @@ function setupSync() {
             if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
 
             if (syncStatus) {
-                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado backup (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}.</p>`;
+                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}.</p>`;
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         } catch (err) {
             if (syncStatus) {
                 syncStatus.style.display = 'block';
-                syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error al leer el backup: ${err.message || err}</p>`;
+                syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ Error al leer <code>${RUNMETRICS_FILENAME}</code>: ${err.message || err}</p>`;
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         } finally {

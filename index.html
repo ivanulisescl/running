@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.2.13</span>
+                <span id="currentVersion">v1.2.14</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -43,18 +43,18 @@
             <!-- Menú desplegable -->
             <div id="menuDropdown" class="menu-dropdown">
                 <button type="button" id="exportAllBtnMenu" class="menu-item">
-                    <span>📤</span> Exportar (sesiones, carreras y récords)
+                    <span>📤</span> Exportar (<code>runmetrics.json</code>)
                 </button>
                 <input type="file" id="importAllFile" accept=".json" style="display: none;">
                 <button type="button" id="importAllBtnMenu" class="menu-item">
-                    <span>📥</span> Importar (sesiones, carreras y récords)
+                    <span>📥</span> Importar (<code>runmetrics.json</code>)
                 </button>
                 <input type="file" id="garminFile" accept=".tcx,.gpx,.csv" style="display: none;" multiple>
                 <button type="button" id="importGarminBtnMenu" class="menu-item">
                     <span>📥</span> Importar desde Garmin
                 </button>
                 <button type="button" id="resetFromRepoBtn" class="menu-item">
-                    <span>🔄</span> Resetear (sesiones y carreras)
+                    <span>🔄</span> Resetear (desde repositorio)
                 </button>
                 <button type="button" id="forceUpdateBtn" class="menu-item">
                     <span>⬆️</span> Forzar actualización
@@ -237,7 +237,7 @@
             <section id="recordsSection" class="card main-section" style="display: none;">
                 <h2>Récords</h2>
                 <div id="recordsContent">
-                    <!-- Se rellena dinámicamente desde records.json -->
+                    <!-- Se rellena dinámicamente desde runmetrics.json -->
                 </div>
             </section>
 
@@ -331,6 +331,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.13"></script>
+    <script src="app.js?v=1.2.14"></script>
 </body>
 </html>
