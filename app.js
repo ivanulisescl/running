@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.16'; // Versión actual de la app
+let currentAppVersion = '1.2.17'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1700,15 +1700,16 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-// Obtener localización de una sesión (Localidad > localizacion > fallback desde notes)
+// Obtener localización de una sesión (localizacion > Localidad > fallback desde notes)
 function getSessionLocation(session) {
+    const loc = (session.localizacion != null && String(session.localizacion).trim() !== '') ? String(session.localizacion).trim() : '';
+    if (loc) return loc;
+
     const localidad = (session && session.Localidad != null && String(session.Localidad).trim() !== '')
         ? String(session.Localidad).trim()
         : '';
     if (localidad) return localidad;
 
-    const loc = (session.localizacion != null && String(session.localizacion).trim() !== '') ? String(session.localizacion).trim() : '';
-    if (loc) return loc;
     if (!session.notes || !session.notes.trim()) return '';
     const notes = session.notes.trim();
     if (notes.includes(':')) {
