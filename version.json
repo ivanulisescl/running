@@ -1,7 +1,9 @@
 {
-  "version": "1.2.12",
+  "version": "1.2.13",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Header: al abrir secciones (excepto Opciones) hace scroll al apartado",
+    "Resetear: también trae records.json del repositorio",
     "Estadísticas: gráfico Actividades (km por día) con selector de mes",
     "Opciones: Exportar/Importar unificado (sesiones, carreras, récords) con reemplazo total al importar",
     "Estadísticas: gráficos por mes con selector de año (Distancia, Desnivel, Ritmo) y Tipo por año",

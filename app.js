@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.12'; // Versión actual de la app
+let currentAppVersion = '1.2.13'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -114,6 +114,16 @@ function showSection(sectionId) {
     section.style.display = 'block';
 }
 
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Esperar a que el layout aplique el display:block antes de hacer scroll
+    requestAnimationFrame(() => {
+        section.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+}
+
 function toggleSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (!section) return;
@@ -123,6 +133,7 @@ function toggleSection(sectionId) {
     } else {
         hideAllMainSections();
         section.style.display = 'block';
+        scrollToSection(sectionId);
     }
 }
 
@@ -993,10 +1004,19 @@ function resetFromRepository() {
                 saveMarcas();
                 renderMarcas();
             }
+            return fetch('./records.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
+        })
+        .then(recordsData => {
+            if (Array.isArray(recordsData)) {
+                records = recordsData.map(r => ({ ...r }));
+                saveRecords();
+                renderRecords();
+            }
             if (syncStatus) {
                 syncStatus.style.display = 'block';
                 const carrerasMsg = Array.isArray(carrerasData) ? ', ' + marcas.length + ' carrera(s)' : '';
-                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Resetear hecho. ' + sessions.length + ' sesión(es)' + carrerasMsg + ' cargadas del repositorio.</p>';
+                const recordsMsg = Array.isArray(recordsData) ? ', ' + records.length + ' récord(s)' : '';
+                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Resetear hecho. ' + sessions.length + ' sesión(es)' + carrerasMsg + recordsMsg + ' cargadas del repositorio.</p>';
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         })
