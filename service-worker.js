@@ -4,6 +4,7 @@ const urlsToCache = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './records.json',
   './data/sessions.json',
   './sessions.json'
   // NO cachear: ./ , index.html, app.js, version.json → siempre desde red para no revertir versión

@@ -106,6 +106,9 @@ header h1 {
 }
 
 .header-row-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     width: 100%;
 }
 
@@ -219,6 +222,53 @@ header h1 {
 
 .menu-item:hover {
     background: var(--background);
+}
+
+.records-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--background);
+}
+
+.records-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px; /* permite scroll horizontal en móvil */
+}
+
+.records-table th,
+.records-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    color: var(--text-primary);
+}
+
+.records-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--card-background);
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
+}
+
+.records-table tbody tr:hover td {
+    background: rgba(74, 144, 226, 0.06);
+}
+
+.records-col-right {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.records-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .menu-item:active {
@@ -354,7 +404,8 @@ header h1 {
 }
 
 .marca-card-meta .marca-card-location::before {
-    content: '· ';
+    content: '📍';
+    margin-right: 6px;
 }
 
 .marca-card-date {
@@ -363,7 +414,14 @@ header h1 {
 }
 
 .marca-card-location {
-    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    background: rgba(37, 99, 235, 0.08);
+    color: #1d4ed8;
+    font-weight: 600;
 }
 
 .marca-card-stats {

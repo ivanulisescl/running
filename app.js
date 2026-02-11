@@ -8,6 +8,7 @@ let historyTypeFilter = ''; // '' = todos, 'entrenamiento' | 'series' | 'carrera
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
 let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
+let records = []; // Récords (tabla editable desde records.json)
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSessions();
     loadSessionsFromProject();
     loadMarcas();
+    loadRecords();
+    loadRecordsFromProject();
     setupForm();
     setupNewSessionButton();
     setupNavigationButtons();
@@ -79,7 +82,8 @@ const MAIN_SECTIONS = {
     stats: { btnId: 'statsBtn', sectionId: 'statsSection' },
     history: { btnId: 'historyBtn', sectionId: 'historySection' },
     equipment: { btnId: 'equipmentBtn', sectionId: 'equipmentSection' },
-    marcas: { btnId: 'marcasBtn', sectionId: 'marcasSection' }
+    marcas: { btnId: 'marcasBtn', sectionId: 'marcasSection' },
+    records: { btnId: 'recordsBtn', sectionId: 'recordsSection' }
 };
 
 function hideAllMainSections() {
@@ -108,7 +112,7 @@ function toggleSection(sectionId) {
 }
 
 function setActiveNavButton(activeBtnId) {
-    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn'].forEach(id => {
+    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.classList.toggle('active', id === activeBtnId);
     });
@@ -138,9 +142,11 @@ function setupNavigationButtons() {
     const statsBtn = document.getElementById('statsBtn');
     const historyBtn = document.getElementById('historyBtn');
     const equipmentBtn = document.getElementById('equipmentBtn');
+    const recordsBtn = document.getElementById('recordsBtn');
     const statsSection = document.getElementById('statsSection');
     const historySection = document.getElementById('historySection');
     const equipmentSection = document.getElementById('equipmentSection');
+    const recordsSection = document.getElementById('recordsSection');
 
     if (statsBtn && statsSection) {
         statsBtn.addEventListener('click', () => {
@@ -160,6 +166,13 @@ function setupNavigationButtons() {
             setActiveNavButton(equipmentSection.style.display !== 'none' ? 'equipmentBtn' : null);
         });
     }
+    if (recordsBtn && recordsSection) {
+        recordsBtn.addEventListener('click', () => {
+            toggleSection('recordsSection');
+            setActiveNavButton(recordsSection.style.display !== 'none' ? 'recordsBtn' : null);
+            if (recordsSection.style.display !== 'none') renderRecords();
+        });
+    }
     const marcasBtn = document.getElementById('marcasBtn');
     const marcasSection = document.getElementById('marcasSection');
     if (marcasBtn && marcasSection) {
@@ -169,6 +182,86 @@ function setupNavigationButtons() {
             renderMarcas();
         });
     }
+}
+
+function saveRecords() {
+    localStorage.setItem('runningRecords', JSON.stringify(records));
+}
+
+function loadRecords() {
+    const saved = localStorage.getItem('runningRecords');
+    if (!saved) return;
+    try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+            records = parsed;
+            renderRecords();
+        }
+    } catch (_) {}
+}
+
+// Cargar récords desde records.json del proyecto (sincronización)
+function loadRecordsFromProject() {
+    fetch('./records.json?' + Date.now())
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (!Array.isArray(data)) return;
+            records = data.map(r => ({ ...r }));
+            saveRecords();
+            const recordsSection = document.getElementById('recordsSection');
+            if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
+        })
+        .catch(() => {});
+}
+
+function renderRecords() {
+    const container = document.getElementById('recordsContent');
+    if (!container) return;
+
+    if (!Array.isArray(records) || records.length === 0) {
+        container.innerHTML = `
+            <p class="section-intro">Edita <strong>records.json</strong> para definir tus récords.</p>
+            <p class="empty-state">No hay récords cargados.</p>
+        `;
+        return;
+    }
+
+    const rowsHtml = records.map(r => {
+        const categoria = escapeHtml(String(r.categoria ?? '—'));
+        const record = escapeHtml(String(r.record ?? '—'));
+        const ritmo = escapeHtml(String(r.ritmo ?? '—'));
+        const actividad = escapeHtml(String(r.actividad ?? '—'));
+        const fecha = escapeHtml(String(r.fecha ?? '—'));
+        return `
+            <tr>
+                <td>${categoria}</td>
+                <td class="records-col-right">${record}</td>
+                <td class="records-col-right">${ritmo}</td>
+                <td>${actividad}</td>
+                <td class="records-col-right">${fecha}</td>
+            </tr>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <p class="section-intro">Mejores marcas y distancias destacadas.</p>
+        <div class="records-table-wrapper" role="region" aria-label="Tabla de récords">
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Categoría</th>
+                        <th scope="col" class="records-col-right">Récord</th>
+                        <th scope="col" class="records-col-right">Ritmo</th>
+                        <th scope="col">Actividad</th>
+                        <th scope="col" class="records-col-right">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHtml}
+                </tbody>
+            </table>
+        </div>
+    `;
 }
 
 // Estados posibles de un equipo
@@ -1049,6 +1142,26 @@ function setupSync() {
         });
     }
 
+    const exportRecordsBtn = document.getElementById('exportRecordsBtnMenu');
+    if (exportRecordsBtn) {
+        exportRecordsBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            const data = JSON.stringify(records, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'records.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ records.json descargado.</p>';
+                setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
+            }
+        });
+    }
+
     const importCarrerasBtn = document.getElementById('importCarrerasBtnMenu');
     const importCarrerasInput = document.getElementById('importCarrerasFile');
     if (importCarrerasBtn && importCarrerasInput) {
@@ -1092,6 +1205,42 @@ function setupSync() {
                 }
             }
             importCarrerasInput.value = '';
+        });
+    }
+
+    const importRecordsBtn = document.getElementById('importRecordsBtnMenu');
+    const importRecordsInput = document.getElementById('importRecordsFile');
+    if (importRecordsBtn && importRecordsInput) {
+        importRecordsBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            importRecordsInput.click();
+        });
+        importRecordsInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando récords...</p>';
+            }
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                if (!Array.isArray(data)) throw new Error('El JSON debe ser un array');
+                records = data.map(r => ({ ...r }));
+                saveRecords();
+                const recordsSection = document.getElementById('recordsSection');
+                if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
+                if (syncStatus) {
+                    syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Récords importados desde records.json.</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
+                }
+            } catch (err) {
+                if (syncStatus) {
+                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error: ' + (err.message || 'JSON no válido') + '</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+                }
+            }
+            importRecordsInput.value = '';
         });
     }
 

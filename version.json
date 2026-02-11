@@ -1,7 +1,9 @@
 {
-  "version": "1.2.9",
-  "buildDate": "2026-02-09",
+  "version": "1.2.10",
+  "buildDate": "2026-02-11",
   "changelog": [
+    "Récords: sección + records.json editable; Importar/Exportar récords",
+    "Carreras: lugar destacado con icono 📍",
     "Sesiones: campo Distancia (km) acepta 2 decimales",
     "Ficha carreras: % tras puesto categoría (cuando hay participantes categoría)",
     "Resetear: trae sesiones y carreras del repositorio (sessions.json + carreras.json)",

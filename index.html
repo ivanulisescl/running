@@ -35,6 +35,7 @@
                     <button id="marcasBtn" class="btn-header">Carreras</button>
                 </div>
                 <div class="header-row-4">
+                    <button id="recordsBtn" class="btn-header">Récords</button>
                     <button id="menuBtn" class="btn-header">Opciones</button>
                 </div>
             </div>
@@ -47,9 +48,16 @@
                 <button type="button" id="exportCarrerasBtnMenu" class="menu-item">
                     <span>📤</span> Exportar carreras
                 </button>
+                <button type="button" id="exportRecordsBtnMenu" class="menu-item">
+                    <span>📤</span> Exportar récords
+                </button>
                 <input type="file" id="importCarrerasFile" accept=".json" style="display: none;">
                 <button type="button" id="importCarrerasBtnMenu" class="menu-item">
                     <span>📥</span> Importar carreras
+                </button>
+                <input type="file" id="importRecordsFile" accept=".json" style="display: none;">
+                <button type="button" id="importRecordsBtnMenu" class="menu-item">
+                    <span>📥</span> Importar récords
                 </button>
                 <input type="file" id="importJsonFile" accept=".json" style="display: none;">
                 <button type="button" id="importJsonBtnMenu" class="menu-item">
@@ -203,6 +211,14 @@
                         <h3>Desnivel Acumulado</h3>
                         <canvas id="elevationChart"></canvas>
                     </div>
+                </div>
+            </section>
+
+            <!-- Récords -->
+            <section id="recordsSection" class="card main-section" style="display: none;">
+                <h2>Récords</h2>
+                <div id="recordsContent">
+                    <!-- Se rellena dinámicamente desde records.json -->
                 </div>
             </section>
 
