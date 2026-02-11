@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.16",
-  "exportedAt": "2026-02-11T14:46:55.279Z",
+  "version": "1.2.17",
+  "exportedAt": "2026-02-11T15:36:20.796Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -1884,14 +1884,14 @@
       "distance": 5.95,
       "time": "00:25:12",
       "timeInMinutes": 25.2,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "San Silvestre",
       "elevationGain": 24,
       "elevationLoss": 11,
       "id": 1770637973884.3025,
       "equipo": "Asics Gel Nimbus 26 Azules",
       "Localidad": "Gijón",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2024-12-29",
@@ -2878,14 +2878,14 @@
       "distance": 21.1,
       "time": "01:42:50",
       "timeInMinutes": 102.83333333333333,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "Media Maratón Salamanca",
       "elevationGain": 161,
       "elevationLoss": 155,
       "id": 1770637973884.463,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Media",
-      "localizacion": ""
+      "localizacion": "Salamanca"
     },
     {
       "date": "2024-02-23",
@@ -3186,14 +3186,14 @@
       "distance": 6.54,
       "time": "00:34:20",
       "timeInMinutes": 34.333333333333336,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "San Silvestre",
       "elevationGain": 20,
       "elevationLoss": 13,
       "id": 1770637973885.598,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Gijón",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-12-29",
@@ -3494,14 +3494,14 @@
       "distance": 9.75,
       "time": "00:48:12",
       "timeInMinutes": 48.2,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "10 km Soto del Barco",
       "elevationGain": 111,
       "elevationLoss": 112,
       "id": 1770637973885.8027,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "10km",
-      "localizacion": ""
+      "localizacion": "Soto del Barco"
     },
     {
       "date": "2023-10-17",
@@ -3564,14 +3564,14 @@
       "distance": 10.03,
       "time": "00:49:16",
       "timeInMinutes": 49.266666666666666,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "10 km Salinas",
       "elevationGain": 15,
       "elevationLoss": 16,
       "id": 1770637973885.1519,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "10km",
-      "localizacion": ""
+      "localizacion": "Salinas"
     },
     {
       "date": "2023-10-04",
@@ -3648,14 +3648,14 @@
       "distance": 10.08,
       "time": "00:49:33",
       "timeInMinutes": 49.55,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "10 km Ribadesella",
       "elevationGain": 15,
       "elevationLoss": 11,
       "id": 1770637973885.4233,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "10Km",
-      "localizacion": ""
+      "localizacion": "Ribadesella"
     },
     {
       "date": "2023-09-20",
@@ -3872,14 +3872,14 @@
       "distance": 11.96,
       "time": "00:56:17",
       "timeInMinutes": 56.28333333333333,
-      "type": "ritmo-carrera",
-      "notes": "",
+      "type": "carrera",
+      "notes": "12 km Villa de Gijón",
       "elevationGain": 54,
       "elevationLoss": 66,
       "id": 1770640037741.041,
       "equipo": "Asics Gel Nimbus 26 Azules",
       "Localidad": "12km",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2024-10-07",
