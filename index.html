@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.2.3</span>
+                <span id="currentVersion">v1.2.4</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -32,7 +32,7 @@
                 </div>
                 <div class="header-row-3">
                     <button id="equipmentBtn" class="btn-header">Equipo</button>
-                    <button id="marcasBtn" class="btn-header">Marcas</button>
+                    <button id="marcasBtn" class="btn-header">Carreras</button>
                 </div>
                 <div class="header-row-4">
                     <button id="menuBtn" class="btn-header">Opciones</button>
@@ -44,8 +44,12 @@
                 <button type="button" id="exportJsonBtnMenu" class="menu-item">
                     <span>📤</span> Exportar a JSON
                 </button>
-                <button type="button" id="exportMarcasBtnMenu" class="menu-item">
-                    <span>📤</span> Exportar marcas
+                <button type="button" id="exportCarrerasBtnMenu" class="menu-item">
+                    <span>📤</span> Exportar carreras
+                </button>
+                <input type="file" id="importCarrerasFile" accept=".json" style="display: none;">
+                <button type="button" id="importCarrerasBtnMenu" class="menu-item">
+                    <span>📥</span> Importar carreras
                 </button>
                 <input type="file" id="importJsonFile" accept=".json" style="display: none;">
                 <button type="button" id="importJsonBtnMenu" class="menu-item">
@@ -206,9 +210,9 @@
             <div id="syncStatus" class="status-message" style="display: none;"></div>
             <div id="importStatus" class="status-message" style="display: none;"></div>
 
-            <!-- Sección de Marcas (mejores marcas por carrera) -->
+            <!-- Sección de Carreras -->
             <section id="marcasSection" class="card main-section" style="display: none;">
-                <h2>Mejores marcas</h2>
+                <h2>Carreras</h2>
                 <p class="section-intro">Carreras con resultado registrado. Añade o edita los datos de cada carrera.</p>
                 <div id="marcasList" class="marcas-list">
                     <!-- Se rellena dinámicamente -->
@@ -292,6 +296,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.3"></script>
+    <script src="app.js?v=1.2.4"></script>
 </body>
 </html>

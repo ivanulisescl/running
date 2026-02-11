@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.3'; // Versión actual de la app
+let currentAppVersion = '1.2.4'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -693,7 +693,8 @@ function setupHistoryTypeFilter() {
 
 // --- Marcas (mejores marcas por carrera) ---
 function loadMarcas() {
-    const saved = localStorage.getItem('runningMarcas');
+    let saved = localStorage.getItem('runningCarreras');
+    if (!saved) saved = localStorage.getItem('runningMarcas'); // migración desde nombre antiguo
     if (saved) {
         try {
             marcas = JSON.parse(saved);
@@ -704,7 +705,7 @@ function loadMarcas() {
 }
 
 function saveMarcas() {
-    localStorage.setItem('runningMarcas', JSON.stringify(marcas));
+    localStorage.setItem('runningCarreras', JSON.stringify(marcas));
 }
 
 function getMarcaBySessionId(sessionId) {
@@ -1002,23 +1003,69 @@ function setupSync() {
         }, 5000);
     });
 
-    const exportMarcasBtn = document.getElementById('exportMarcasBtnMenu');
-    if (exportMarcasBtn) {
-        exportMarcasBtn.addEventListener('click', () => {
+    const exportCarrerasBtn = document.getElementById('exportCarrerasBtnMenu');
+    if (exportCarrerasBtn) {
+        exportCarrerasBtn.addEventListener('click', () => {
             document.getElementById('menuDropdown').style.display = 'none';
             const data = JSON.stringify(marcas, null, 2);
             const blob = new Blob([data], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'marcas.json';
+            a.download = 'carreras.json';
             a.click();
             URL.revokeObjectURL(url);
             if (syncStatus) {
                 syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ marcas.json descargado.</p>';
+                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ carreras.json descargado.</p>';
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
             }
+        });
+    }
+
+    const importCarrerasBtn = document.getElementById('importCarrerasBtnMenu');
+    const importCarrerasInput = document.getElementById('importCarrerasFile');
+    if (importCarrerasBtn && importCarrerasInput) {
+        importCarrerasBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            importCarrerasInput.click();
+        });
+        importCarrerasInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatus.innerHTML = '<p style="color: var(--primary-color);">Procesando carreras...</p>';
+            }
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                if (!Array.isArray(data)) throw new Error('El JSON debe ser un array');
+                const existingIds = new Set(marcas.map(m => m.id));
+                let added = 0;
+                data.forEach(marca => {
+                    if (marca.id != null && !existingIds.has(marca.id)) {
+                        marcas.push(marca);
+                        existingIds.add(marca.id);
+                        added++;
+                    } else if (marca.id != null && existingIds.has(marca.id)) {
+                        const idx = marcas.findIndex(m => m.id === marca.id);
+                        if (idx !== -1) marcas[idx] = { ...marcas[idx], ...marca };
+                    }
+                });
+                saveMarcas();
+                renderMarcas();
+                if (syncStatus) {
+                    syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Carreras importadas desde carreras.json.</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 3000);
+                }
+            } catch (err) {
+                if (syncStatus) {
+                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error: ' + (err.message || 'JSON no válido') + '</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
+                }
+            }
+            importCarrerasInput.value = '';
         });
     }
 
