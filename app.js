@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.7'; // Versión actual de la app
+let currentAppVersion = '1.2.8'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -736,9 +736,15 @@ function renderMarcas() {
         const puestoPct = (marca && marca.numParticipantes > 0 && marca.puestoGeneral != null)
             ? Math.round((marca.puestoGeneral / marca.numParticipantes) * 100)
             : null;
+        const puestoCatPct = (marca && marca.participantesCategoria > 0 && marca.puestoCategoria != null)
+            ? Math.round((marca.puestoCategoria / marca.participantesCategoria) * 100)
+            : null;
         if (marca) {
             const puestoGeneralStr = marca.puestoGeneral != null
                 ? (puestoPct != null ? `${marca.puestoGeneral} (${puestoPct}%)` : String(marca.puestoGeneral))
+                : '—';
+            const puestoCategoriaStr = marca.puestoCategoria != null
+                ? (puestoCatPct != null ? `${marca.puestoCategoria} (${puestoCatPct}%)` : String(marca.puestoCategoria))
                 : '—';
             return `
                 <div class="marca-card" data-session-id="${session.id}">
@@ -756,7 +762,7 @@ function renderMarcas() {
                         <div class="marca-card-dato"><span class="marca-dato-label">Puesto general:</span><span>${puestoGeneralStr}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Categoría:</span><span>${escapeHtml(marca.categoria || '—')}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Part. categoría:</span><span>${marca.participantesCategoria ?? '—'}</span></div>
-                        <div class="marca-card-dato"><span class="marca-dato-label">Puesto categoría:</span><span>${marca.puestoCategoria ?? '—'}</span></div>
+                        <div class="marca-card-dato"><span class="marca-dato-label">Puesto categoría:</span><span>${puestoCategoriaStr}</span></div>
                     </div>
                     <button type="button" class="btn btn-small btn-edit-marca" data-session-id="${session.id}">Editar</button>
                 </div>

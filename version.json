@@ -1,7 +1,8 @@
 {
-  "version": "1.2.7",
+  "version": "1.2.8",
   "buildDate": "2026-02-09",
   "changelog": [
+    "Ficha carreras: % tras puesto categoría (cuando hay participantes categoría)",
     "Resetear: trae sesiones y carreras del repositorio (sessions.json + carreras.json)",
     "Ficha carreras: nombre en azul, km en rojo, Tiempo: prefix, % tras puesto general",
     "Fichas carreras: nombre (nota) resaltado, diseño reordenado; ritmo en sesiones mm:ss; logo más grande",
