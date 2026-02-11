@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.6'; // Versión actual de la app
+let currentAppVersion = '1.2.7'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -836,12 +836,12 @@ function setupMarcaForm() {
     }
 }
 
-// Traer el último JSON del repositorio y reemplazar datos locales (botón Resetear)
+// Traer sesiones y carreras del repositorio y reemplazar datos locales (botón Resetear)
 function resetFromRepository() {
     const syncStatus = document.getElementById('syncStatus');
     if (syncStatus) {
         syncStatus.style.display = 'block';
-        syncStatus.innerHTML = '<p style="color: var(--primary-color);">Buscando último JSON en el repositorio...</p>';
+        syncStatus.innerHTML = '<p style="color: var(--primary-color);">Buscando sesiones y carreras en el repositorio...</p>';
     }
     const cacheBust = '?t=' + Date.now();
     const opts = { cache: 'no-store' };
@@ -852,16 +852,16 @@ function resetFromRepository() {
             if (Array.isArray(data) && data.length > 0) return data;
             return fetch('./sessions.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
         })
-        .then(data => {
-            if (!Array.isArray(data)) {
+        .then(sessionsData => {
+            if (!Array.isArray(sessionsData)) {
                 if (syncStatus) {
                     syncStatus.style.display = 'block';
-                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ No se encontró JSON en el repositorio o está vacío.</p>';
+                    syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ No se encontró sessions.json en el repositorio o está vacío.</p>';
                     setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
                 }
                 return;
             }
-            sessions = data.map(s => {
+            sessions = sessionsData.map(s => {
                 if (s.equipo === undefined) s.equipo = '';
                 if (!('localizacion' in s) || s.localizacion === undefined) s.localizacion = (s.notes || '').trim();
                 return s;
@@ -871,16 +871,25 @@ function resetFromRepository() {
             renderEquipmentList();
             updateStats();
             updateEquipmentSelect();
+            return fetch('./carreras.json' + cacheBust, opts).then(r => r.ok ? r.json() : null);
+        })
+        .then(carrerasData => {
+            if (Array.isArray(carrerasData)) {
+                marcas = carrerasData.map(m => ({ ...m }));
+                saveMarcas();
+                renderMarcas();
+            }
             if (syncStatus) {
                 syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Resetear hecho. Se han cargado ' + sessions.length + ' sesión(es) del repositorio.</p>';
+                const carrerasMsg = Array.isArray(carrerasData) ? ', ' + marcas.length + ' carrera(s)' : '';
+                syncStatus.innerHTML = '<p style="color: var(--secondary-color);">✅ Resetear hecho. ' + sessions.length + ' sesión(es)' + carrerasMsg + ' cargadas del repositorio.</p>';
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         })
         .catch(err => {
             if (syncStatus) {
                 syncStatus.style.display = 'block';
-                syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error al obtener el JSON: ' + (err.message || 'Revisa la conexión') + '</p>';
+                syncStatus.innerHTML = '<p style="color: var(--danger-color);">❌ Error: ' + (err.message || 'Revisa la conexión') + '</p>';
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         });
