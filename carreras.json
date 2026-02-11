@@ -38,5 +38,45 @@
     "categoria": "Master 45",
     "participantesCategoria": 122,
     "puestoCategoria": 69
+  },
+  {
+    "id": 1770637973884.463,
+    "numParticipantes": 2367,
+    "puestoGeneral": 860,
+    "categoria": "Absoluta",
+    "participantesCategoria": null,
+    "puestoCategoria": null
+  },
+  {
+    "id": 1770637973885.598,
+    "numParticipantes": 4300,
+    "puestoGeneral": 1705,
+    "categoria": "Absoluta",
+    "participantesCategoria": null,
+    "puestoCategoria": null
+  },
+  {
+    "id": 1770637973885.8027,
+    "numParticipantes": 86,
+    "puestoGeneral": 32,
+    "categoria": "Absoluta",
+    "participantesCategoria": null,
+    "puestoCategoria": null
+  },
+  {
+    "id": 1770637973885.1519,
+    "numParticipantes": 348,
+    "puestoGeneral": 178,
+    "categoria": "Absoluta",
+    "participantesCategoria": null,
+    "puestoCategoria": null
+  },
+  {
+    "id": 1770637973885.4233,
+    "numParticipantes": 330,
+    "puestoGeneral": 223,
+    "categoria": "Absoluta",
+    "participantesCategoria": null,
+    "puestoCategoria": null
   }
 ]
