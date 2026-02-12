@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.26'; // Versión actual de la app
+let currentAppVersion = '1.2.27'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1109,9 +1109,22 @@ async function resetFromRepository() {
         marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
         records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
 
+        if (data && typeof data === 'object' && data.planning && typeof data.planning === 'object') {
+            const plansRaw = Array.isArray(data.planning.plans) ? data.planning.plans : [];
+            planningPlans = plansRaw.map(normalizePlanningPlan).filter(Boolean);
+            selectedPlanningPlanId = data.planning.selectedPlanId ? Number(data.planning.selectedPlanId) : null;
+            if (!selectedPlanningPlanId || !planningPlans.some(p => p.id === selectedPlanningPlanId)) {
+                selectedPlanningPlanId = planningPlans.length ? planningPlans[planningPlans.length - 1].id : null;
+            }
+        } else {
+            planningPlans = [];
+            selectedPlanningPlanId = null;
+        }
+
         saveSessions();
         saveMarcas();
         saveRecords();
+        savePlanningPlans();
 
         renderSessions();
         renderEquipmentList();
@@ -1119,12 +1132,13 @@ async function resetFromRepository() {
         updateStats();
         renderMarcas();
         renderRecords();
+        renderPlanning();
 
         if (syncStatus) {
             syncStatus.style.display = 'block';
             syncStatus.innerHTML =
                 `<p style="color: var(--secondary-color);">✅ Resetear hecho desde <code>${RUNMETRICS_FILENAME}</code>. ` +
-                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}.</p>`;
+                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}.</p>`;
             setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
         }
     } catch (err) {
