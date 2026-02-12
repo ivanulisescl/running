@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.17",
-  "exportedAt": "2026-02-11T15:48:52.061Z",
+  "version": "1.2.26",
+  "exportedAt": "2026-02-12T15:53:38.519Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4084,5 +4084,190 @@
       "actividad": "Media Maratón Salamanca",
       "fecha": "Mar 3, 2024"
     }
-  ]
+  ],
+  "planning": {
+    "plans": [
+      {
+        "id": 1770911600961,
+        "raceName": "Media Maratón Reconquista 2026",
+        "weeks": 12,
+        "daysPerWeek": 3,
+        "startDate": "2026-03-09",
+        "raceDate": "2026-05-31",
+        "raceDistanceKm": 21.1,
+        "schedule": [
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 7,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "series"
+            },
+            {
+              "plannedKm": 9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 10,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7,
+              "type": "series"
+            },
+            {
+              "plannedKm": 11,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 12,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 13,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 14,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 15,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 16,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 17,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 3,
+              "type": "series"
+            },
+            {
+              "plannedKm": 21.1,
+              "type": "carrera"
+            }
+          ]
+        ],
+        "assignments": {}
+      }
+    ],
+    "selectedPlanId": 1770911600961
+  }
 }
