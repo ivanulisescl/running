@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.24'; // Versión actual de la app
+let currentAppVersion = '1.2.25'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2628,6 +2628,10 @@ function renderPlanning() {
     if (select && !plan) select.value = '';
 
     if (!plan) {
+        if (charts.planningSummaryChart) {
+            charts.planningSummaryChart.destroy();
+            charts.planningSummaryChart = null;
+        }
         container.innerHTML = `<p class="empty-state">Crea o selecciona una planificación para ver tu semana a semana.</p>`;
         return;
     }
@@ -2678,6 +2682,23 @@ function renderPlanning() {
     const progress = plannedCount ? Math.round((doneCount / plannedCount) * 100) : 0;
     const startLabel = formatDate(plan.startDate);
     const raceLabel = formatDate(plan.raceDate);
+
+    // Realizado por semana (km) para la gráfica
+    const actualKmByWeek = Array.from({ length: plan.weeks }, () => 0);
+    weeks.forEach(w => {
+        for (let dayIdx = 0; dayIdx < plan.daysPerWeek; dayIdx++) {
+            const key = planningKey(w.weekIndex, dayIdx + 1);
+            const sid = Number(assignments[key]);
+            if (sid && sessionById.has(sid)) {
+                actualKmByWeek[w.weekIndex - 1] += Number(sessionById.get(sid).distance) || 0;
+            }
+        }
+    });
+    const raceSid = Number(assignments[PLANNING_RACE_KEY]);
+    if (raceSid && sessionById.has(raceSid)) {
+        const raceKm = Number(sessionById.get(raceSid).distance) || 0;
+        if (plan.weeks > 0) actualKmByWeek[plan.weeks - 1] += raceKm;
+    }
 
     const summaryHtml = `
         <div class="planning-summary">
@@ -2842,12 +2863,144 @@ function renderPlanning() {
         </div>
     `;
 
+    const chartLabels = weeks.map(w => String(w.weekIndex));
+    const chartPlanned = weeks.map(w => w.plannedKm);
+    const chartRealized = actualKmByWeek.map(k => Number(k.toFixed(1)));
+    const chartDiffPct = chartPlanned.map((p, i) => {
+        if (!p || p <= 0) return null;
+        const r = chartRealized[i] || 0;
+        return Number((((r - p) / p) * 100).toFixed(1));
+    });
+
+    if (charts.planningSummaryChart) {
+        charts.planningSummaryChart.destroy();
+        charts.planningSummaryChart = null;
+    }
     container.innerHTML = `
         <p class="section-intro"><strong>${escapeHtml(plan.raceName)}</strong> · ${escapeHtml(startLabel)} → ${escapeHtml(raceLabel)} · ${escapeHtml(String(plan.weeks))} semanas · ${escapeHtml(String(plan.daysPerWeek))} días/sem.${plan.raceDistanceKm ? ` · ${escapeHtml(String(plan.raceDistanceKm))} km` : ''}</p>
         ${summaryHtml}
+        <div class="planning-chart-wrap">
+            <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
+        </div>
         ${weeksHtml}
         ${raceRow}
     `;
+
+    updatePlanningSummaryChart(plan.raceName, chartLabels, chartPlanned, chartRealized, chartDiffPct);
+}
+
+// Gráfica de resumen semanal en Planificación: planificado, realizado y diferencia %
+function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, diffPct) {
+    const canvas = document.getElementById('planningSummaryChart');
+    if (!canvas) return;
+    if (charts.planningSummaryChart) {
+        charts.planningSummaryChart.destroy();
+        charts.planningSummaryChart = null;
+    }
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    charts.planningSummaryChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Planificado',
+                    data: plannedKm,
+                    type: 'bar',
+                    yAxisID: 'y',
+                    backgroundColor: 'rgba(156, 163, 175, 0.7)',
+                    borderColor: 'rgba(156, 163, 175, 0.9)',
+                    borderWidth: 1,
+                    order: 2
+                },
+                {
+                    label: 'Realizado',
+                    data: realizedKm,
+                    type: 'bar',
+                    yAxisID: 'y',
+                    backgroundColor: 'rgba(134, 239, 172, 0.7)',
+                    borderColor: 'rgba(74, 222, 128, 0.9)',
+                    borderWidth: 1,
+                    order: 1
+                },
+                {
+                    label: 'Dif.',
+                    data: diffPct,
+                    type: 'line',
+                    yAxisID: 'y1',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: false,
+                    tension: 0.2,
+                    pointRadius: 4,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    order: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Entrenamiento ${raceName || 'Plan'}`,
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    font: { size: 14 }
+                },
+                legend: {
+                    labels: { color: 'rgba(255, 255, 255, 0.9)' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            const v = ctx.raw;
+                            if (ctx.dataset.yAxisID === 'y1') {
+                                return v != null ? `Dif.: ${Number(v).toFixed(1)}%` : '';
+                            }
+                            return v != null ? `${ctx.dataset.label}: ${Number(v).toFixed(1)} km` : '';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: 'rgba(255, 255, 255, 0.8)', maxRotation: 0 },
+                    grid: { color: 'rgba(255, 255, 255, 0.15)' }
+                },
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    title: { display: true, text: 'km', color: 'rgba(255, 255, 255, 0.8)' },
+                    beginAtZero: true,
+                    ticks: { color: 'rgba(255, 255, 255, 0.8)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.15)' }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    title: { display: true, text: '%', color: 'rgba(255, 255, 255, 0.8)' },
+                    min: (() => {
+                        const vals = diffPct.filter(v => v != null);
+                        if (vals.length === 0) return -10;
+                        return Math.min(-10, Math.floor(Math.min(...vals) / 5) * 5 - 5);
+                    })(),
+                    max: (() => {
+                        const vals = diffPct.filter(v => v != null);
+                        if (vals.length === 0) return 10;
+                        return Math.max(10, Math.ceil(Math.max(...vals) / 5) * 5 + 5);
+                    })(),
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        callback: (v) => (v != null ? `${v}%` : '')
+                    },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
 }
 
 // Actualizar todas las gráficas

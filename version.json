@@ -1,7 +1,8 @@
 {
-  "version": "1.2.24",
+  "version": "1.2.25",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planificación: gráfica resumen por semana (km planificado, realizado y diferencia %)",
     "Planificación: vista móvil optimizada; eliminado texto bajo Generar plan base",
     "Planificación: plan base 12 sem × 3 días (media maratón), mínimos 5/6 km por día",
     "Planificación: corregido el botón Nueva (fallo en generación de plan base)",
