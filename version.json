@@ -1,7 +1,8 @@
 {
-  "version": "1.2.22",
+  "version": "1.2.23",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planificación: plan base 12 sem × 3 días (media maratón), mínimos 5/6 km por día",
     "Planificación: corregido el botón Nueva (fallo en generación de plan base)",
     "Planificación: plan por semanas editable, asignación de sesiones reales a cada día planificado",
     "Carreras (móvil): distancia en formato 'Distancia: XX km' y ritmo con /km más compacto",

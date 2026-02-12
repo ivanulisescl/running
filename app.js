@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.22'; // Versión actual de la app
+let currentAppVersion = '1.2.23'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2078,8 +2078,20 @@ function normalizePlanningPlan(raw) {
     };
 }
 
+function hardcodedHalfMarathon12w3dSchedule() {
+    // Plan 12 semanas × 3 días (tabla de referencia del usuario). Semana 12: taper + 21.1 km.
+    const day1 = [5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.0, 8.0, 8.0, 8.0, 6.5];
+    const day2 = [5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.0, 8.0, 8.0, 8.0, 3.0];
+    const day3 = [7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 21.1];
+    return Array.from({ length: 12 }, (_, i) => ([
+        { plannedKm: day1[i], type: 'entrenamiento' },
+        { plannedKm: day2[i], type: 'series' },
+        { plannedKm: day3[i], type: i === 11 ? 'carrera' : 'entrenamiento' }
+    ]));
+}
+
 function hardcodedHalfMarathon14w3dSchedule() {
-    // Basado en la tabla que has compartido (editable después).
+    // Plan 14 semanas × 3 días (editable después).
     const day1 = [7.3, 6.0, 6.0, 6.5, 8.0, 8.0, 6.0, 7.5, 7.5, 8.0, 8.0, 8.0, 8.0, 6.5];
     const day2 = [7.2, 6.0, 6.0, 6.5, 6.0, 6.0, 3.0, 7.5, 7.5, 8.0, 8.0, 8.0, 8.0, 3.0];
     const day3 = [6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 11.8, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 21.1];
@@ -2097,14 +2109,19 @@ function generateBaseSchedule(weeks, daysPerWeek, raceDistanceKm) {
         ? null
         : Number(raceDistanceKm);
 
-    // Caso “como el de la imagen”
+    // Plan 12 semanas × 3 días (tabla de referencia del usuario)
+    if (W === 12 && D === 3 && (dist === null || Math.abs(dist - 21.1) < 0.3)) {
+        return hardcodedHalfMarathon12w3dSchedule();
+    }
+    // Plan 14 semanas × 3 días
     if (W === 14 && D === 3 && (dist === null || Math.abs(dist - 21.1) < 0.3)) {
         return hardcodedHalfMarathon14w3dSchedule();
     }
 
-    // Genérico: progresión suave, último día más largo.
-    const baseWeekly = Math.max(12, computeBaselineWeeklyKm());
-    const basePerDay = Math.max(4, baseWeekly / D);
+    // Genérico: progresión suave, último día más largo. Mínimos razonables para no proponer 3–4 km.
+    const MIN_KM_SHORT = 5;   // mínimo por día corto (evita 3.7 km en semana 1)
+    const MIN_KM_LONG = 6;    // mínimo tirada larga
+    const baseWeekly = Math.max(20, computeBaselineWeeklyKm()); // base mínima 20 km/sem para semana 1
     const schedule = [];
     for (let w = 0; w < W; w++) {
         const factor = Math.min(1.55, 1 + 0.05 * w);
@@ -2112,9 +2129,10 @@ function generateBaseSchedule(weeks, daysPerWeek, raceDistanceKm) {
         const row = [];
         for (let d = 0; d < D; d++) {
             const isLong = d === D - 1;
-            const km = isLong ? weeklyKm * 0.38 : (weeklyKm * 0.62) / Math.max(1, D - 1);
+            let km = isLong ? weeklyKm * 0.38 : (weeklyKm * 0.62) / Math.max(1, D - 1);
+            km = isLong ? Math.max(MIN_KM_LONG, km) : Math.max(MIN_KM_SHORT, km);
             row.push({
-                plannedKm: Number(Math.max(0, km).toFixed(1)),
+                plannedKm: Number(km.toFixed(1)),
                 type: (d === 1 && D >= 3) ? 'series' : 'entrenamiento'
             });
         }
