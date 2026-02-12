@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.2.23">
+    <link rel="stylesheet" href="styles.css?v=1.2.24">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.2.23</span>
+                <span id="currentVersion">v1.2.24</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -292,7 +292,6 @@
                                 <h4>Plan por semanas (editable)</h4>
                                 <button type="button" id="planningGenerateBtn" class="btn btn-secondary btn-small">Generar plan base</button>
                             </div>
-                            <p class="section-intro" style="margin-bottom: 10px;">Define kilómetros y tipo para cada <strong>Semana</strong> y <strong>Día 1…N</strong>. No es un día fijo del calendario: asignarás sesiones reales dentro de la semana cuando las completes.</p>
                             <div id="planningScheduleGrid" class="planning-schedule-grid"></div>
                         </div>
 
@@ -307,15 +306,9 @@
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="planningRaceDistanceKm">Distancia de la carrera (km)</label>
-                                <input type="number" id="planningRaceDistanceKm" step="0.1" min="0" placeholder="Ej: 21.1 (opcional)">
-                            </div>
-                            <div class="form-group">
-                                <label>&nbsp;</label>
-                                <small style="color: var(--text-secondary);">Se usa para generar planes base (p. ej. medio maratón).</small>
-                            </div>
+                        <div class="form-group">
+                            <label for="planningRaceDistanceKm">Distancia de la carrera (km)</label>
+                            <input type="number" id="planningRaceDistanceKm" step="0.1" min="0" placeholder="Ej: 21.1 (opcional)">
                         </div>
 
                         <div class="form-actions">
@@ -420,6 +413,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.23"></script>
+    <script src="app.js?v=1.2.24"></script>
 </body>
 </html>

@@ -480,22 +480,125 @@ header h1 {
 }
 
 @media (max-width: 600px) {
+    #planningSection.card {
+        padding: 14px 12px;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+    .planning-controls .form-row {
+        flex-direction: column;
+    }
+    .planning-actions-inline {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .planning-actions-inline .btn {
+        flex: 1;
+        min-width: 0;
+    }
+    .planning-box {
+        padding: 12px;
+    }
+    .planning-template-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .planning-template-header h4 {
+        margin-bottom: 8px;
+    }
+    .planning-schedule-grid {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+    .planning-schedule-table {
+        min-width: 420px;
+    }
+    .planning-schedule-table th,
+    .planning-schedule-table td {
+        padding: 6px 6px;
+        font-size: 0.85em;
+    }
+    .planning-schedule-cell input,
+    .planning-schedule-cell select {
+        padding: 6px 8px;
+        min-height: 36px;
+        font-size: 0.85em;
+    }
     .planning-template-row {
         grid-template-columns: 1fr;
         align-items: stretch;
     }
     .planning-assign {
         justify-content: flex-start;
+        flex-direction: column;
+        align-items: stretch;
     }
     .planning-assign select {
         min-width: 0;
         width: 100%;
     }
+    .planning-view {
+        max-width: 100%;
+    }
+    .planning-summary {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .planning-kpi {
+        padding: 10px 8px;
+    }
+    .planning-kpi-value {
+        font-size: 1.2em;
+    }
+    .planning-kpi-label {
+        font-size: 0.7em;
+    }
+    .planning-week {
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+    .planning-week-header {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .planning-week-title {
+        font-size: 0.95em;
+    }
+    .planning-week-meta {
+        font-size: 0.8em;
+    }
+    .planning-sessions {
+        padding: 10px 12px;
+    }
+    .planning-session {
+        flex-wrap: wrap;
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    .planning-session-left {
+        flex: 1;
+        min-width: 0;
+    }
+    .planning-session-date {
+        font-size: 0.95em;
+    }
+    .planning-session-sub {
+        font-size: 0.8em;
+    }
+    .planning-status {
+        width: 100%;
+        text-align: right;
+    }
 }
 
 .planning-schedule-grid {
     width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: 12px;
     border: 1px solid var(--border-color);
     background: var(--card-background);
