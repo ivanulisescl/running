@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.25'; // Versión actual de la app
+let currentAppVersion = '1.2.26'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2900,6 +2900,15 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const maxKm = Math.max(...plannedKm, ...realizedKm, 1);
+    const suggestedMaxKm = Math.ceil(maxKm / 5) * 5 + 5;
+    const valsPct = diffPct.filter(v => v != null);
+    const minPct = valsPct.length ? Math.min(...valsPct) : 0;
+    const maxPct = valsPct.length ? Math.max(...valsPct) : 0;
+    const rangePct = Math.max(10, Math.ceil(Math.max(-minPct, maxPct) / 5) * 5 + 5);
+    const y1Min = -rangePct;
+    const y1Max = rangePct;
+
     charts.planningSummaryChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -2910,9 +2919,11 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                     data: plannedKm,
                     type: 'bar',
                     yAxisID: 'y',
-                    backgroundColor: 'rgba(156, 163, 175, 0.7)',
-                    borderColor: 'rgba(156, 163, 175, 0.9)',
+                    backgroundColor: 'rgba(148, 163, 184, 0.85)',
+                    borderColor: 'rgb(100, 116, 139)',
                     borderWidth: 1,
+                    barPercentage: 0.75,
+                    categoryPercentage: 0.8,
                     order: 2
                 },
                 {
@@ -2920,22 +2931,29 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                     data: realizedKm,
                     type: 'bar',
                     yAxisID: 'y',
-                    backgroundColor: 'rgba(134, 239, 172, 0.7)',
-                    borderColor: 'rgba(74, 222, 128, 0.9)',
+                    backgroundColor: 'rgba(52, 211, 153, 0.85)',
+                    borderColor: 'rgb(16, 185, 129)',
                     borderWidth: 1,
+                    barPercentage: 0.75,
+                    categoryPercentage: 0.8,
                     order: 1
                 },
                 {
-                    label: 'Dif.',
+                    label: 'Diferencia %',
                     data: diffPct,
                     type: 'line',
                     yAxisID: 'y1',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: 'rgb(96, 165, 250)',
+                    backgroundColor: 'rgba(96, 165, 250, 0.15)',
                     fill: false,
-                    tension: 0.2,
-                    pointRadius: 4,
-                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    tension: 0.25,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: 'rgb(96, 165, 250)',
+                    pointBorderColor: 'rgba(255, 255, 255, 0.9)',
+                    pointBorderWidth: 1.5,
+                    borderWidth: 2.5,
+                    spanGaps: false,
                     order: 0
                 }
             ]
@@ -2943,22 +2961,38 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
             plugins: {
                 title: {
                     display: true,
                     text: `Entrenamiento ${raceName || 'Plan'}`,
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    font: { size: 14 }
+                    color: 'rgba(255, 255, 255, 0.95)',
+                    font: { size: 16, weight: 'bold' }
                 },
                 legend: {
-                    labels: { color: 'rgba(255, 255, 255, 0.9)' }
+                    position: 'top',
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        font: { size: 12 },
+                        padding: 14,
+                        usePointStyle: true
+                    }
                 },
                 tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                    titleColor: 'rgba(255, 255, 255, 0.95)',
+                    bodyColor: 'rgba(255, 255, 255, 0.9)',
+                    padding: 12,
+                    displayColors: true,
                     callbacks: {
+                        title: (items) => items.length && items[0].label != null ? `Semana ${items[0].label}` : '',
                         label: function (ctx) {
                             const v = ctx.raw;
                             if (ctx.dataset.yAxisID === 'y1') {
-                                return v != null ? `Dif.: ${Number(v).toFixed(1)}%` : '';
+                                return v != null ? `Diferencia: ${Number(v).toFixed(1)}%` : '';
                             }
                             return v != null ? `${ctx.dataset.label}: ${Number(v).toFixed(1)} km` : '';
                         }
@@ -2967,33 +3001,46 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
             },
             scales: {
                 x: {
-                    ticks: { color: 'rgba(255, 255, 255, 0.8)', maxRotation: 0 },
-                    grid: { color: 'rgba(255, 255, 255, 0.15)' }
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        maxRotation: 0,
+                        font: { size: 11 },
+                        autoSkip: true,
+                        maxTicksLimit: 18
+                    },
+                    grid: { color: 'rgba(255, 255, 255, 0.12)' }
                 },
                 y: {
                     type: 'linear',
                     position: 'left',
-                    title: { display: true, text: 'km', color: 'rgba(255, 255, 255, 0.8)' },
+                    title: {
+                        display: true,
+                        text: 'km',
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        font: { size: 12 }
+                    },
                     beginAtZero: true,
-                    ticks: { color: 'rgba(255, 255, 255, 0.8)' },
-                    grid: { color: 'rgba(255, 255, 255, 0.15)' }
+                    suggestedMax: suggestedMaxKm,
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        stepSize: suggestedMaxKm <= 25 ? 5 : 10
+                    },
+                    grid: { color: 'rgba(255, 255, 255, 0.12)' }
                 },
                 y1: {
                     type: 'linear',
                     position: 'right',
-                    title: { display: true, text: '%', color: 'rgba(255, 255, 255, 0.8)' },
-                    min: (() => {
-                        const vals = diffPct.filter(v => v != null);
-                        if (vals.length === 0) return -10;
-                        return Math.min(-10, Math.floor(Math.min(...vals) / 5) * 5 - 5);
-                    })(),
-                    max: (() => {
-                        const vals = diffPct.filter(v => v != null);
-                        if (vals.length === 0) return 10;
-                        return Math.max(10, Math.ceil(Math.max(...vals) / 5) * 5 + 5);
-                    })(),
+                    title: {
+                        display: true,
+                        text: '%',
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        font: { size: 12 }
+                    },
+                    min: y1Min,
+                    max: y1Max,
                     ticks: {
-                        color: 'rgba(255, 255, 255, 0.8)',
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        stepSize: 5,
                         callback: (v) => (v != null ? `${v}%` : '')
                     },
                     grid: { drawOnChartArea: false }
@@ -3351,8 +3398,8 @@ function updateTotalElevationYearChart() {
             datasets: [{
                 label: `Desnivel + (m) (${totalElevationSelectedYear})`,
                 data: gainData,
-                backgroundColor: 'rgba(16, 185, 129, 0.85)',
-                borderColor: 'rgb(16, 185, 129)',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
                 borderWidth: 2
             }, {
                 label: `Desnivel - (m) (${totalElevationSelectedYear})`,
@@ -3604,8 +3651,8 @@ function updateElevationChart(sessions) {
             datasets: [{
                 label: 'Desnivel + (m)',
                 data: elevationGain,
-                backgroundColor: 'rgba(16, 185, 129, 0.85)',
-                borderColor: 'rgb(16, 185, 129)',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
                 borderWidth: 2
             }, {
                 label: 'Desnivel - (m)',
