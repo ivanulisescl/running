@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.27'; // Versión actual de la app
+let currentAppVersion = '1.2.28'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -321,11 +321,23 @@ async function loadRunmetricsFromRepoIfEmpty() {
                 selectedPlanningPlanId = planningPlans.length ? planningPlans[planningPlans.length - 1].id : null;
             }
         }
+        if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
+            equipmentList = data.equipment.map(item => {
+                const name = typeof item === 'string' ? item : (item.name || '');
+                const estado = typeof item === 'object' && item.estado ? item.estado : 'Activo';
+                const kilometros = typeof item === 'object' && typeof item.kilometros === 'number' ? item.kilometros : 0;
+                const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
+                    ? item.desde
+                    : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
+                return { name, kilometros, estado, desde };
+            });
+        }
 
         saveSessions();
         saveMarcas();
         saveRecords();
         savePlanningPlans();
+        if (data && typeof data === 'object' && Array.isArray(data.equipment)) saveEquipment();
 
         renderSessions();
         renderEquipmentList();
@@ -391,6 +403,28 @@ function renderRecords() {
 // Estados posibles de un equipo
 const EQUIPO_ESTADOS = ['Activo', 'Retirado', 'Activo por defecto'];
 
+// Fechas "desde" por defecto para equipos conocidos (nombre contiene la clave)
+const EQUIPMENT_DESDE_DEFAULTS = [
+    { match: (n) => /nimbus\s*25|25\s*negras/i.test(n), desde: '2023-07-30' },
+    { match: (n) => /nimbus\s*26|26\s*azules/i.test(n), desde: '2024-09-24' },
+    { match: (n) => /hokka|bondi\s*9/i.test(n), desde: '2025-08-02' }
+];
+
+function getDefaultDesdeForEquipmentName(name) {
+    const n = (name || '').trim();
+    for (const { match, desde } of EQUIPMENT_DESDE_DEFAULTS) {
+        if (match(n)) return desde;
+    }
+    return null;
+}
+
+function getEquipmentDesde(eq) {
+    const item = typeof eq === 'object' && eq !== null ? eq : null;
+    if (item && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))) return item.desde;
+    const name = getEquipmentName(eq);
+    return getDefaultDesdeForEquipmentName(name) || '1970-01-01';
+}
+
 // Cargar equipos desde localStorage
 function loadEquipment() {
     const saved = localStorage.getItem('runningEquipment');
@@ -403,19 +437,21 @@ function loadEquipment() {
                 let estado = 'Activo';
                 if (name.startsWith('Asics')) estado = 'Retirado';
                 if (name.startsWith('Hokka')) estado = 'Activo por defecto';
-                return { name, kilometros: 0, estado };
+                const desde = getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0];
+                return { name, kilometros: 0, estado, desde };
             }
             if (item.kilometros === undefined || typeof item.kilometros !== 'number') item.kilometros = 0;
             if (!item.estado) item.estado = 'Activo';
+            if (!item.desde) item.desde = getDefaultDesdeForEquipmentName(item.name) || new Date().toISOString().split('T')[0];
             return item;
         });
         saveEquipment();
     } else {
-        // Equipos iniciales por defecto
+        // Equipos iniciales por defecto (desde: cuándo se empezó a usar)
         equipmentList = [
-            { name: 'Asics Gel Nimbus 25 Negras', kilometros: 0, estado: 'Retirado' },
-            { name: 'Asics Gel Nimbus 26 Azules', kilometros: 0, estado: 'Retirado' },
-            { name: 'Hokka Bondi 9 Grises', kilometros: 0, estado: 'Activo por defecto' }
+            { name: 'Asics Gel Nimbus 25 Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30' },
+            { name: 'Asics Gel Nimbus 26 Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24' },
+            { name: 'Hokka Bondi 9 Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02' }
         ];
         saveEquipment();
     }
@@ -468,7 +504,9 @@ function addNewEquipment() {
         return;
     }
     
-    equipmentList.push({ name: equipmentName, kilometros: 0, estado: 'Activo' });
+    const hoy = new Date().toISOString().split('T')[0];
+    const desde = getDefaultDesdeForEquipmentName(equipmentName) || hoy;
+    equipmentList.push({ name: equipmentName, kilometros: 0, estado: 'Activo', desde });
     saveEquipment();
     renderEquipmentList();
     updateEquipmentSelect();
@@ -521,7 +559,8 @@ function updateEquipment(index, field, value) {
     if (index < 0 || index >= equipmentList.length) return;
     const eq = equipmentList[index];
     if (typeof eq === 'string') {
-        equipmentList[index] = { name: eq, kilometros: 0, estado: 'Activo' };
+        const desde = getDefaultDesdeForEquipmentName(eq) || new Date().toISOString().split('T')[0];
+        equipmentList[index] = { name: eq, kilometros: 0, estado: 'Activo', desde };
     }
     const item = equipmentList[index];
     if (field === 'estado') item.estado = value;
@@ -529,7 +568,7 @@ function updateEquipment(index, field, value) {
     updateEquipmentSelect();
 }
 
-// Renderizar lista de equipos
+// Renderizar lista de equipos (orden: de más reciente a más antigua por "desde")
 function renderEquipmentList() {
     const container = document.getElementById('equipmentList');
     if (!container) return;
@@ -539,11 +578,16 @@ function renderEquipmentList() {
         return;
     }
     
-    container.innerHTML = equipmentList.map((equipment, index) => {
+    const withIndex = equipmentList.map((equipment, index) => ({ equipment, index }));
+    withIndex.sort((a, b) => getEquipmentDesde(b.equipment).localeCompare(getEquipmentDesde(a.equipment)));
+    
+    container.innerHTML = withIndex.map(({ equipment, index }) => {
         const name = getEquipmentName(equipment);
         const stats = getEquipmentStatsFromSessions(name);
         const estado = typeof equipment === 'object' ? (equipment.estado || 'Activo') : 'Activo';
         const info = parseEquipmentInfo(name);
+        const desdeIso = getEquipmentDesde(equipment);
+        const desdeLabel = desdeIso && desdeIso !== '1970-01-01' ? formatDate(desdeIso) : '—';
         const estadoOptions = EQUIPO_ESTADOS.map(e => 
             `<option value="${escapeHtml(e)}" ${e === estado ? 'selected' : ''}>${escapeHtml(e)}</option>`
         ).join('');
@@ -559,6 +603,10 @@ function renderEquipmentList() {
                         <span class="color-label">Color:</span>
                         <span class="color-value">${escapeHtml(info.color)}</span>
                     </div>` : ''}
+                    <div class="equipment-desde">
+                        <span class="desde-label">Desde:</span>
+                        <span class="desde-value">${escapeHtml(desdeLabel)}</span>
+                    </div>
                     <div class="equipment-stats-row">
                         <div class="equipment-stat">
                             <span class="equipment-stat-label">Kilómetros:</span>
@@ -1120,6 +1168,18 @@ async function resetFromRepository() {
             planningPlans = [];
             selectedPlanningPlanId = null;
         }
+        if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
+            equipmentList = data.equipment.map(item => {
+                const name = typeof item === 'string' ? item : (item.name || '');
+                const estado = typeof item === 'object' && item.estado ? item.estado : 'Activo';
+                const kilometros = typeof item === 'object' && typeof item.kilometros === 'number' ? item.kilometros : 0;
+                const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
+                    ? item.desde
+                    : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
+                return { name, kilometros, estado, desde };
+            });
+            saveEquipment();
+        }
 
         saveSessions();
         saveMarcas();
@@ -1138,7 +1198,7 @@ async function resetFromRepository() {
             syncStatus.style.display = 'block';
             syncStatus.innerHTML =
                 `<p style="color: var(--secondary-color);">✅ Resetear hecho desde <code>${RUNMETRICS_FILENAME}</code>. ` +
-                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}.</p>`;
+                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}. Equipos: ${equipmentList.length}.</p>`;
             setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
         }
     } catch (err) {
@@ -1220,7 +1280,12 @@ function setupSync() {
             planning: {
                 plans: planningPlans || [],
                 selectedPlanId: selectedPlanningPlanId || null
-            }
+            },
+            equipment: (equipmentList || []).map(eq => {
+                const item = typeof eq === 'object' && eq !== null ? { ...eq } : { name: String(eq), kilometros: 0, estado: 'Activo' };
+                if (!item.desde) item.desde = getEquipmentDesde(eq);
+                return item;
+            })
         };
         const data = JSON.stringify(payload, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
@@ -1309,11 +1374,23 @@ function setupSync() {
                 planningPlans = [];
                 selectedPlanningPlanId = null;
             }
+            if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
+                equipmentList = data.equipment.map(item => {
+                    const name = typeof item === 'string' ? item : (item.name || '');
+                    const estado = typeof item === 'object' && item.estado ? item.estado : 'Activo';
+                    const kilometros = typeof item === 'object' && typeof item.kilometros === 'number' ? item.kilometros : 0;
+                    const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
+                        ? item.desde
+                        : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
+                    return { name, kilometros, estado, desde };
+                });
+            }
 
             saveSessions();
             saveMarcas();
             saveRecords();
             savePlanningPlans();
+            if (data && typeof data === 'object' && Array.isArray(data.equipment)) saveEquipment();
 
             // Refresh UI
             renderSessions();
@@ -1326,7 +1403,7 @@ function setupSync() {
             renderPlanning();
 
             if (syncStatus) {
-                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}.</p>`;
+                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}. Equipos: ${equipmentList.length}.</p>`;
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         } catch (err) {
