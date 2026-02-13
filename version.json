@@ -1,7 +1,8 @@
 {
-  "version": "1.2.28",
+  "version": "1.2.29",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipo: Límite km, barra de progreso, Nº actividades en JSON; oculto Límite km en ficha",
     "Equipo: campo Desde (fecha de uso), orden por fecha, incluido en runmetrics.json",
     "Resetear desde repositorio: ahora actualiza también la planificación",
     "Estadísticas: desnivel positivo en blanco (antes verde)",

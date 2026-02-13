@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.28'; // Versión actual de la app
+let currentAppVersion = '1.2.29'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -329,7 +329,10 @@ async function loadRunmetricsFromRepoIfEmpty() {
                 const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
                     ? item.desde
                     : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
-                return { name, kilometros, estado, desde };
+                const limiteKm = typeof item === 'object' && typeof item.limiteKm === 'number' && item.limiteKm > 0
+                    ? item.limiteKm
+                    : getDefaultLimiteKmForEquipmentName(name);
+                return { name, kilometros, estado, desde, limiteKm };
             });
         }
 
@@ -425,6 +428,20 @@ function getEquipmentDesde(eq) {
     return getDefaultDesdeForEquipmentName(name) || '1970-01-01';
 }
 
+// Límite de km por defecto: Nimbus negras 700, resto 800
+const EQUIPMENT_LIMITE_KM_DEFAULT = 800;
+function getDefaultLimiteKmForEquipmentName(name) {
+    const n = (name || '').trim();
+    if (/nimbus\s*25|25\s*negras/i.test(n)) return 700;
+    return EQUIPMENT_LIMITE_KM_DEFAULT;
+}
+
+function getEquipmentLimiteKm(eq) {
+    const item = typeof eq === 'object' && eq !== null ? eq : null;
+    if (item && typeof item.limiteKm === 'number' && item.limiteKm > 0) return item.limiteKm;
+    return getDefaultLimiteKmForEquipmentName(getEquipmentName(eq));
+}
+
 // Cargar equipos desde localStorage
 function loadEquipment() {
     const saved = localStorage.getItem('runningEquipment');
@@ -438,20 +455,22 @@ function loadEquipment() {
                 if (name.startsWith('Asics')) estado = 'Retirado';
                 if (name.startsWith('Hokka')) estado = 'Activo por defecto';
                 const desde = getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0];
-                return { name, kilometros: 0, estado, desde };
+                const limiteKm = getDefaultLimiteKmForEquipmentName(name);
+                return { name, kilometros: 0, estado, desde, limiteKm };
             }
             if (item.kilometros === undefined || typeof item.kilometros !== 'number') item.kilometros = 0;
             if (!item.estado) item.estado = 'Activo';
             if (!item.desde) item.desde = getDefaultDesdeForEquipmentName(item.name) || new Date().toISOString().split('T')[0];
+            if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getDefaultLimiteKmForEquipmentName(item.name);
             return item;
         });
         saveEquipment();
     } else {
         // Equipos iniciales por defecto (desde: cuándo se empezó a usar)
         equipmentList = [
-            { name: 'Asics Gel Nimbus 25 Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30' },
-            { name: 'Asics Gel Nimbus 26 Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24' },
-            { name: 'Hokka Bondi 9 Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02' }
+            { name: 'Asics Gel Nimbus 25 Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
+            { name: 'Asics Gel Nimbus 26 Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
+            { name: 'Hokka Bondi 9 Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 }
         ];
         saveEquipment();
     }
@@ -506,7 +525,8 @@ function addNewEquipment() {
     
     const hoy = new Date().toISOString().split('T')[0];
     const desde = getDefaultDesdeForEquipmentName(equipmentName) || hoy;
-    equipmentList.push({ name: equipmentName, kilometros: 0, estado: 'Activo', desde });
+    const limiteKm = getDefaultLimiteKmForEquipmentName(equipmentName);
+    equipmentList.push({ name: equipmentName, kilometros: 0, estado: 'Activo', desde, limiteKm });
     saveEquipment();
     renderEquipmentList();
     updateEquipmentSelect();
@@ -560,7 +580,8 @@ function updateEquipment(index, field, value) {
     const eq = equipmentList[index];
     if (typeof eq === 'string') {
         const desde = getDefaultDesdeForEquipmentName(eq) || new Date().toISOString().split('T')[0];
-        equipmentList[index] = { name: eq, kilometros: 0, estado: 'Activo', desde };
+        const limiteKm = getDefaultLimiteKmForEquipmentName(eq);
+        equipmentList[index] = { name: eq, kilometros: 0, estado: 'Activo', desde, limiteKm };
     }
     const item = equipmentList[index];
     if (field === 'estado') item.estado = value;
@@ -588,6 +609,9 @@ function renderEquipmentList() {
         const info = parseEquipmentInfo(name);
         const desdeIso = getEquipmentDesde(equipment);
         const desdeLabel = desdeIso && desdeIso !== '1970-01-01' ? formatDate(desdeIso) : '—';
+        const limiteKm = getEquipmentLimiteKm(equipment);
+        const kmRealizados = stats.kilometros;
+        const progressPct = limiteKm > 0 ? Math.min(100, (kmRealizados / limiteKm) * 100) : 0;
         const estadoOptions = EQUIPO_ESTADOS.map(e => 
             `<option value="${escapeHtml(e)}" ${e === estado ? 'selected' : ''}>${escapeHtml(e)}</option>`
         ).join('');
@@ -607,13 +631,22 @@ function renderEquipmentList() {
                         <span class="desde-label">Desde:</span>
                         <span class="desde-value">${escapeHtml(desdeLabel)}</span>
                     </div>
+                    <div class="equipment-progress-wrap" title="${escapeHtml(kmRealizados.toFixed(1))} / ${escapeHtml(String(limiteKm))} km">
+                        <div class="equipment-progress-bar" role="progressbar" aria-valuenow="${progressPct.toFixed(0)}" aria-valuemin="0" aria-valuemax="100">
+                            <div class="equipment-progress-fill" style="width: ${progressPct.toFixed(1)}%"></div>
+                        </div>
+                        <div class="equipment-progress-labels">
+                            <span class="equipment-progress-km">${escapeHtml(kmRealizados.toFixed(1))} km</span>
+                            <span class="equipment-progress-max">/ ${escapeHtml(String(limiteKm))} km</span>
+                        </div>
+                    </div>
                     <div class="equipment-stats-row">
                         <div class="equipment-stat">
                             <span class="equipment-stat-label">Kilómetros:</span>
                             <span class="equipment-stat-value">${stats.kilometros.toFixed(1)}</span>
                         </div>
                         <div class="equipment-stat">
-                            <span class="equipment-stat-label">Actividades:</span>
+                            <span class="equipment-stat-label">Nº actividades:</span>
                             <span class="equipment-stat-value">${stats.actividades}</span>
                         </div>
                     </div>
@@ -1176,7 +1209,10 @@ async function resetFromRepository() {
                 const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
                     ? item.desde
                     : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
-                return { name, kilometros, estado, desde };
+                const limiteKm = typeof item === 'object' && typeof item.limiteKm === 'number' && item.limiteKm > 0
+                    ? item.limiteKm
+                    : getDefaultLimiteKmForEquipmentName(name);
+                return { name, kilometros, estado, desde, limiteKm };
             });
             saveEquipment();
         }
@@ -1282,8 +1318,12 @@ function setupSync() {
                 selectedPlanId: selectedPlanningPlanId || null
             },
             equipment: (equipmentList || []).map(eq => {
+                const name = getEquipmentName(eq);
+                const stats = getEquipmentStatsFromSessions(name);
                 const item = typeof eq === 'object' && eq !== null ? { ...eq } : { name: String(eq), kilometros: 0, estado: 'Activo' };
                 if (!item.desde) item.desde = getEquipmentDesde(eq);
+                if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getEquipmentLimiteKm(eq);
+                item.numActividades = stats.actividades;
                 return item;
             })
         };
@@ -1382,7 +1422,10 @@ function setupSync() {
                     const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
                         ? item.desde
                         : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
-                    return { name, kilometros, estado, desde };
+                    const limiteKm = typeof item === 'object' && typeof item.limiteKm === 'number' && item.limiteKm > 0
+                        ? item.limiteKm
+                        : getDefaultLimiteKmForEquipmentName(name);
+                    return { name, kilometros, estado, desde, limiteKm };
                 });
             }
 
