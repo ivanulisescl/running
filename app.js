@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.31'; // Versión actual de la app
+let currentAppVersion = '1.2.32'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -634,10 +634,10 @@ function renderEquipmentList() {
                     <div class="equipment-progress-wrap" title="${escapeHtml(kmRealizados.toFixed(1))} / ${escapeHtml(String(limiteKm))} km">
                         <div class="equipment-progress-bar" role="progressbar" aria-valuenow="${progressPct.toFixed(0)}" aria-valuemin="0" aria-valuemax="100">
                             <div class="equipment-progress-fill" style="width: ${progressPct.toFixed(1)}%"></div>
+                            <span class="equipment-progress-pct">${progressPct.toFixed(0)}%</span>
                         </div>
                         <div class="equipment-progress-labels">
-                            <span class="equipment-progress-km">${escapeHtml(kmRealizados.toFixed(1))} km</span>
-                            <span class="equipment-progress-max">/ ${escapeHtml(String(limiteKm))} km</span>
+                            <span class="equipment-progress-limit">Límite: ${escapeHtml(String(limiteKm))} km</span>
                         </div>
                     </div>
                     <div class="equipment-stats-row">

@@ -1,7 +1,8 @@
 {
-  "version": "1.2.31",
+  "version": "1.2.32",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipo: porcentaje en barra de progreso, texto Límite: xx km",
     "Equipo (móvil): Kilómetros y Nº actividades en una línea cada uno",
     "Equipo: barra de progreso más visible en PC y móvil (CSS)",
     "Equipo: Límite km, barra de progreso, Nº actividades en JSON; oculto Límite km en ficha",
