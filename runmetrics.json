@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.27",
-  "exportedAt": "2026-02-12T22:35:26.077Z",
+  "version": "1.2.28",
+  "exportedAt": "2026-02-13T10:29:22.007Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4283,5 +4283,25 @@
       }
     ],
     "selectedPlanId": 1770911600961
-  }
+  },
+  "equipment": [
+    {
+      "name": "Asics Gel Nimbus 25 Negras",
+      "kilometros": 0,
+      "estado": "Retirado",
+      "desde": "2023-07-30"
+    },
+    {
+      "name": "Asics Gel Nimbus 26 Azules",
+      "kilometros": 0,
+      "estado": "Retirado",
+      "desde": "2024-09-24"
+    },
+    {
+      "name": "Hokka Bondi 9 Grises",
+      "kilometros": 0,
+      "estado": "Activo por defecto",
+      "desde": "2025-08-02"
+    }
+  ]
 }
