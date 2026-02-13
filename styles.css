@@ -2113,6 +2113,15 @@ header h1 {
         flex-direction: column;
     }
 
+    .equipment-stats-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .equipment-stat {
+        white-space: nowrap;
+    }
+
     /* Carreras: mejorar legibilidad en móvil (km/tiempo/ritmo) */
     .marca-card {
         padding: 16px 16px;
