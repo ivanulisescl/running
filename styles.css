@@ -1736,8 +1736,9 @@ header h1 {
 
 .session-item-compact {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     padding: 10px 15px;
 }
 
@@ -1745,26 +1746,10 @@ header h1 {
     transform: translateX(5px);
 }
 
-.session-compact-row {
-    display: block;
-}
-
-.session-compact-row-date {
+.session-compact-date {
     font-weight: 600;
     color: var(--primary-color);
     font-size: 0.95em;
-}
-
-.session-compact-row-info {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.session-compact-location {
-    color: var(--text-primary);
-    font-size: 0.9em;
 }
 
 .session-compact-km {

@@ -1,7 +1,9 @@
 {
-  "version": "1.2.33",
+  "version": "1.2.34",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Estadísticas: gráfico Lugares (quesito) después de Tipo de entrenamiento",
+    "Historial vista compacta: una línea fecha y km, sin localidad",
     "Estadísticas: Actividades después de Desnivel acumulado; título Actividades sin (mes en curso)",
     "Historial vista compacta: sin Editar/Eliminar; fila fecha, fila localidad y km",
     "Equipo: porcentaje en barra de progreso, texto Límite: xx km",

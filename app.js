@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.33'; // Versión actual de la app
+let currentAppVersion = '1.2.34'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -18,6 +18,7 @@ let planningEditingPlanId = null; // ID del plan en edición (null = nuevo)
 let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado para Distancia total (por mes)
 let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
 let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
+let locationsSelectedYear = new Date().getFullYear(); // Año seleccionado para Lugares
 let paceSelectedYear = new Date().getFullYear(); // Año seleccionado para Evolución del ritmo (por mes)
 let activitiesSelectedMonth = (() => {
     const d = new Date();
@@ -41,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTotalDistanceYearSelector();
     setupTotalElevationYearSelector();
     setupTypeYearSelector();
+    setupLocationsYearSelector();
     setupPaceYearSelector();
     setupActivitiesMonthSelector();
     setupEquipmentSection();
@@ -1942,11 +1944,8 @@ function renderSessions() {
         if (isCompact) {
             return `
                 <div class="session-item session-item-compact">
-                    <div class="session-compact-row session-compact-row-date">${formattedDate}</div>
-                    <div class="session-compact-row session-compact-row-info">
-                        <span class="session-compact-location">${location ? escapeHtml(location) : '—'}</span>
-                        <span class="session-compact-km">${session.distance} km</span>
-                    </div>
+                    <span class="session-compact-date">${formattedDate}</span>
+                    <span class="session-compact-km">${session.distance} km</span>
                 </div>
             `;
         }
@@ -2096,6 +2095,7 @@ function updateStats() {
     refreshTotalDistanceYearOptions();
     refreshTotalElevationYearOptions();
     refreshTypeYearOptions();
+    refreshLocationsYearOptions();
     refreshPaceYearOptions();
 
     // Actualizar gráficas
@@ -3187,6 +3187,7 @@ function updateCharts(filteredSessions) {
     updateTotalDistanceYearChart();
     updateTotalElevationYearChart();
     updateTypeYearChart();
+    updateLocationsYearChart();
     updatePaceYearChart();
     updateActivitiesMonthChart();
 }
@@ -3414,6 +3415,36 @@ function refreshTypeYearOptions() {
 
     select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
     select.value = String(typeSelectedYear);
+}
+
+function setupLocationsYearSelector() {
+    const select = document.getElementById('locationsYearSelect');
+    if (!select) return;
+    const saved = localStorage.getItem('locationsSelectedYear');
+    if (saved && /^\d{4}$/.test(saved)) locationsSelectedYear = parseInt(saved, 10);
+    select.addEventListener('change', () => {
+        const y = parseInt(select.value, 10);
+        if (!isNaN(y)) {
+            locationsSelectedYear = y;
+            localStorage.setItem('locationsSelectedYear', String(y));
+            updateLocationsYearChart();
+        }
+    });
+}
+
+function refreshLocationsYearOptions() {
+    const select = document.getElementById('locationsYearSelect');
+    if (!select) return;
+    const { currentYear, years } = getAvailableStatsYears();
+    if (!years.includes(locationsSelectedYear)) locationsSelectedYear = years[0] || currentYear;
+    const existing = new Set(Array.from(select.options).map(o => parseInt(o.value, 10)));
+    const shouldRebuild = years.length !== select.options.length || years.some(y => !existing.has(y));
+    if (!shouldRebuild) {
+        select.value = String(locationsSelectedYear);
+        return;
+    }
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    select.value = String(locationsSelectedYear);
 }
 
 function setupPaceYearSelector() {
@@ -3660,6 +3691,88 @@ function updateTypeYearChart() {
                     'rgba(255, 255, 255, 0.4)',
                     'rgba(255, 255, 255, 0.2)'
                 ],
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: 'white', padding: 15 }
+                }
+            }
+        }
+    });
+}
+
+// Paleta de colores para gráfico de lugares (pie)
+const LOCATIONS_CHART_COLORS = [
+    'rgba(255, 255, 255, 0.95)',
+    'rgba(255, 255, 255, 0.8)',
+    'rgba(255, 255, 255, 0.65)',
+    'rgba(200, 220, 255, 0.9)',
+    'rgba(220, 255, 220, 0.85)',
+    'rgba(255, 230, 200, 0.9)',
+    'rgba(255, 220, 255, 0.8)',
+    'rgba(220, 255, 255, 0.85)',
+    'rgba(255, 255, 200, 0.9)',
+    'rgba(230, 230, 255, 0.9)'
+];
+
+// Gráfica de lugares (pie) por año
+function updateLocationsYearChart() {
+    const ctx = document.getElementById('locationsChart');
+    if (!ctx) return;
+
+    const countsByLocation = {};
+    (sessions || []).forEach(session => {
+        if (!session || !session.date) return;
+        const d = new Date(session.date + 'T00:00:00');
+        if (d.getFullYear() !== locationsSelectedYear) return;
+        const loc = getSessionLocation(session);
+        const key = (loc && loc.trim()) ? loc.trim() : 'Sin lugar';
+        countsByLocation[key] = (countsByLocation[key] || 0) + 1;
+    });
+
+    const labels = Object.keys(countsByLocation).sort((a, b) => countsByLocation[b] - countsByLocation[a]);
+    const data = labels.map(l => countsByLocation[l]);
+    const colors = labels.map((_, i) => LOCATIONS_CHART_COLORS[i % LOCATIONS_CHART_COLORS.length]);
+
+    if (charts.locationsChart) charts.locationsChart.destroy();
+
+    if (labels.length === 0) {
+        charts.locationsChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Sin datos'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['rgba(255, 255, 255, 0.3)'],
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: 'white', padding: 15 } }
+                }
+            }
+        });
+        return;
+    }
+
+    charts.locationsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors,
                 borderColor: 'rgba(255, 255, 255, 0.9)',
                 borderWidth: 2
             }]
