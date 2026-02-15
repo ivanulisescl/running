@@ -1,7 +1,9 @@
 {
-  "version": "1.2.32",
+  "version": "1.2.33",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Estadísticas: Actividades después de Desnivel acumulado; título Actividades sin (mes en curso)",
+    "Historial vista compacta: sin Editar/Eliminar; fila fecha, fila localidad y km",
     "Equipo: porcentaje en barra de progreso, texto Límite: xx km",
     "Equipo (móvil): Kilómetros y Nº actividades en una línea cada uno",
     "Equipo: barra de progreso más visible en PC y móvil (CSS)",

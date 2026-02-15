@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.2.32">
+    <link rel="stylesheet" href="styles.css?v=1.2.33">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -199,6 +199,19 @@
                     </div>
 
                     <div class="chart-wrapper">
+                        <h3>Actividades</h3>
+                        <div class="chart-month-control">
+                            <label for="activitiesMonthPicker">Mes</label>
+                            <div class="chart-month-controls">
+                                <button type="button" id="activitiesMonthPrev" class="btn btn-small btn-month-nav" aria-label="Mes anterior">◀</button>
+                                <input type="month" id="activitiesMonthPicker" class="chart-month-input" aria-label="Seleccionar mes de Actividades">
+                                <button type="button" id="activitiesMonthNext" class="btn btn-small btn-month-nav" aria-label="Mes siguiente">▶</button>
+                            </div>
+                        </div>
+                        <canvas id="activitiesChart"></canvas>
+                    </div>
+
+                    <div class="chart-wrapper">
                         <h3>Tipo de entrenamiento</h3>
                         <div class="chart-year-control">
                             <label for="typeYearSelect">Año</label>
@@ -220,18 +233,6 @@
                         <canvas id="paceChart"></canvas>
                     </div>
 
-                    <div class="chart-wrapper">
-                        <h3>Actividades (mes en curso)</h3>
-                        <div class="chart-month-control">
-                            <label for="activitiesMonthPicker">Mes</label>
-                            <div class="chart-month-controls">
-                                <button type="button" id="activitiesMonthPrev" class="btn btn-small btn-month-nav" aria-label="Mes anterior">◀</button>
-                                <input type="month" id="activitiesMonthPicker" class="chart-month-input" aria-label="Seleccionar mes de Actividades">
-                                <button type="button" id="activitiesMonthNext" class="btn btn-small btn-month-nav" aria-label="Mes siguiente">▶</button>
-                            </div>
-                        </div>
-                        <canvas id="activitiesChart"></canvas>
-                    </div>
                     
                 </div>
             </section>
@@ -407,6 +408,6 @@
 
     </div>
 
-    <script src="app.js?v=1.2.32"></script>
+    <script src="app.js?v=1.2.33"></script>
 </body>
 </html>

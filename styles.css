@@ -1736,9 +1736,8 @@ header h1 {
 
 .session-item-compact {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 4px;
     padding: 10px 15px;
 }
 
@@ -1746,24 +1745,32 @@ header h1 {
     transform: translateX(5px);
 }
 
-.session-compact-date {
+.session-compact-row {
+    display: block;
+}
+
+.session-compact-row-date {
     font-weight: 600;
     color: var(--primary-color);
     font-size: 0.95em;
-    min-width: 140px;
+}
+
+.session-compact-row-info {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .session-compact-location {
-    flex: 1;
-    min-width: 80px;
     color: var(--text-primary);
-    font-size: 0.95em;
+    font-size: 0.9em;
 }
 
 .session-compact-km {
     font-weight: 700;
     color: var(--text-primary);
-    font-size: 1em;
+    font-size: 0.95em;
 }
 
 .session-actions-inline {
@@ -1772,7 +1779,7 @@ header h1 {
     gap: 8px;
 }
 
-/* Vista compacta: botones solo icono */
+/* Vista detallada: botones Editar/Eliminar */
 .edit-btn-icon,
 .delete-btn-icon {
     min-width: 0;
