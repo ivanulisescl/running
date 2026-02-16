@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.2.34",
-  "exportedAt": "2026-02-15T16:49:44.982Z",
+  "exportedAt": "2026-02-16T07:01:54.266Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -2794,14 +2794,14 @@
       "distance": 10.01,
       "time": "00:50:40",
       "timeInMinutes": 50.666666666666664,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 151,
       "elevationLoss": 149,
       "id": 1770637973884.9224,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Casa",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2024-03-28",
@@ -3312,28 +3312,28 @@
       "distance": 2.12,
       "time": "00:09:35",
       "timeInMinutes": 9.583333333333334,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973885.0583,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Entrenamiento",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-11-29",
       "distance": 2,
       "time": "00:10:04",
       "timeInMinutes": 10.066666666666666,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973885.3198,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Entrenamiento",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-11-22",
@@ -3354,14 +3354,14 @@
       "distance": 6.01,
       "time": "00:28:57",
       "timeInMinutes": 28.95,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 9,
       "elevationLoss": 7,
       "id": 1770637973885.2844,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Grupo-Náutico",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-11-18",
@@ -3438,14 +3438,14 @@
       "distance": 11.01,
       "time": "00:54:32",
       "timeInMinutes": 54.53333333333333,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 32,
       "elevationLoss": 18,
       "id": 1770637973885.351,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Grupo-Poniente",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-10-30",
@@ -3480,14 +3480,14 @@
       "distance": 2.4,
       "time": "00:15:24",
       "timeInMinutes": 15.4,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 0,
       "elevationLoss": 0,
       "id": 1770637973885.062,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Entrenamiento",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-10-21",
@@ -3508,14 +3508,14 @@
       "distance": 6,
       "time": "00:28:29",
       "timeInMinutes": 28.483333333333334,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 13,
       "elevationLoss": 8,
       "id": 1770637973885.4983,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Grupo-Muro",
-      "localizacion": ""
+      "localizacion": "Gijón"
     },
     {
       "date": "2023-10-15",
@@ -3606,42 +3606,42 @@
       "distance": 8.51,
       "time": "00:51:00",
       "timeInMinutes": 51,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 162,
       "elevationLoss": 163,
       "id": 1770637973885.7554,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Barrigón-Arenal",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-27",
       "distance": 6.01,
       "time": "00:29:47",
       "timeInMinutes": 29.783333333333335,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 53,
       "elevationLoss": 64,
       "id": 1770637973885.4302,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Casa-Los",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-25",
       "distance": 6.01,
       "time": "00:29:54",
       "timeInMinutes": 29.9,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 84,
       "elevationLoss": 83,
       "id": 1770637973885.697,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Casa-Huerres",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-23",
@@ -3662,14 +3662,14 @@
       "distance": 5.01,
       "time": "00:23:34",
       "timeInMinutes": 23.566666666666666,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 30,
       "elevationLoss": 26,
       "id": 1770637973885.9307,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Casa",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-18",
@@ -3732,42 +3732,42 @@
       "distance": 5,
       "time": "00:24:39",
       "timeInMinutes": 24.65,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 57,
       "elevationLoss": 55,
       "id": 1770637973885.8132,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Barri",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-05",
       "distance": 5,
       "time": "00:25:15",
       "timeInMinutes": 25.25,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 64,
       "elevationLoss": 54,
       "id": 1770637973885.4893,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Barrigón",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-03",
       "distance": 8.02,
       "time": "00:45:10",
       "timeInMinutes": 45.166666666666664,
-      "type": "rodaje",
+      "type": "entrenamiento",
       "notes": "",
       "elevationGain": 167,
       "elevationLoss": 178,
       "id": 1770637973885.482,
       "equipo": "Asics Gel Nimbus 25 Negras",
       "Localidad": "Barrigón",
-      "localizacion": ""
+      "localizacion": "Colunga"
     },
     {
       "date": "2023-09-02",
