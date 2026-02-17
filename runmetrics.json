@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.2.34",
-  "exportedAt": "2026-02-16T07:01:54.266Z",
+  "exportedAt": "2026-02-17T15:09:07.232Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -3978,6 +3978,20 @@
       "elevationLoss": 50,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-02-15T13:39:08.903Z"
+    },
+    {
+      "id": 1771340892143,
+      "date": "2026-02-17",
+      "distance": 9.3,
+      "time": "00:46:01",
+      "timeInMinutes": 46.016666666666666,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 75,
+      "elevationLoss": 75,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-02-17T15:08:12.143Z"
     }
   ],
   "carreras": [
@@ -4321,7 +4335,7 @@
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 67
+      "numActividades": 68
     }
   ]
 }
