@@ -1,7 +1,8 @@
 {
-  "version": "1.2.36",
+  "version": "1.2.37",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planificación: gráfico resumen mejorado (mayor tamaño, leyenda más clara con etiquetas explícitas)",
     "Planificación tabla: columna Sem. para mejor cabida en móvil",
     "Planificación: botón Ver tabla con km por semana/día y total planificación",
     "Estadísticas: gráfico Lugares (quesito) después de Tipo de entrenamiento",

@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.36'; // Versión actual de la app
+let currentAppVersion = '1.2.37'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3094,7 +3094,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
             labels,
             datasets: [
                 {
-                    label: 'Planificado',
+                    label: 'Km planificado',
                     data: plannedKm,
                     type: 'bar',
                     yAxisID: 'y',
@@ -3106,7 +3106,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                     order: 2
                 },
                 {
-                    label: 'Realizado',
+                    label: 'Km realizado',
                     data: realizedKm,
                     type: 'bar',
                     yAxisID: 'y',
@@ -3144,20 +3144,27 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                 mode: 'index',
                 intersect: false
             },
+            layout: {
+                padding: { top: 8, bottom: 8, left: 4, right: 4 }
+            },
             plugins: {
                 title: {
                     display: true,
                     text: `Entrenamiento ${raceName || 'Plan'}`,
                     color: 'rgba(255, 255, 255, 0.95)',
-                    font: { size: 16, weight: 'bold' }
+                    font: { size: 17, weight: 'bold' }
                 },
                 legend: {
                     position: 'top',
+                    align: 'center',
                     labels: {
-                        color: 'rgba(255, 255, 255, 0.95)',
-                        font: { size: 12 },
-                        padding: 14,
-                        usePointStyle: true
+                        color: 'rgba(255, 255, 255, 0.98)',
+                        font: { size: 14, weight: '600' },
+                        padding: 18,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 14,
+                        boxHeight: 14
                     }
                 },
                 tooltip: {
@@ -3181,9 +3188,9 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
             scales: {
                 x: {
                     ticks: {
-                        color: 'rgba(255, 255, 255, 0.85)',
+                        color: 'rgba(255, 255, 255, 0.9)',
                         maxRotation: 0,
-                        font: { size: 11 },
+                        font: { size: 12 },
                         autoSkip: true,
                         maxTicksLimit: 18
                     },
@@ -3195,13 +3202,14 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                     title: {
                         display: true,
                         text: 'km',
-                        color: 'rgba(255, 255, 255, 0.85)',
-                        font: { size: 12 }
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        font: { size: 13 }
                     },
                     beginAtZero: true,
                     suggestedMax: suggestedMaxKm,
                     ticks: {
-                        color: 'rgba(255, 255, 255, 0.85)',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        font: { size: 12 },
                         stepSize: suggestedMaxKm <= 25 ? 5 : 10
                     },
                     grid: { color: 'rgba(255, 255, 255, 0.12)' }
@@ -3212,13 +3220,14 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                     title: {
                         display: true,
                         text: '%',
-                        color: 'rgba(255, 255, 255, 0.85)',
-                        font: { size: 12 }
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        font: { size: 13 }
                     },
                     min: y1Min,
                     max: y1Max,
                     ticks: {
-                        color: 'rgba(255, 255, 255, 0.85)',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        font: { size: 12 },
                         stepSize: 5,
                         callback: (v) => (v != null ? `${v}%` : '')
                     },
