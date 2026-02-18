@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.38'; // Versión actual de la app
+let currentAppVersion = '1.2.39'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3044,14 +3044,7 @@ function renderPlanning() {
         <p class="section-intro"><strong>${escapeHtml(plan.raceName)}</strong> · ${escapeHtml(startLabel)} → ${escapeHtml(raceLabel)} · ${escapeHtml(String(plan.weeks))} semanas · ${escapeHtml(String(plan.daysPerWeek))} días/sem.${plan.raceDistanceKm ? ` · ${escapeHtml(String(plan.raceDistanceKm))} km` : ''}</p>
         ${summaryHtml}
         <div class="planning-chart-wrap">
-            <div class="planning-chart-area">
-                <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
-            </div>
-            <div class="planning-chart-legend" aria-label="Leyenda del gráfico">
-                <span class="planning-legend-item"><span class="planning-legend-box planning-legend-planned"></span>Km planificado</span>
-                <span class="planning-legend-item"><span class="planning-legend-box planning-legend-realized"></span>Km realizado</span>
-                <span class="planning-legend-item"><span class="planning-legend-box planning-legend-diff"></span>Diferencia %</span>
-            </div>
+            <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
         </div>
         <div class="planning-ver-tabla-row">
             <button type="button" class="btn btn-secondary btn-small planning-ver-tabla-btn" aria-expanded="false" aria-controls="planningKmTableWrap">Ver tabla</button>
@@ -4043,16 +4036,16 @@ function loadSessions() {
     }
 }
 
-// Aplicar actualización: forzar recarga con la nueva versión (evita caché HTTP)
+// Aplicar actualización: desregistrar SW, vaciar cachés y recargar (forzar versión nueva en móvil)
 function applyUpdate() {
     sessionStorage.setItem('updateReloadTime', String(Date.now()));
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-            registrations.forEach(registration => registration.unregister());
-        });
-        caches.keys().then(names => {
-            names.forEach(name => caches.delete(name));
-        }).finally(goToFreshPage);
+        Promise.all([
+            navigator.serviceWorker.getRegistrations().then(regs =>
+                Promise.all(regs.map(r => r.unregister()))
+            ),
+            caches.keys().then(names => Promise.all(names.map(name => caches.delete(name))))
+        ]).then(goToFreshPage).catch(goToFreshPage);
     } else {
         goToFreshPage();
     }
@@ -4146,7 +4139,7 @@ function setupPWA() {
     // Registrar service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
+            navigator.serviceWorker.register('./service-worker.js?v=' + currentAppVersion)
                 .then(registration => {
                     console.log('Service Worker registrado:', registration);
                     registration.update();

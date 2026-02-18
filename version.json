@@ -1,7 +1,8 @@
 {
-  "version": "1.2.38",
+  "version": "1.2.39",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Actualización en móvil: SW con cache no-store para shell, desregistro y vaciado de cachés al pulsar Actualizar",
     "Planificación: leyenda del gráfico fija en la parte inferior con recuadros y texto (Km planificado, Km realizado, Diferencia %)",
     "Planificación: gráfico resumen mejorado (mayor tamaño, leyenda más clara con etiquetas explícitas)",
     "Planificación tabla: columna Sem. para mejor cabida en móvil",

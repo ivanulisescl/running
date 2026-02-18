@@ -1,6 +1,7 @@
-const CACHE_NAME = 'running-v1.2.36';
+// Cambiar CACHE_NAME y ?v= en urlsToCache al publicar nueva versión (mismo que app.js)
+const CACHE_NAME = 'running-v1.2.39';
 const urlsToCache = [
-  './styles.css?v=1.2.36',
+  './styles.css?v=1.2.39',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -43,8 +44,10 @@ self.addEventListener('fetch', (event) => {
     url.endsWith('/') || url.endsWith('index.html') || url.includes('app.js') || url.includes('version.json');
 
   if (isShell) {
-    // Documento, app.js y version.json: siempre red, no cachear (evita que vuelva a versión antigua)
-    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+    // Documento, app.js y version.json: siempre red, no cachear (cache: 'no-store' para móvil)
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(event.request))
+    );
     return;
   }
 
