@@ -1,7 +1,8 @@
 {
-  "version": "1.2.34",
+  "version": "1.2.35",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planificación: botón Ver tabla con km por semana/día y total planificación",
     "Estadísticas: gráfico Lugares (quesito) después de Tipo de entrenamiento",
     "Historial vista compacta: una línea fecha y km, sin localidad",
     "Estadísticas: Actividades después de Desnivel acumulado; título Actividades sin (mes en curso)",

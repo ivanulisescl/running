@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.34'; // Versión actual de la app
+let currentAppVersion = '1.2.35'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3004,6 +3004,38 @@ function renderPlanning() {
         return Number((((r - p) / p) * 100).toFixed(1));
     });
 
+    const daysPerWeek = plan.daysPerWeek || 1;
+    const tableHeaderCells = Array.from({ length: daysPerWeek }, (_, i) => `<th scope="col">Día ${i + 1}</th>`).join('');
+    const tableRows = Array.from({ length: plan.weeks }, (_, idx) => {
+        const row = schedule[idx] || [];
+        const cells = Array.from({ length: daysPerWeek }, (_, d) => {
+            const km = (row[d] && Number(row[d].plannedKm)) || 0;
+            return `<td>${km.toFixed(1)}</td>`;
+        }).join('');
+        const total = (schedule[idx] || []).reduce((s, c) => s + (Number(c?.plannedKm) || 0), 0);
+        return `<tr><td>${idx + 1}</td>${cells}<td class="planning-table-total">${total.toFixed(1)}</td></tr>`;
+    }).join('');
+    const grandTotal = schedule.reduce((sum, row) => sum + (row || []).reduce((s, c) => s + (Number(c?.plannedKm) || 0), 0), 0);
+    const tableHtml = `
+        <div id="planningKmTableWrap" class="planning-km-table-wrap" style="display: none;">
+            <table class="planning-km-table" aria-label="Kilómetros planificados por semana y día">
+                <thead>
+                    <tr>
+                        <th scope="col">Semana</th>
+                        ${tableHeaderCells}
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>${tableRows}</tbody>
+                <tfoot>
+                    <tr class="planning-table-grand-total">
+                        <td colspan="${daysPerWeek + 1}">Total planificación</td>
+                        <td class="planning-table-grand-total-value">${grandTotal.toFixed(1)}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>`;
+
     if (charts.planningSummaryChart) {
         charts.planningSummaryChart.destroy();
         charts.planningSummaryChart = null;
@@ -3014,9 +3046,24 @@ function renderPlanning() {
         <div class="planning-chart-wrap">
             <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
         </div>
+        <div class="planning-ver-tabla-row">
+            <button type="button" class="btn btn-secondary btn-small planning-ver-tabla-btn" aria-expanded="false" aria-controls="planningKmTableWrap">Ver tabla</button>
+        </div>
+        ${tableHtml}
         ${weeksHtml}
         ${raceRow}
     `;
+
+    const verTablaBtn = container.querySelector('.planning-ver-tabla-btn');
+    const tableWrap = document.getElementById('planningKmTableWrap');
+    if (verTablaBtn && tableWrap) {
+        verTablaBtn.addEventListener('click', () => {
+            const isHidden = tableWrap.style.display === 'none';
+            tableWrap.style.display = isHidden ? 'block' : 'none';
+            verTablaBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            verTablaBtn.textContent = isHidden ? 'Ocultar tabla' : 'Ver tabla';
+        });
+    }
 
     updatePlanningSummaryChart(plan.raceName, chartLabels, chartPlanned, chartRealized, chartDiffPct);
 }

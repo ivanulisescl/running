@@ -692,6 +692,71 @@ header h1 {
     width: 100% !important;
 }
 
+.planning-ver-tabla-row {
+    margin-bottom: 16px;
+}
+
+.planning-km-table-wrap {
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.planning-km-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+    background: var(--card-background);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.planning-km-table th,
+.planning-km-table td {
+    padding: 10px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.planning-km-table th:first-child,
+.planning-km-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.planning-km-table thead th {
+    background: var(--background);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.planning-km-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.planning-km-table .planning-table-total {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.planning-km-table .planning-table-grand-total td {
+    border-top: 2px solid var(--primary-color);
+    padding-top: 12px;
+    padding-bottom: 12px;
+    font-weight: 700;
+    background: rgba(74, 144, 226, 0.12);
+}
+
+.planning-km-table .planning-table-grand-total td:first-child {
+    color: var(--text-primary);
+}
+
+.planning-km-table .planning-table-grand-total-value {
+    font-size: 1.15em;
+    color: var(--primary-color);
+}
+
 .planning-kpi {
     background: var(--card-background);
     border: 1px solid var(--border-color);
