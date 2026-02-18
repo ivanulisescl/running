@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.35'; // Versión actual de la app
+let currentAppVersion = '1.2.36'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3021,7 +3021,7 @@ function renderPlanning() {
             <table class="planning-km-table" aria-label="Kilómetros planificados por semana y día">
                 <thead>
                     <tr>
-                        <th scope="col">Semana</th>
+                        <th scope="col">Sem.</th>
                         ${tableHeaderCells}
                         <th scope="col">Total</th>
                     </tr>

@@ -1,7 +1,8 @@
 {
-  "version": "1.2.35",
+  "version": "1.2.36",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planificación tabla: columna Sem. para mejor cabida en móvil",
     "Planificación: botón Ver tabla con km por semana/día y total planificación",
     "Estadísticas: gráfico Lugares (quesito) después de Tipo de entrenamiento",
     "Historial vista compacta: una línea fecha y km, sin localidad",
