@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.37'; // Versión actual de la app
+let currentAppVersion = '1.2.38'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3044,7 +3044,14 @@ function renderPlanning() {
         <p class="section-intro"><strong>${escapeHtml(plan.raceName)}</strong> · ${escapeHtml(startLabel)} → ${escapeHtml(raceLabel)} · ${escapeHtml(String(plan.weeks))} semanas · ${escapeHtml(String(plan.daysPerWeek))} días/sem.${plan.raceDistanceKm ? ` · ${escapeHtml(String(plan.raceDistanceKm))} km` : ''}</p>
         ${summaryHtml}
         <div class="planning-chart-wrap">
-            <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
+            <div class="planning-chart-area">
+                <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
+            </div>
+            <div class="planning-chart-legend" aria-label="Leyenda del gráfico">
+                <span class="planning-legend-item"><span class="planning-legend-box planning-legend-planned"></span>Km planificado</span>
+                <span class="planning-legend-item"><span class="planning-legend-box planning-legend-realized"></span>Km realizado</span>
+                <span class="planning-legend-item"><span class="planning-legend-box planning-legend-diff"></span>Diferencia %</span>
+            </div>
         </div>
         <div class="planning-ver-tabla-row">
             <button type="button" class="btn btn-secondary btn-small planning-ver-tabla-btn" aria-expanded="false" aria-controls="planningKmTableWrap">Ver tabla</button>
@@ -3065,7 +3072,12 @@ function renderPlanning() {
         });
     }
 
-    updatePlanningSummaryChart(plan.raceName, chartLabels, chartPlanned, chartRealized, chartDiffPct);
+    // Crear el gráfico después del layout para que el contenedor tenga su ancho real
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            updatePlanningSummaryChart(plan.raceName, chartLabels, chartPlanned, chartRealized, chartDiffPct);
+        });
+    });
 }
 
 // Gráfica de resumen semanal en Planificación: planificado, realizado y diferencia %
@@ -3073,6 +3085,9 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
     const canvas = document.getElementById('planningSummaryChart');
     if (!canvas) return;
     if (charts.planningSummaryChart) {
+        if (charts.planningSummaryChart._resizeObserver) {
+            charts.planningSummaryChart._resizeObserver.disconnect();
+        }
         charts.planningSummaryChart.destroy();
         charts.planningSummaryChart = null;
     }
@@ -3145,7 +3160,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                 intersect: false
             },
             layout: {
-                padding: { top: 8, bottom: 8, left: 4, right: 4 }
+                padding: { top: 8, bottom: 8, left: 0, right: 0 }
             },
             plugins: {
                 title: {
@@ -3154,19 +3169,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                     color: 'rgba(255, 255, 255, 0.95)',
                     font: { size: 17, weight: 'bold' }
                 },
-                legend: {
-                    position: 'top',
-                    align: 'center',
-                    labels: {
-                        color: 'rgba(255, 255, 255, 0.98)',
-                        font: { size: 14, weight: '600' },
-                        padding: 18,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxWidth: 14,
-                        boxHeight: 14
-                    }
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(30, 41, 59, 0.95)',
                     titleColor: 'rgba(255, 255, 255, 0.95)',
@@ -3199,17 +3202,13 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                 y: {
                     type: 'linear',
                     position: 'left',
-                    title: {
-                        display: true,
-                        text: 'km',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        font: { size: 13 }
-                    },
+                    title: { display: false },
                     beginAtZero: true,
                     suggestedMax: suggestedMaxKm,
                     ticks: {
                         color: 'rgba(255, 255, 255, 0.9)',
-                        font: { size: 12 },
+                        font: { size: 11 },
+                        maxTicksLimit: 8,
                         stepSize: suggestedMaxKm <= 25 ? 5 : 10
                     },
                     grid: { color: 'rgba(255, 255, 255, 0.12)' }
@@ -3217,17 +3216,13 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                 y1: {
                     type: 'linear',
                     position: 'right',
-                    title: {
-                        display: true,
-                        text: '%',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        font: { size: 13 }
-                    },
+                    title: { display: false },
                     min: y1Min,
                     max: y1Max,
                     ticks: {
                         color: 'rgba(255, 255, 255, 0.9)',
-                        font: { size: 12 },
+                        font: { size: 11 },
+                        maxTicksLimit: 8,
                         stepSize: 5,
                         callback: (v) => (v != null ? `${v}%` : '')
                     },
@@ -3235,6 +3230,19 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
                 }
             }
         }
+    });
+
+    // Redimensionar cuando el contenedor cambie de tamaño (p. ej. al mostrar la sección)
+    const wrap = canvas.closest('.planning-chart-wrap');
+    if (wrap && typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => {
+            if (charts.planningSummaryChart) charts.planningSummaryChart.resize();
+        });
+        ro.observe(wrap);
+        charts.planningSummaryChart._resizeObserver = ro;
+    }
+    requestAnimationFrame(() => {
+        if (charts.planningSummaryChart) charts.planningSummaryChart.resize();
     });
 }
 
