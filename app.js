@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.39'; // Versión actual de la app
+let currentAppVersion = '1.2.40'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3017,7 +3017,8 @@ function renderPlanning() {
     }).join('');
     const grandTotal = schedule.reduce((sum, row) => sum + (row || []).reduce((s, c) => s + (Number(c?.plannedKm) || 0), 0), 0);
     const tableHtml = `
-        <div id="planningKmTableWrap" class="planning-km-table-wrap" style="display: none;">
+        <div id="planningBlockTabla" class="planning-block planning-block-tabla" style="display: none;">
+            <div class="planning-km-table-wrap">
             <table class="planning-km-table" aria-label="Kilómetros planificados por semana y día">
                 <thead>
                     <tr>
@@ -3034,6 +3035,7 @@ function renderPlanning() {
                     </tr>
                 </tfoot>
             </table>
+            </div>
         </div>`;
 
     if (charts.planningSummaryChart) {
@@ -3041,29 +3043,43 @@ function renderPlanning() {
         charts.planningSummaryChart = null;
     }
     container.innerHTML = `
-        <p class="section-intro"><strong>${escapeHtml(plan.raceName)}</strong> · ${escapeHtml(startLabel)} → ${escapeHtml(raceLabel)} · ${escapeHtml(String(plan.weeks))} semanas · ${escapeHtml(String(plan.daysPerWeek))} días/sem.${plan.raceDistanceKm ? ` · ${escapeHtml(String(plan.raceDistanceKm))} km` : ''}</p>
-        ${summaryHtml}
-        <div class="planning-chart-wrap">
-            <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
+        <div class="planning-selected-bar">
+            <div class="planning-selected-title">${escapeHtml(plan.raceName)}</div>
+            <div class="planning-selected-meta">${escapeHtml(startLabel)} → ${escapeHtml(raceLabel)} · ${escapeHtml(String(plan.weeks))} semanas · ${escapeHtml(String(plan.daysPerWeek))} días/sem.${plan.raceDistanceKm ? ` · ${escapeHtml(String(plan.raceDistanceKm))} km` : ''}</div>
+            <div class="planning-view-toggles">
+                <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="resumen" aria-pressed="false">Resumen</button>
+                <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="grafica" aria-pressed="false">Gráfica</button>
+                <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="tabla" aria-pressed="false">Tabla</button>
+                <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="planning" aria-pressed="false">Planning</button>
+            </div>
         </div>
-        <div class="planning-ver-tabla-row">
-            <button type="button" class="btn btn-secondary btn-small planning-ver-tabla-btn" aria-expanded="false" aria-controls="planningKmTableWrap">Ver tabla</button>
+        <div id="planningBlockResumen" class="planning-block planning-block-resumen" style="display: none;">
+            ${summaryHtml}
+        </div>
+        <div id="planningBlockGrafica" class="planning-block planning-block-grafica" style="display: none;">
+            <div class="planning-chart-wrap">
+                <canvas id="planningSummaryChart" aria-label="Resumen por semana: planificado, realizado y diferencia porcentual"></canvas>
+            </div>
         </div>
         ${tableHtml}
-        ${weeksHtml}
-        ${raceRow}
+        <div id="planningBlockPlanning" class="planning-block planning-block-planning" style="display: none;">
+            ${weeksHtml}
+            ${raceRow}
+        </div>
     `;
 
-    const verTablaBtn = container.querySelector('.planning-ver-tabla-btn');
-    const tableWrap = document.getElementById('planningKmTableWrap');
-    if (verTablaBtn && tableWrap) {
-        verTablaBtn.addEventListener('click', () => {
-            const isHidden = tableWrap.style.display === 'none';
-            tableWrap.style.display = isHidden ? 'block' : 'none';
-            verTablaBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-            verTablaBtn.textContent = isHidden ? 'Ocultar tabla' : 'Ver tabla';
+    const blockIdToEl = { resumen: 'Resumen', grafica: 'Grafica', tabla: 'Tabla', planning: 'Planning' };
+    container.querySelectorAll('.planning-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const blockId = btn.getAttribute('data-block');
+            const block = document.getElementById('planningBlock' + (blockIdToEl[blockId] || blockId));
+            if (!block) return;
+            const hidden = block.style.display === 'none';
+            block.style.display = hidden ? 'block' : 'none';
+            btn.classList.toggle('is-active', hidden);
+            btn.setAttribute('aria-pressed', hidden ? 'true' : 'false');
         });
-    }
+    });
 
     // Crear el gráfico después del layout para que el contenedor tenga su ancho real
     requestAnimationFrame(() => {
