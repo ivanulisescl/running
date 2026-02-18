@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.34",
-  "exportedAt": "2026-02-17T15:09:07.232Z",
+  "version": "1.2.40",
+  "exportedAt": "2026-02-18T15:46:20.420Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -22,7 +22,7 @@
       "distance": 7.01,
       "time": "00:38:12",
       "timeInMinutes": 38.2,
-      "type": "entrenamiento",
+      "type": "series",
       "notes": "",
       "elevationGain": 43,
       "elevationLoss": 28,
@@ -106,7 +106,7 @@
       "distance": 7.01,
       "time": "00:36:54",
       "timeInMinutes": 36.9,
-      "type": "entrenamiento",
+      "type": "series",
       "notes": "",
       "elevationGain": 11,
       "elevationLoss": 15,
