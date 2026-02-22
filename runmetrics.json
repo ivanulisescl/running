@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.2.40",
-  "exportedAt": "2026-02-18T15:57:15.612Z",
+  "exportedAt": "2026-02-22T18:47:03.853Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -3992,6 +3992,20 @@
       "elevationLoss": 75,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-02-17T15:08:12.143Z"
+    },
+    {
+      "id": 1771674192389,
+      "date": "2026-02-21",
+      "distance": 9.25,
+      "time": "00:49:43",
+      "timeInMinutes": 49.71666666666667,
+      "type": "entrenamiento",
+      "localizacion": "Colunga",
+      "notes": "",
+      "elevationGain": 130,
+      "elevationLoss": 130,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-02-21T11:43:12.389Z"
     }
   ],
   "carreras": [
@@ -4335,7 +4349,7 @@
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 68
+      "numActividades": 69
     }
   ]
 }
