@@ -142,29 +142,10 @@ header h1 {
 .btn-header-main {
     padding: 16px 32px;
     font-size: 1.1em;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    background: var(--accent-green);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    box-shadow: 0 2px 12px rgba(5, 150, 105, 0.35);
-    transition: box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
-}
-
-.btn-header-main:hover {
-    background: var(--accent-green-dark);
-    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4);
-    transform: translateY(-2px);
-}
-
-.btn-header.active {
-    box-shadow: inset 0 0 0 2px white, 0 2px 8px rgba(74, 144, 226, 0.5);
 }
 
 .btn-header-main.active {
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9), 0 2px 12px rgba(5, 150, 105, 0.35);
+    box-shadow: inset 0 0 0 2px white, 0 2px 8px rgba(74, 144, 226, 0.5);
 }
 
 .btn-options {
