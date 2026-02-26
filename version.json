@@ -1,7 +1,8 @@
 {
-  "version": "1.2.41",
+  "version": "1.2.42",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planificación: scroll automático al pulsar Resumen/Gráfica/Tabla/Planning",
     "Botón Nueva sesión: mismo formato que el resto, tamaño mayor, texto — Nueva sesión —",
     "Planificación: selección destacada, botones Resumen/Gráfica/Tabla/Planning (bloques ocultos por defecto)",
     "Actualización en móvil: SW con cache no-store para shell, desregistro y vaciado de cachés al pulsar Actualizar",
