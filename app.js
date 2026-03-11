@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.51'; // Versión actual de la app
+let currentAppVersion = '1.2.52'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -397,28 +397,60 @@ function renderRecords() {
 // Estados posibles de un equipo
 const EQUIPO_ESTADOS = ['Activo', 'Retirado', 'Activo por defecto'];
 
+const EQUIPMENT_COLOR_TOKENS = new Set([
+    'negro', 'negra', 'negros', 'negras',
+    'azul', 'azules',
+    'gris', 'grises',
+    'blanco', 'blanca', 'blancos', 'blancas',
+    'rojo', 'roja', 'rojos', 'rojas',
+    'verde', 'verdes',
+    'amarillo', 'amarilla', 'amarillos', 'amarillas'
+]);
+
+function splitLegacyEquipmentName(fullName) {
+    const raw = (fullName || '').trim();
+    if (!raw) return { name: '', color: '' };
+    const parts = raw.split(/\s+/);
+    if (parts.length < 2) return { name: raw, color: '' };
+    const last = parts[parts.length - 1];
+    const looksLikeColor = !/\d/.test(last) && EQUIPMENT_COLOR_TOKENS.has(last.toLowerCase());
+    if (!looksLikeColor) return { name: raw, color: '' };
+    return { name: parts.slice(0, -1).join(' '), color: last };
+}
+
+function getDefaultColorForEquipmentName(name) {
+    const n = (name || '').trim().toLowerCase();
+    if (/nimbus\s*25/.test(n)) return 'Negras';
+    if (/nimbus\s*26/.test(n)) return 'Azules';
+    if (/bondi\s*9|hokka/.test(n)) return 'Grises';
+    return '';
+}
+
 function normalizeEquipmentFromExternal(item) {
     let name, color;
     if (typeof item === 'string') {
-        const parts = item.trim().split(/\s+/);
-        name = parts.length >= 2 ? parts.slice(0, -1).join(' ') : item;
-        color = parts.length >= 2 ? parts[parts.length - 1] : '';
+        const split = splitLegacyEquipmentName(item);
+        name = split.name;
+        color = split.color;
     } else {
         name = (item && item.name) || '';
         if (item && item.color != null) {
             color = String(item.color).trim();
         } else if (name) {
-            const parts = name.trim().split(/\s+/);
-            if (parts.length >= 2) {
-                name = parts.slice(0, -1).join(' ');
-                color = parts[parts.length - 1];
-            } else {
-                color = '';
-            }
+            const split = splitLegacyEquipmentName(name);
+            name = split.name;
+            color = split.color;
         } else {
             color = '';
         }
     }
+    // Reparación automática de datos corruptos: color numérico (p.ej. "25")
+    if (/^\d+$/.test(color || '')) {
+        name = (name ? name + ' ' : '') + color;
+        color = '';
+    }
+    // Si no hay color explícito, intentar inferirlo para modelos conocidos
+    if (!color) color = getDefaultColorForEquipmentName(name);
     const displayName = color ? name + ' ' + color : name;
     const estado = typeof item === 'object' && item && item.estado ? item.estado : 'Activo';
     const kilometros = typeof item === 'object' && item && typeof item.kilometros === 'number' ? item.kilometros : 0;
@@ -473,34 +505,7 @@ function loadEquipment() {
     if (saved) {
         const parsed = JSON.parse(saved);
         // Migrar formato antiguo (array de strings) a nuevo (array de objetos)
-        equipmentList = parsed.map(item => {
-            if (typeof item === 'string') {
-                const fullName = item;
-                const parts = fullName.trim().split(/\s+/);
-                const name = parts.length >= 2 ? parts.slice(0, -1).join(' ') : fullName;
-                const color = parts.length >= 2 ? parts[parts.length - 1] : '';
-                let estado = 'Activo';
-                if (fullName.startsWith('Asics')) estado = 'Retirado';
-                if (fullName.startsWith('Hokka')) estado = 'Activo por defecto';
-                const desde = getDefaultDesdeForEquipmentName(fullName) || new Date().toISOString().split('T')[0];
-                const limiteKm = getDefaultLimiteKmForEquipmentName(fullName);
-                return { name, color, kilometros: 0, estado, desde, limiteKm };
-            }
-            if (item.color === undefined && item.name) {
-                const parts = item.name.trim().split(/\s+/);
-                if (parts.length >= 2) {
-                    item.name = parts.slice(0, -1).join(' ');
-                    item.color = parts[parts.length - 1];
-                } else {
-                    item.color = '';
-                }
-            }
-            if (item.kilometros === undefined || typeof item.kilometros !== 'number') item.kilometros = 0;
-            if (!item.estado) item.estado = 'Activo';
-            if (!item.desde) item.desde = getDefaultDesdeForEquipmentName(getEquipmentName(item)) || new Date().toISOString().split('T')[0];
-            if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getDefaultLimiteKmForEquipmentName(getEquipmentName(item));
-            return item;
-        });
+        equipmentList = parsed.map(normalizeEquipmentFromExternal);
         saveEquipment();
     } else {
         // Equipos iniciales por defecto (desde: cuándo se empezó a usar)
@@ -590,7 +595,7 @@ function parseEquipmentInfo(equipment) {
     const parts = name.trim().split(/\s+/);
     const marca = parts[0] || '';
     const modelo = parts.slice(1).join(' ') || '';
-    return { marca, modelo, color: color || (parts.length >= 2 ? parts[parts.length - 1] : '') };
+    return { marca, modelo, color };
 }
 
 // Slug del nombre del equipo para el archivo de foto (equipment-photos/{slug}.jpg o .webp)
@@ -4264,4 +4269,5 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
