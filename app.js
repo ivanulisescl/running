@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.53'; // Versión actual de la app
+let currentAppVersion = '1.2.54'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -589,7 +589,9 @@ function getEquipmentName(eq) {
     if (typeof eq === 'string') return eq;
     const name = (eq && eq.name) || '';
     const color = (eq && eq.color && String(eq.color).trim()) || '';
-    return color ? name + ' ' + color : name;
+    const inferredColor = getDefaultColorForEquipmentName(name);
+    const finalColor = color || inferredColor;
+    return finalColor ? name + ' ' + finalColor : name;
 }
 
 
@@ -597,10 +599,11 @@ function getEquipmentName(eq) {
 function parseEquipmentInfo(equipment) {
     const name = typeof equipment === 'string' ? equipment : (equipment && equipment.name) || '';
     const color = typeof equipment === 'object' && equipment && equipment.color != null ? String(equipment.color).trim() : '';
+    const inferredColor = getDefaultColorForEquipmentName(name);
     const parts = name.trim().split(/\s+/);
     const marca = parts[0] || '';
     const modelo = parts.slice(1).join(' ') || '';
-    return { marca, modelo, color };
+    return { marca, modelo, color: color || inferredColor };
 }
 
 // Slug del nombre del equipo para el archivo de foto (equipment-photos/{slug}.jpg o .webp)
@@ -628,10 +631,20 @@ function getEquipmentPhotoUrl(slug, extension) {
 }
 
 // Calcular kilómetros y actividades de un equipo desde las sesiones
-function getEquipmentStatsFromSessions(equipmentName) {
+function getEquipmentStatsFromSessions(equipmentRef) {
     const norm = (v) => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
-    const target = norm(equipmentName);
-    const matchingSessions = sessions.filter(s => norm(s.equipo) === target);
+    const full = typeof equipmentRef === 'string' ? equipmentRef : getEquipmentName(equipmentRef);
+    const base = typeof equipmentRef === 'object' && equipmentRef ? String(equipmentRef.name || '').trim() : '';
+    const targetFull = norm(full);
+    const targetBase = norm(base);
+    const matchingSessions = sessions.filter(s => {
+        const eq = norm(s.equipo);
+        if (!eq) return false;
+        if (eq === targetFull) return true;
+        if (targetBase && eq === targetBase) return true;
+        if (targetBase && eq.startsWith(targetBase + ' ')) return true; // compat legacy: nombre base + color
+        return false;
+    });
     const kilometros = matchingSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
     const actividades = matchingSessions.length;
     return { kilometros, actividades };
@@ -670,7 +683,7 @@ function renderEquipmentList() {
     
     container.innerHTML = withIndex.map(({ equipment, index }) => {
         const name = getEquipmentName(equipment);
-        const stats = getEquipmentStatsFromSessions(name);
+        const stats = getEquipmentStatsFromSessions(equipment);
         const estado = typeof equipment === 'object' ? (equipment.estado || 'Activo') : 'Activo';
         const info = parseEquipmentInfo(equipment);
         const desdeIso = getEquipmentDesde(equipment);
@@ -4276,6 +4289,7 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
 
 
