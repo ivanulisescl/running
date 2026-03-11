@@ -1103,6 +1103,8 @@ header h1 {
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .equipment-card:hover {
@@ -1157,6 +1159,7 @@ header h1 {
     display: flex;
     gap: 16px;
     align-items: flex-start;
+    min-width: 0;
 }
 
 .equipment-photo-wrap {
@@ -2282,6 +2285,21 @@ header h1 {
     
     .equipment-list-grid {
         grid-template-columns: 1fr;
+    }
+
+    .equipment-card-main {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .equipment-photo-wrap {
+        width: 72px;
+        height: 72px;
+    }
+
+    .equipment-card-body {
+        width: 100%;
     }
     
     .add-equipment-form {
