@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.42'; // Versión actual de la app
+let currentAppVersion = '1.2.43'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1058,6 +1058,7 @@ function renderMarcas() {
             const puestoCategoriaStr = marca.puestoCategoria != null
                 ? (puestoCatPct != null ? `${marca.puestoCategoria} (${puestoCatPct}%)` : String(marca.puestoCategoria))
                 : '—';
+            const equipoDisplay = (marca.equipo != null && String(marca.equipo).trim()) ? String(marca.equipo).trim() : (session.equipo != null && String(session.equipo).trim()) ? String(session.equipo).trim() : '—';
             return `
                 <div class="marca-card" data-session-id="${session.id}">
                     <h3 class="marca-card-name">${escapeHtml(raceName)}</h3>
@@ -1085,6 +1086,7 @@ function renderMarcas() {
                         <div class="marca-card-dato"><span class="marca-dato-label">Categoría:</span><span>${escapeHtml(marca.categoria || '—')}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Part. categoría:</span><span>${marca.participantesCategoria ?? '—'}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Puesto categoría:</span><span>${puestoCategoriaStr}</span></div>
+                        <div class="marca-card-dato"><span class="marca-dato-label">Equipo:</span><span>${escapeHtml(equipoDisplay)}</span></div>
                     </div>
                     <button type="button" class="btn btn-small btn-edit-marca" data-session-id="${session.id}">Editar</button>
                 </div>
@@ -1110,6 +1112,9 @@ function renderMarcas() {
                         <span class="marca-card-stat-label">Ritmo:</span>
                         <span class="marca-card-stat-value"><strong>${paceText}</strong><span class="marca-card-stat-unit">/km</span></span>
                     </div>
+                </div>
+                <div class="marca-card-datos">
+                    <div class="marca-card-dato"><span class="marca-dato-label">Equipo:</span><span>${escapeHtml((session.equipo || '').trim() || '—')}</span></div>
                 </div>
                 <button type="button" class="btn btn-primary btn-small btn-add-marca" data-session-id="${session.id}">Añadir marca</button>
             </div>
