@@ -1,7 +1,8 @@
 {
-  "version": "1.2.52",
+  "version": "1.2.53",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipos: normalizacion extra para evitar duplicado name+color y recuperar foto/km/actividades",
     "Equipos: correccion migracion de color/nombre (sin perder fotos, km y actividades)",
     "Equipos: color como campo aparte en JSON (name sin color)",
     "Equipos: nombre centrado debajo de la imagen en móvil",
@@ -112,5 +113,6 @@
     "Datos: equipos por antigüedad (105 Asics negras, 112 azules, resto Hokka)"
   ]
 }
+
 
 

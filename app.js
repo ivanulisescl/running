@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.52'; // Versión actual de la app
+let currentAppVersion = '1.2.53'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -436,6 +436,11 @@ function normalizeEquipmentFromExternal(item) {
         name = (item && item.name) || '';
         if (item && item.color != null) {
             color = String(item.color).trim();
+            // Si el nombre ya incluye el color al final, quitarlo para evitar duplicados.
+            if (color) {
+                const re = new RegExp(`\\s+${color.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
+                name = name.replace(re, '').trim();
+            }
         } else if (name) {
             const split = splitLegacyEquipmentName(name);
             name = split.name;
@@ -624,7 +629,9 @@ function getEquipmentPhotoUrl(slug, extension) {
 
 // Calcular kilómetros y actividades de un equipo desde las sesiones
 function getEquipmentStatsFromSessions(equipmentName) {
-    const matchingSessions = sessions.filter(s => (s.equipo || '').trim() === equipmentName.trim());
+    const norm = (v) => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const target = norm(equipmentName);
+    const matchingSessions = sessions.filter(s => norm(s.equipo) === target);
     const kilometros = matchingSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
     const actividades = matchingSessions.length;
     return { kilometros, actividades };
@@ -4269,5 +4276,6 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
 

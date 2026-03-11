@@ -1,6 +1,6 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.52",
+  "version": "1.2.53",
   "exportedAt": "2026-03-09T19:40:23.685Z",
   "sessions": [
     {
@@ -4400,4 +4400,5 @@
     }
   ]
 }
+
 
