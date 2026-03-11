@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.49'; // Versión actual de la app
+let currentAppVersion = '1.2.50'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -652,16 +652,15 @@ function renderEquipmentList() {
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
-                <div class="equipment-card-header">
-                    <h3 class="equipment-marca">${escapeHtml(info.marca)}</h3>
-                    <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
-                </div>
                 <div class="equipment-card-main">
                     <div class="equipment-photo-wrap" title="Foto: ${escapeHtml(photoSlug || '')}.jpg o .webp">
                         ${photoHtml}
                     </div>
+                    <div class="equipment-card-header">
+                        <h3 class="equipment-marca">${escapeHtml(name)}</h3>
+                        <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
+                    </div>
                     <div class="equipment-card-body">
-                    <div class="equipment-modelo">${escapeHtml(info.modelo)}</div>
                     ${info.color ? `<div class="equipment-color">
                         <span class="color-label">Color:</span>
                         <span class="color-value">${escapeHtml(info.color)}</span>
