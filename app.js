@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.43'; // Versión actual de la app
+let currentAppVersion = '1.2.44'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -568,6 +568,19 @@ function parseEquipmentInfo(equipmentName) {
     return { marca, modelo, color };
 }
 
+// Slug del nombre del equipo para el archivo de foto (equipment-photos/{slug}.jpg o .webp)
+function getEquipmentPhotoSlug(equipmentName) {
+    if (!equipmentName || typeof equipmentName !== 'string') return '';
+    const acentos = { á: 'a', é: 'e', í: 'i', ó: 'o', ú: 'u', ñ: 'n', Á: 'a', É: 'e', Í: 'i', Ó: 'o', Ú: 'u', Ñ: 'n' };
+    let s = equipmentName.trim().toLowerCase();
+    s = s.replace(/[áéíóúñ]/gi, c => acentos[c] || c);
+    s = s.replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    return s;
+}
+
+// Ruta base de fotos de equipo (carpeta en el proyecto)
+const EQUIPMENT_PHOTOS_FOLDER = 'equipment-photos';
+
 // Calcular kilómetros y actividades de un equipo desde las sesiones
 function getEquipmentStatsFromSessions(equipmentName) {
     const matchingSessions = sessions.filter(s => (s.equipo || '').trim() === equipmentName.trim());
@@ -617,13 +630,23 @@ function renderEquipmentList() {
         const estadoOptions = EQUIPO_ESTADOS.map(e => 
             `<option value="${escapeHtml(e)}" ${e === estado ? 'selected' : ''}>${escapeHtml(e)}</option>`
         ).join('');
+        const photoSlug = getEquipmentPhotoSlug(name);
+        const photoJpg = photoSlug ? `${EQUIPMENT_PHOTOS_FOLDER}/${escapeHtml(photoSlug)}.jpg` : '';
+        const photoWebp = photoSlug ? `${EQUIPMENT_PHOTOS_FOLDER}/${escapeHtml(photoSlug)}.webp` : '';
+        const photoHtml = photoSlug
+            ? `<picture><source srcset="${photoWebp}" type="image/webp"><img class="equipment-photo" src="${photoJpg}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span></picture>`
+            : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
                 <div class="equipment-card-header">
                     <h3 class="equipment-marca">${escapeHtml(info.marca)}</h3>
                     <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
                 </div>
-                <div class="equipment-card-body">
+                <div class="equipment-card-main">
+                    <div class="equipment-photo-wrap" title="Foto en ${EQUIPMENT_PHOTOS_FOLDER}/${escapeHtml(photoSlug || '...')}.jpg o .webp">
+                        ${photoHtml}
+                    </div>
+                    <div class="equipment-card-body">
                     <div class="equipment-modelo">${escapeHtml(info.modelo)}</div>
                     ${info.color ? `<div class="equipment-color">
                         <span class="color-label">Color:</span>
@@ -657,6 +680,7 @@ function renderEquipmentList() {
                         <select class="equipment-estado-select" onchange="updateEquipment(${index}, 'estado', this.value)">
                             ${estadoOptions}
                         </select>
+                    </div>
                     </div>
                 </div>
             </div>

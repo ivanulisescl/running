@@ -1,7 +1,8 @@
 {
-  "version": "1.2.43",
+  "version": "1.2.44",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipos: foto en ficha desde carpeta equipment-photos (nombre = slug del equipo, JPG o WebP 96×96 px)",
     "Carreras: campo Equipo (con qué corriste), guardado en JSON y fallback a equipo de la sesión",
     "Planificación: scroll automático al pulsar Resumen/Gráfica/Tabla/Planning",
     "Botón Nueva sesión: mismo formato que el resto, tamaño mayor, texto — Nueva sesión —",
