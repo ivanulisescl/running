@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.44'; // Versión actual de la app
+let currentAppVersion = '1.2.45'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -578,8 +578,12 @@ function getEquipmentPhotoSlug(equipmentName) {
     return s;
 }
 
-// Ruta base de fotos de equipo (carpeta en el proyecto)
-const EQUIPMENT_PHOTOS_FOLDER = 'equipment-photos';
+// Ruta base de fotos de equipo (carpeta en el proyecto). Resuelve bien en GitHub Pages y local.
+function getEquipmentPhotoBaseUrl() {
+    const pathname = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : '';
+    const base = pathname.endsWith('/') ? pathname : pathname.replace(/\/[^/]*$/, '/');
+    return base + 'equipment-photos/';
+}
 
 // Calcular kilómetros y actividades de un equipo desde las sesiones
 function getEquipmentStatsFromSessions(equipmentName) {
@@ -631,8 +635,9 @@ function renderEquipmentList() {
             `<option value="${escapeHtml(e)}" ${e === estado ? 'selected' : ''}>${escapeHtml(e)}</option>`
         ).join('');
         const photoSlug = getEquipmentPhotoSlug(name);
-        const photoJpg = photoSlug ? `${EQUIPMENT_PHOTOS_FOLDER}/${escapeHtml(photoSlug)}.jpg` : '';
-        const photoWebp = photoSlug ? `${EQUIPMENT_PHOTOS_FOLDER}/${escapeHtml(photoSlug)}.webp` : '';
+        const photoBase = getEquipmentPhotoBaseUrl();
+        const photoJpg = photoSlug ? photoBase + escapeHtml(photoSlug) + '.jpg' : '';
+        const photoWebp = photoSlug ? photoBase + escapeHtml(photoSlug) + '.webp' : '';
         const photoHtml = photoSlug
             ? `<picture><source srcset="${photoWebp}" type="image/webp"><img class="equipment-photo" src="${photoJpg}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span></picture>`
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
@@ -643,7 +648,7 @@ function renderEquipmentList() {
                     <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
                 </div>
                 <div class="equipment-card-main">
-                    <div class="equipment-photo-wrap" title="Foto en ${EQUIPMENT_PHOTOS_FOLDER}/${escapeHtml(photoSlug || '...')}.jpg o .webp">
+                    <div class="equipment-photo-wrap" title="Foto: ${escapeHtml(photoSlug || '')}.jpg o .webp">
                         ${photoHtml}
                     </div>
                     <div class="equipment-card-body">
