@@ -578,11 +578,17 @@ function getEquipmentPhotoSlug(equipmentName) {
     return s;
 }
 
-// Ruta base de fotos de equipo (carpeta en el proyecto). Resuelve bien en GitHub Pages y local.
-function getEquipmentPhotoBaseUrl() {
-    const pathname = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : '';
-    const base = pathname.endsWith('/') ? pathname : pathname.replace(/\/[^/]*$/, '/');
-    return base + 'equipment-photos/';
+// URL absoluta de la foto de un equipo (resuelve bien en GitHub Pages, file:// y cualquier ruta).
+function getEquipmentPhotoUrl(slug, extension) {
+    if (!slug || typeof extension !== 'string') return '';
+    if (typeof window === 'undefined' || !window.location) return 'equipment-photos/' + slug + extension;
+    try {
+        const base = window.location.href.endsWith('/') ? window.location.href : (window.location.href.replace(/\/[^/]*$/, '/') || window.location.href + '/');
+        if (!base.endsWith('/')) base = base.replace(/\/[^/]*$/, '/') || base + '/';
+        return new URL('equipment-photos/' + slug + extension, base).href;
+    } catch (_) {
+        return 'equipment-photos/' + slug + extension;
+    }
 }
 
 // Calcular kilómetros y actividades de un equipo desde las sesiones
@@ -635,11 +641,13 @@ function renderEquipmentList() {
             `<option value="${escapeHtml(e)}" ${e === estado ? 'selected' : ''}>${escapeHtml(e)}</option>`
         ).join('');
         const photoSlug = getEquipmentPhotoSlug(name);
-        const photoBase = getEquipmentPhotoBaseUrl();
-        const photoJpg = photoSlug ? photoBase + escapeHtml(photoSlug) + '.jpg' : '';
-        const photoWebp = photoSlug ? photoBase + escapeHtml(photoSlug) + '.webp' : '';
+        const cacheBust = '?v=' + (typeof currentAppVersion !== 'undefined' ? currentAppVersion : '1');
+        const photoJpg = photoSlug ? getEquipmentPhotoUrl(photoSlug, '.jpg') + cacheBust : '';
+        const photoWebp = photoSlug ? getEquipmentPhotoUrl(photoSlug, '.webp') + cacheBust : '';
+        const photoJpgEsc = photoJpg ? escapeHtml(photoJpg) : '';
+        const photoWebpEsc = photoWebp ? escapeHtml(photoWebp) : '';
         const photoHtml = photoSlug
-            ? `<picture><source srcset="${photoWebp}" type="image/webp"><img class="equipment-photo" src="${photoJpg}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span></picture>`
+            ? `<picture><source srcset="${photoWebpEsc}" type="image/webp"><img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span></picture>`
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
