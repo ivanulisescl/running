@@ -1,7 +1,8 @@
 {
-  "version": "1.2.46",
+  "version": "1.2.47",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipos: corrección URL base de fotos (pathname) para GitHub Pages sin barra final",
     "Equipos: URL de fotos con new URL() y cache-bust; más fotos en equipment-photos",
     "Equipos: ruta de fotos corregida para GitHub Pages y subcarpetas",
     "Equipos: foto en ficha desde carpeta equipment-photos (nombre = slug del equipo, JPG o WebP 96×96 px)",

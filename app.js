@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.46'; // Versión actual de la app
+let currentAppVersion = '1.2.47'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -583,8 +583,9 @@ function getEquipmentPhotoUrl(slug, extension) {
     if (!slug || typeof extension !== 'string') return '';
     if (typeof window === 'undefined' || !window.location) return 'equipment-photos/' + slug + extension;
     try {
-        const base = window.location.href.endsWith('/') ? window.location.href : (window.location.href.replace(/\/[^/]*$/, '/') || window.location.href + '/');
-        if (!base.endsWith('/')) base = base.replace(/\/[^/]*$/, '/') || base + '/';
+        const p = window.location.pathname || '/';
+        const dir = p.endsWith('/') ? p : (p.lastIndexOf('/') > 0 ? p.substring(0, p.lastIndexOf('/') + 1) : p + '/');
+        const base = window.location.origin + dir;
         return new URL('equipment-photos/' + slug + extension, base).href;
     } catch (_) {
         return 'equipment-photos/' + slug + extension;
@@ -647,7 +648,7 @@ function renderEquipmentList() {
         const photoJpgEsc = photoJpg ? escapeHtml(photoJpg) : '';
         const photoWebpEsc = photoWebp ? escapeHtml(photoWebp) : '';
         const photoHtml = photoSlug
-            ? `<picture><source srcset="${photoWebpEsc}" type="image/webp"><img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span></picture>`
+            ? `<picture><source srcset="${photoWebpEsc}" type="image/webp"><img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="lazy" data-photo-url="${photoJpgEsc}" onerror="this.onerror=null;this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span></picture>`
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
