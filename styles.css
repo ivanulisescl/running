@@ -1095,6 +1095,7 @@ header h1 {
 }
 
 .equipment-card {
+    position: relative;
     background: var(--card-background);
     border: 2px solid var(--border-color);
     border-radius: 12px;
@@ -1155,6 +1156,9 @@ header h1 {
 }
 
 .equipment-delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
     background: transparent;
     border: none;
     color: var(--danger-color);
@@ -1171,6 +1175,7 @@ header h1 {
     font-weight: bold;
     line-height: 1;
     flex-shrink: 0;
+    z-index: 1;
 }
 
 .equipment-delete-btn:hover {
@@ -2322,14 +2327,6 @@ header h1 {
     .equipment-card-main .equipment-card-header .equipment-marca {
         flex: none;
         text-align: center;
-        padding: 0 36px;
-    }
-
-    .equipment-card-main .equipment-card-header .equipment-delete-btn {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
     }
 
     .equipment-photo-wrap {

@@ -1,6 +1,6 @@
 {
   "app": "RunMetrics",
-  "version": "1.2.50",
+  "version": "1.2.51",
   "exportedAt": "2026-03-09T19:40:23.685Z",
   "sessions": [
     {
@@ -4372,7 +4372,8 @@
   },
   "equipment": [
     {
-      "name": "Asics Gel Nimbus 25 Negras",
+      "name": "Asics Gel Nimbus 25",
+      "color": "Negras",
       "kilometros": 0,
       "estado": "Retirado",
       "desde": "2023-07-30",
@@ -4380,7 +4381,8 @@
       "numActividades": 105
     },
     {
-      "name": "Asics Gel Nimbus 26 Azules",
+      "name": "Asics Gel Nimbus 26",
+      "color": "Azules",
       "kilometros": 0,
       "estado": "Retirado",
       "desde": "2024-09-24",
@@ -4388,7 +4390,8 @@
       "numActividades": 112
     },
     {
-      "name": "Hokka Bondi 9 Grises",
+      "name": "Hokka Bondi 9",
+      "color": "Grises",
       "kilometros": 0,
       "estado": "Activo por defecto",
       "desde": "2025-08-02",

@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.50'; // Versión actual de la app
+let currentAppVersion = '1.2.51'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -324,18 +324,7 @@ async function loadRunmetricsFromRepoIfEmpty() {
             }
         }
         if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
-            equipmentList = data.equipment.map(item => {
-                const name = typeof item === 'string' ? item : (item.name || '');
-                const estado = typeof item === 'object' && item.estado ? item.estado : 'Activo';
-                const kilometros = typeof item === 'object' && typeof item.kilometros === 'number' ? item.kilometros : 0;
-                const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
-                    ? item.desde
-                    : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
-                const limiteKm = typeof item === 'object' && typeof item.limiteKm === 'number' && item.limiteKm > 0
-                    ? item.limiteKm
-                    : getDefaultLimiteKmForEquipmentName(name);
-                return { name, kilometros, estado, desde, limiteKm };
-            });
+            equipmentList = data.equipment.map(normalizeEquipmentFromExternal);
         }
 
         saveSessions();
@@ -408,6 +397,40 @@ function renderRecords() {
 // Estados posibles de un equipo
 const EQUIPO_ESTADOS = ['Activo', 'Retirado', 'Activo por defecto'];
 
+function normalizeEquipmentFromExternal(item) {
+    let name, color;
+    if (typeof item === 'string') {
+        const parts = item.trim().split(/\s+/);
+        name = parts.length >= 2 ? parts.slice(0, -1).join(' ') : item;
+        color = parts.length >= 2 ? parts[parts.length - 1] : '';
+    } else {
+        name = (item && item.name) || '';
+        if (item && item.color != null) {
+            color = String(item.color).trim();
+        } else if (name) {
+            const parts = name.trim().split(/\s+/);
+            if (parts.length >= 2) {
+                name = parts.slice(0, -1).join(' ');
+                color = parts[parts.length - 1];
+            } else {
+                color = '';
+            }
+        } else {
+            color = '';
+        }
+    }
+    const displayName = color ? name + ' ' + color : name;
+    const estado = typeof item === 'object' && item && item.estado ? item.estado : 'Activo';
+    const kilometros = typeof item === 'object' && item && typeof item.kilometros === 'number' ? item.kilometros : 0;
+    const desde = typeof item === 'object' && item && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
+        ? item.desde
+        : (getDefaultDesdeForEquipmentName(displayName) || new Date().toISOString().split('T')[0]);
+    const limiteKm = typeof item === 'object' && item && typeof item.limiteKm === 'number' && item.limiteKm > 0
+        ? item.limiteKm
+        : getDefaultLimiteKmForEquipmentName(displayName);
+    return { name, color, kilometros, estado, desde, limiteKm };
+}
+
 // Fechas "desde" por defecto para equipos conocidos (nombre contiene la clave)
 const EQUIPMENT_DESDE_DEFAULTS = [
     { match: (n) => /nimbus\s*25|25\s*negras/i.test(n), desde: '2023-07-30' },
@@ -452,27 +475,39 @@ function loadEquipment() {
         // Migrar formato antiguo (array de strings) a nuevo (array de objetos)
         equipmentList = parsed.map(item => {
             if (typeof item === 'string') {
-                const name = item;
+                const fullName = item;
+                const parts = fullName.trim().split(/\s+/);
+                const name = parts.length >= 2 ? parts.slice(0, -1).join(' ') : fullName;
+                const color = parts.length >= 2 ? parts[parts.length - 1] : '';
                 let estado = 'Activo';
-                if (name.startsWith('Asics')) estado = 'Retirado';
-                if (name.startsWith('Hokka')) estado = 'Activo por defecto';
-                const desde = getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0];
-                const limiteKm = getDefaultLimiteKmForEquipmentName(name);
-                return { name, kilometros: 0, estado, desde, limiteKm };
+                if (fullName.startsWith('Asics')) estado = 'Retirado';
+                if (fullName.startsWith('Hokka')) estado = 'Activo por defecto';
+                const desde = getDefaultDesdeForEquipmentName(fullName) || new Date().toISOString().split('T')[0];
+                const limiteKm = getDefaultLimiteKmForEquipmentName(fullName);
+                return { name, color, kilometros: 0, estado, desde, limiteKm };
+            }
+            if (item.color === undefined && item.name) {
+                const parts = item.name.trim().split(/\s+/);
+                if (parts.length >= 2) {
+                    item.name = parts.slice(0, -1).join(' ');
+                    item.color = parts[parts.length - 1];
+                } else {
+                    item.color = '';
+                }
             }
             if (item.kilometros === undefined || typeof item.kilometros !== 'number') item.kilometros = 0;
             if (!item.estado) item.estado = 'Activo';
-            if (!item.desde) item.desde = getDefaultDesdeForEquipmentName(item.name) || new Date().toISOString().split('T')[0];
-            if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getDefaultLimiteKmForEquipmentName(item.name);
+            if (!item.desde) item.desde = getDefaultDesdeForEquipmentName(getEquipmentName(item)) || new Date().toISOString().split('T')[0];
+            if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getDefaultLimiteKmForEquipmentName(getEquipmentName(item));
             return item;
         });
         saveEquipment();
     } else {
         // Equipos iniciales por defecto (desde: cuándo se empezó a usar)
         equipmentList = [
-            { name: 'Asics Gel Nimbus 25 Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
-            { name: 'Asics Gel Nimbus 26 Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
-            { name: 'Hokka Bondi 9 Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 }
+            { name: 'Asics Gel Nimbus 25', color: 'Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
+            { name: 'Asics Gel Nimbus 26', color: 'Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
+            { name: 'Hokka Bondi 9', color: 'Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 }
         ];
         saveEquipment();
     }
@@ -513,59 +548,49 @@ function setupEquipmentSection() {
 // Añadir nuevo equipo
 function addNewEquipment() {
     const input = document.getElementById('newEquipmentInput');
+    const colorInput = document.getElementById('newEquipmentColor');
     const equipmentName = input.value.trim();
+    const equipmentColor = (colorInput && colorInput.value) ? colorInput.value.trim() : '';
     
     if (!equipmentName) {
         alert('Por favor ingresa un nombre para el equipo');
         return;
     }
     
-    if (equipmentList.some(eq => getEquipmentName(eq) === equipmentName)) {
+    const displayName = equipmentColor ? equipmentName + ' ' + equipmentColor : equipmentName;
+    if (equipmentList.some(eq => getEquipmentName(eq) === displayName)) {
         alert('Este equipo ya existe');
         return;
     }
     
     const hoy = new Date().toISOString().split('T')[0];
-    const desde = getDefaultDesdeForEquipmentName(equipmentName) || hoy;
-    const limiteKm = getDefaultLimiteKmForEquipmentName(equipmentName);
-    equipmentList.push({ name: equipmentName, kilometros: 0, estado: 'Activo', desde, limiteKm });
+    const desde = getDefaultDesdeForEquipmentName(displayName) || hoy;
+    const limiteKm = getDefaultLimiteKmForEquipmentName(displayName);
+    equipmentList.push({ name: equipmentName, color: equipmentColor, kilometros: 0, estado: 'Activo', desde, limiteKm });
     saveEquipment();
     renderEquipmentList();
     updateEquipmentSelect();
     
     input.value = '';
+    if (colorInput) colorInput.value = '';
 }
 
 function getEquipmentName(eq) {
-    return typeof eq === 'string' ? eq : eq.name;
+    if (typeof eq === 'string') return eq;
+    const name = (eq && eq.name) || '';
+    const color = (eq && eq.color && String(eq.color).trim()) || '';
+    return color ? name + ' ' + color : name;
 }
 
 
-// Parsear información del equipo desde el nombre
-function parseEquipmentInfo(equipmentName) {
-    // Formato esperado: "Marca Modelo Color" o "Marca Modelo Número Color"
-    // Ejemplos: "Asics Gel Nimbus 25 Negras", "Hokka Bondi 9 Grises"
-    const parts = equipmentName.trim().split(/\s+/);
-    
-    if (parts.length < 3) {
-        // Si no tiene suficiente información, devolver todo como nombre
-        return {
-            marca: parts[0] || '',
-            modelo: parts.slice(1).join(' ') || '',
-            color: ''
-        };
-    }
-    
-    // La marca suele ser la primera palabra
-    const marca = parts[0];
-    
-    // El color suele ser la última palabra
-    const color = parts[parts.length - 1];
-    
-    // El modelo es todo lo que está en medio
-    const modelo = parts.slice(1, parts.length - 1).join(' ');
-    
-    return { marca, modelo, color };
+// Parsear información del equipo (name + color separados, o nombre antiguo para compatibilidad)
+function parseEquipmentInfo(equipment) {
+    const name = typeof equipment === 'string' ? equipment : (equipment && equipment.name) || '';
+    const color = typeof equipment === 'object' && equipment && equipment.color != null ? String(equipment.color).trim() : '';
+    const parts = name.trim().split(/\s+/);
+    const marca = parts[0] || '';
+    const modelo = parts.slice(1).join(' ') || '';
+    return { marca, modelo, color: color || (parts.length >= 2 ? parts[parts.length - 1] : '') };
 }
 
 // Slug del nombre del equipo para el archivo de foto (equipment-photos/{slug}.jpg o .webp)
@@ -605,9 +630,12 @@ function updateEquipment(index, field, value) {
     if (index < 0 || index >= equipmentList.length) return;
     const eq = equipmentList[index];
     if (typeof eq === 'string') {
+        const parts = eq.trim().split(/\s+/);
+        const name = parts.length >= 2 ? parts.slice(0, -1).join(' ') : eq;
+        const color = parts.length >= 2 ? parts[parts.length - 1] : '';
         const desde = getDefaultDesdeForEquipmentName(eq) || new Date().toISOString().split('T')[0];
         const limiteKm = getDefaultLimiteKmForEquipmentName(eq);
-        equipmentList[index] = { name: eq, kilometros: 0, estado: 'Activo', desde, limiteKm };
+        equipmentList[index] = { name, color, kilometros: 0, estado: 'Activo', desde, limiteKm };
     }
     const item = equipmentList[index];
     if (field === 'estado') item.estado = value;
@@ -632,7 +660,7 @@ function renderEquipmentList() {
         const name = getEquipmentName(equipment);
         const stats = getEquipmentStatsFromSessions(name);
         const estado = typeof equipment === 'object' ? (equipment.estado || 'Activo') : 'Activo';
-        const info = parseEquipmentInfo(name);
+        const info = parseEquipmentInfo(equipment);
         const desdeIso = getEquipmentDesde(equipment);
         const desdeLabel = desdeIso && desdeIso !== '1970-01-01' ? formatDate(desdeIso) : '—';
         const limiteKm = getEquipmentLimiteKm(equipment);
@@ -652,13 +680,13 @@ function renderEquipmentList() {
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
+                <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
                 <div class="equipment-card-main">
                     <div class="equipment-photo-wrap" title="Foto: ${escapeHtml(photoSlug || '')}.jpg o .webp">
                         ${photoHtml}
                     </div>
                     <div class="equipment-card-header">
                         <h3 class="equipment-marca">${escapeHtml(name)}</h3>
-                        <button class="equipment-delete-btn" onclick="deleteEquipment(${index})" title="Eliminar">×</button>
                     </div>
                     <div class="equipment-card-body">
                     ${info.color ? `<div class="equipment-color">
@@ -1459,18 +1487,7 @@ function setupSync() {
                 selectedPlanningPlanId = null;
             }
             if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
-                equipmentList = data.equipment.map(item => {
-                    const name = typeof item === 'string' ? item : (item.name || '');
-                    const estado = typeof item === 'object' && item.estado ? item.estado : 'Activo';
-                    const kilometros = typeof item === 'object' && typeof item.kilometros === 'number' ? item.kilometros : 0;
-                    const desde = typeof item === 'object' && item.desde && /^\d{4}-\d{2}-\d{2}$/.test(String(item.desde))
-                        ? item.desde
-                        : (getDefaultDesdeForEquipmentName(name) || new Date().toISOString().split('T')[0]);
-                    const limiteKm = typeof item === 'object' && typeof item.limiteKm === 'number' && item.limiteKm > 0
-                        ? item.limiteKm
-                        : getDefaultLimiteKmForEquipmentName(name);
-                    return { name, kilometros, estado, desde, limiteKm };
-                });
+                equipmentList = data.equipment.map(normalizeEquipmentFromExternal);
             }
 
             saveSessions();
