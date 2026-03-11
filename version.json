@@ -1,7 +1,8 @@
 {
-  "version": "1.2.47",
+  "version": "1.2.48",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipos: fallback robusto de imagen (.jpg -> .webp -> Sin foto)",
     "Equipos: corrección URL base de fotos (pathname) para GitHub Pages sin barra final",
     "Equipos: URL de fotos con new URL() y cache-bust; más fotos en equipment-photos",
     "Equipos: ruta de fotos corregida para GitHub Pages y subcarpetas",
@@ -107,3 +108,4 @@
     "Datos: equipos por antigüedad (105 Asics negras, 112 azules, resto Hokka)"
   ]
 }
+
