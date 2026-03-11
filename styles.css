@@ -1126,7 +1126,7 @@ header h1 {
 /* Desktop: header primero, luego photo + body en fila */
 .equipment-card-main {
     display: grid;
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 136px 1fr;
     grid-template-rows: auto 1fr;
     grid-template-areas: "header header" "photo body";
     gap: 16px;
@@ -1185,8 +1185,8 @@ header h1 {
 }
 
 .equipment-photo-wrap {
-    width: 96px;
-    height: 96px;
+    width: 136px;
+    height: 136px;
     flex-shrink: 0;
     border-radius: 10px;
     overflow: hidden;
@@ -2330,8 +2330,8 @@ header h1 {
     }
 
     .equipment-photo-wrap {
-        width: 72px;
-        height: 72px;
+        width: 104px;
+        height: 104px;
     }
 
     .equipment-card-body {

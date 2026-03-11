@@ -1,7 +1,8 @@
 {
-  "version": "1.2.54",
+  "version": "1.2.55",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Equipos: imagenes de ficha mas grandes (desktop y movil)",
     "Equipos: compatibilidad extra con nombres legacy en sesiones (foto, km y actividades)",
     "Equipos: normalizacion extra para evitar duplicado name+color y recuperar foto/km/actividades",
     "Equipos: correccion migracion de color/nombre (sin perder fotos, km y actividades)",
