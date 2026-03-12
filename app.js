@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.1'; // Versión actual de la app
+let currentAppVersion = '1.3.2'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -12,6 +12,7 @@ let records = []; // Récords (incluidos en runmetrics.json)
 const RUNMETRICS_FILENAME = 'runmetrics.json';
 let planningPlans = []; // Planificaciones por carrera
 let selectedPlanningPlanId = null; // ID del plan seleccionado
+let planningOpenBlocks = new Set(['planning']); // Bloques abiertos en la vista de planificación
 const PLANNING_PLANS_STORAGE_KEY = 'runningPlanningPlans';
 const PLANNING_SELECTED_PLAN_STORAGE_KEY = 'runningPlanningSelectedPlanId';
 let planningEditingPlanId = null; // ID del plan en edición (null = nuevo)
@@ -3290,19 +3291,25 @@ function renderPlanning() {
     `;
 
     const blockIdToEl = { resumen: 'Resumen', grafica: 'Grafica', tabla: 'Tabla', tablareal: 'TablaReal', planning: 'Planning' };
-    const selectedBar = container.querySelector('.planning-selected-bar');
+    const toggleIds = Object.keys(blockIdToEl);
+    const applyBlockState = (blockId, visible) => {
+        const block = document.getElementById('planningBlock' + (blockIdToEl[blockId] || blockId));
+        const btn = container.querySelector(`.planning-toggle-btn[data-block="${blockId}"]`);
+        if (block) block.style.display = visible ? 'block' : 'none';
+        if (btn) {
+            btn.classList.toggle('is-active', visible);
+            btn.setAttribute('aria-pressed', visible ? 'true' : 'false');
+        }
+    };
+    toggleIds.forEach(id => applyBlockState(id, planningOpenBlocks.has(id)));
     container.querySelectorAll('.planning-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const blockId = btn.getAttribute('data-block');
-            const block = document.getElementById('planningBlock' + (blockIdToEl[blockId] || blockId));
-            if (!block) return;
-            const hidden = block.style.display === 'none';
-            block.style.display = hidden ? 'block' : 'none';
-            btn.classList.toggle('is-active', hidden);
-            btn.setAttribute('aria-pressed', hidden ? 'true' : 'false');
-            if (selectedBar) {
-                selectedBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (!blockId || !blockIdToEl[blockId]) return;
+            const willOpen = !planningOpenBlocks.has(blockId);
+            if (willOpen) planningOpenBlocks.add(blockId);
+            else planningOpenBlocks.delete(blockId);
+            applyBlockState(blockId, willOpen);
         });
     });
 
@@ -4426,6 +4433,7 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
 
 

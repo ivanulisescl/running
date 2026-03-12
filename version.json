@@ -1,7 +1,8 @@
 {
-  "version": "1.3.1",
+  "version": "1.3.2",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planning: eliminados saltos de scroll al alternar bloques",
     "Planning: resumen con desnivel acumulado (+ en verde, - en rojo)",
     "Planning: Tabla real mejorada (tipo de sesion por dia y rango en dos lineas Del DD/MM / al DD/MM)",
     "Planning: nuevo boton Tabla real y formato de rango semanal tipo 'Del 9 al 15 de marzo'",
