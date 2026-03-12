@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.0'; // Versión actual de la app
+let currentAppVersion = '1.3.1'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2907,6 +2907,8 @@ function renderPlanning() {
     let doneCount = 0;         // nº de días con sesión asignada
     let plannedKmTotal = 0;    // suma de km planificados (solo días con km)
     let actualKmTotal = 0;     // suma de km hechos (sesiones asignadas)
+    let actualElevUpTotal = 0; // desnivel positivo acumulado (sesiones asignadas)
+    let actualElevDownTotal = 0; // desnivel negativo acumulado (sesiones asignadas)
 
     weeks.forEach(w => {
         for (let dayIdx = 0; dayIdx < plan.daysPerWeek; dayIdx++) {
@@ -2917,7 +2919,10 @@ function renderPlanning() {
             const sid = Number(assignments[key]);
             if (sid && sessionById.has(sid)) {
                 doneCount++;
-                actualKmTotal += Number(sessionById.get(sid).distance) || 0;
+                const assigned = sessionById.get(sid);
+                actualKmTotal += Number(assigned.distance) || 0;
+                actualElevUpTotal += Number(assigned.elevationGain) || 0;
+                actualElevDownTotal += Number(assigned.elevationLoss) || 0;
             }
         }
     });
@@ -2959,6 +2964,7 @@ function renderPlanning() {
             </div>
             <div class="planning-kpi">
                 <div class="planning-kpi-value">${escapeHtml(actualKmTotal.toFixed(1))} km</div>
+                <div class="planning-kpi-sub"><span class="planning-kpi-elev-up">+${escapeHtml(String(Math.round(actualElevUpTotal)))} m</span> / <span class="planning-kpi-elev-down">-${escapeHtml(String(Math.round(actualElevDownTotal)))} m</span></div>
                 <div class="planning-kpi-label">Hecho</div>
             </div>
         </div>
@@ -4420,6 +4426,7 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
 
 
