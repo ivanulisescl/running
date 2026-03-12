@@ -1,7 +1,8 @@
 {
-  "version": "1.2.55",
+  "version": "1.2.56",
   "buildDate": "2026-02-11",
   "changelog": [
+    "Planning: nuevo boton Tabla real y formato de rango semanal tipo 'Del 9 al 15 de marzo'",
     "Equipos: imagenes de ficha mas grandes (desktop y movil)",
     "Equipos: compatibilidad extra con nombres legacy en sesiones (foto, km y actividades)",
     "Equipos: normalizacion extra para evitar duplicado name+color y recuperar foto/km/actividades",

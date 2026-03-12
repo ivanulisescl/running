@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.55'; // Versión actual de la app
+let currentAppVersion = '1.2.56'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2790,11 +2790,38 @@ function getSessionTimeDisplay(s) {
     return '—';
 }
 
+function getSessionMinutesValue(s) {
+    if (!s) return null;
+    if (typeof s.timeInMinutes === 'number' && Number.isFinite(s.timeInMinutes)) return s.timeInMinutes;
+    if (typeof s.time === 'number' && Number.isFinite(s.time)) return s.time;
+    if (typeof s.time === 'string') {
+        const mins = timeToMinutes(s.time);
+        return Number.isFinite(mins) ? mins : null;
+    }
+    return null;
+}
+
+function getSessionPaceShort(s) {
+    if (!s) return '';
+    const dist = Number(s.distance) || 0;
+    const mins = getSessionMinutesValue(s);
+    if (!(dist > 0) || !(mins > 0) || !Number.isFinite(mins)) return '';
+    const totalSeconds = Math.round((mins / dist) * 60);
+    const mm = Math.floor(totalSeconds / 60);
+    const ss = totalSeconds % 60;
+    return `${mm}:${String(ss).padStart(2, '0')}`;
+}
+
 function getSessionElevationText(s) {
     const up = Number(s?.elevationGain) || 0;
     const down = Number(s?.elevationLoss) || 0;
     if (!up && !down) return '';
-    return ` · +${up.toFixed(0)}m / -${down.toFixed(0)}m`;
+    return `+${up.toFixed(0)}m / -${down.toFixed(0)}m`;
+}
+
+function getSessionPaceText(s) {
+    const pace = getSessionPaceShort(s);
+    return pace ? `${pace} min/km` : '';
 }
 
 function sessionOptionLabel(s) {
@@ -2972,16 +2999,22 @@ function renderPlanning() {
             const assignedId = Number(assignments[key]) || null;
             const assignedSession = assignedId ? sessionById.get(assignedId) : null;
             const isDone = !!assignedSession;
+            const dayDateObj = addDays(w.weekStart, di);
+            const isToday = toIsoDate(dayDateObj) === toIsoDate(today);
             if (t.plannedKm) weekPlannedKm += Number(t.plannedKm) || 0;
             if (assignedSession) weekActualKm += Number(assignedSession.distance) || 0;
 
             const klass = isDone ? 'planning-done' : (overdue ? 'planning-missed' : '');
-            const statusText = isDone ? 'Finalizado' : (overdue ? 'Pendiente' : 'Por hacer');
+            const statusText = isDone ? 'Hecho' : (isToday ? 'Hoy' : (overdue ? 'Pendiente' : 'Por hacer'));
+            const statusClass = isDone
+                ? 'planning-status--done'
+                : (isToday ? 'planning-status--today' : (overdue ? 'planning-status--missed' : 'planning-status--planned'));
 
-            const plannedText = `Plan: ${(Number(t.plannedKm) || 0).toFixed(1)} km`;
-            const actualText = assignedSession
-                ? `Hecho: ${(Number(assignedSession.distance) || 0).toFixed(2)} km · ${escapeHtml(getSessionTimeDisplay(assignedSession))}${escapeHtml(getSessionElevationText(assignedSession))}`
-                : '';
+            const plannedKm = Number(t.plannedKm) || 0;
+            const actualKm = assignedSession ? (Number(assignedSession.distance) || 0) : 0;
+            const timeText = assignedSession ? getSessionTimeDisplay(assignedSession) : '';
+            const paceText = assignedSession ? getSessionPaceText(assignedSession) : '';
+            const elevText = assignedSession ? getSessionElevationText(assignedSession) : '';
 
             const assignControls = assignedSession
                 ? `
@@ -3001,14 +3034,18 @@ function renderPlanning() {
 
             return `
                 <div class="planning-session ${klass}">
-                    <div class="planning-session-left">
-                        <div class="planning-session-date">Día ${escapeHtml(String(di + 1))}</div>
-                        <div class="planning-session-sub">
-                            <span class="planning-badge">${escapeHtml(t.type)}</span>
-                            <span>${escapeHtml(`· ${plannedText}`)}${actualText ? ` · ${actualText}` : ''}</span>
-                        </div>
+                    <div class="planning-session-header">
+                        <div class="planning-session-day">Día ${escapeHtml(String(di + 1))}</div>
+                        <div class="planning-status ${statusClass}">${escapeHtml(statusText)}</div>
                     </div>
-                    <div class="planning-status">${escapeHtml(statusText)}</div>
+                    <div class="planning-session-chips">
+                        <span class="planning-chip planning-chip-type">${escapeHtml(t.type)}</span>
+                        <span class="planning-chip planning-chip-plan">Plan ${escapeHtml(plannedKm.toFixed(1))} km</span>
+                        ${assignedSession ? `<span class="planning-chip planning-chip-real">Real ${escapeHtml(actualKm.toFixed(2))} km</span>` : ''}
+                        ${assignedSession && timeText ? `<span class="planning-chip planning-chip-time">${escapeHtml(timeText)}</span>` : ''}
+                        ${assignedSession && paceText ? `<span class="planning-chip planning-chip-pace">${escapeHtml(paceText)}</span>` : ''}
+                        ${assignedSession && elevText ? `<span class="planning-chip planning-chip-elev">${escapeHtml(elevText)}</span>` : ''}
+                    </div>
                     ${assignControls}
                 </div>
             `;
@@ -3033,6 +3070,9 @@ function renderPlanning() {
     // Carrera (asignable también)
     const raceAssignedId = Number(assignments[PLANNING_RACE_KEY]) || null;
     const raceSession = raceAssignedId ? sessionById.get(raceAssignedId) : null;
+    const raceTimeText = raceSession ? getSessionTimeDisplay(raceSession) : '';
+    const racePaceText = raceSession ? getSessionPaceText(raceSession) : '';
+    const raceElevText = raceSession ? getSessionElevationText(raceSession) : '';
     const raceAllowedIds = new Set(
         planSessions
             .filter(s => String(s.date).slice(0, 10) === plan.raceDate)
@@ -3069,7 +3109,7 @@ function renderPlanning() {
                         <div class="planning-session-date">${escapeHtml(plan.raceName)}</div>
                         <div class="planning-session-sub">
                             <span class="planning-badge">carrera</span>
-                            <span>${raceSession ? escapeHtml(`· Hecho: ${(Number(raceSession.distance) || 0).toFixed(2)} km · ${getSessionTimeDisplay(raceSession)}${getSessionElevationText(raceSession)}`) : 'Asigna la sesión de carrera cuando la tengas.'}</span>
+                            <span>${raceSession ? escapeHtml(`Hecho: ${(Number(raceSession.distance) || 0).toFixed(2)} km · ${raceTimeText}${racePaceText ? ` · ${racePaceText}` : ''}${raceElevText ? ` · ${raceElevText}` : ''}`) : 'Asigna la sesión de carrera cuando la tengas.'}</span>
                         </div>
                     </div>
                     <div class="planning-status">${raceSession ? 'Finalizado' : '—'}</div>
@@ -3122,6 +3162,97 @@ function renderPlanning() {
             </div>
         </div>`;
 
+    const realHeaderCells = Array.from({ length: daysPerWeek }, (_, i) => `<th scope="col">Día ${i + 1}</th>`).join('');
+    const realRows = weeks.map(w => {
+        let weekKm = 0;
+        let weekMinutes = 0;
+        let weekUp = 0;
+        let weekDown = 0;
+        const dayCells = Array.from({ length: plan.daysPerWeek }, (_, di) => {
+            const key = planningKey(w.weekIndex, di + 1);
+            const sid = Number(assignments[key]) || null;
+            const s = sid ? sessionById.get(sid) : null;
+            if (!s) return `<td class="planning-real-empty">—</td>`;
+            const km = Number(s.distance) || 0;
+            const mins = getSessionMinutesValue(s);
+            const pace = getSessionPaceShort(s);
+            const up = Number(s.elevationGain) || 0;
+            const down = Number(s.elevationLoss) || 0;
+            weekKm += km;
+            if (mins && Number.isFinite(mins)) weekMinutes += mins;
+            weekUp += up;
+            weekDown += down;
+            return `
+                <td>
+                    <div class="planning-real-cell">
+                        <div class="planning-real-km">${escapeHtml(km.toFixed(1))} km</div>
+                        <div class="planning-real-time">${escapeHtml(getSessionTimeDisplay(s))}</div>
+                        <div class="planning-real-pace">${pace ? escapeHtml(pace) : '—'}</div>
+                        <div class="planning-real-elev">
+                            <span class="planning-real-elev-up">+${escapeHtml(String(Math.round(up)))} m</span>
+                            <span class="planning-real-elev-sep">|</span>
+                            <span class="planning-real-elev-down">-${escapeHtml(String(Math.round(down)))} m</span>
+                        </div>
+                    </div>
+                </td>
+            `;
+        }).join('');
+        const startDay = w.weekStart.getDate();
+        const endDay = w.weekEnd.getDate();
+        const startMonth = w.weekStart.toLocaleDateString('es-ES', { month: 'long' });
+        const endMonth = w.weekEnd.toLocaleDateString('es-ES', { month: 'long' });
+        const sameMonth = startMonth === endMonth;
+        const rangeLabel = sameMonth
+            ? `Del ${startDay} al ${endDay} de ${endMonth}`
+            : `Del ${startDay} de ${startMonth} al ${endDay} de ${endMonth}`;
+        const weekTime = weekKm > 0 ? minutesToTime(weekMinutes) : '—';
+        const weekPace = weekKm > 0 && weekMinutes > 0
+            ? (() => {
+                const totalSeconds = Math.round((weekMinutes / weekKm) * 60);
+                const mm = Math.floor(totalSeconds / 60);
+                const ss = totalSeconds % 60;
+                return `${mm}:${String(ss).padStart(2, '0')}`;
+            })()
+            : '—';
+        return `
+            <tr>
+                <td class="planning-real-weekno">${w.weekIndex}</td>
+                <td class="planning-real-weeklabel">${escapeHtml(rangeLabel)}</td>
+                ${dayCells}
+                <td>
+                    <div class="planning-real-cell planning-real-sum">
+                        <div class="planning-real-km">${escapeHtml(weekKm.toFixed(1))} km</div>
+                        <div class="planning-real-time">${escapeHtml(weekTime)}</div>
+                        <div class="planning-real-pace">${escapeHtml(weekPace)}</div>
+                        <div class="planning-real-elev">
+                            <span class="planning-real-elev-up">+${escapeHtml(String(Math.round(weekUp)))} m</span>
+                            <span class="planning-real-elev-sep">|</span>
+                            <span class="planning-real-elev-down">-${escapeHtml(String(Math.round(weekDown)))} m</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    const realTableHtml = `
+        <div id="planningBlockTablaReal" class="planning-block planning-block-tabla-real" style="display: none;">
+            <div class="planning-real-table-wrap">
+                <table class="planning-real-table" aria-label="Tabla real por semana y día">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sem.</th>
+                            <th scope="col">Semana</th>
+                            ${realHeaderCells}
+                            <th scope="col">Suma km</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${realRows}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+
     if (charts.planningSummaryChart) {
         charts.planningSummaryChart.destroy();
         charts.planningSummaryChart = null;
@@ -3134,6 +3265,7 @@ function renderPlanning() {
                 <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="resumen" aria-pressed="false">Resumen</button>
                 <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="grafica" aria-pressed="false">Gráfica</button>
                 <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="tabla" aria-pressed="false">Tabla</button>
+                <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="tablareal" aria-pressed="false">Tabla real</button>
                 <button type="button" class="btn btn-secondary btn-small planning-toggle-btn" data-block="planning" aria-pressed="false">Planning</button>
             </div>
         </div>
@@ -3146,13 +3278,14 @@ function renderPlanning() {
             </div>
         </div>
         ${tableHtml}
+        ${realTableHtml}
         <div id="planningBlockPlanning" class="planning-block planning-block-planning" style="display: none;">
             ${weeksHtml}
             ${raceRow}
         </div>
     `;
 
-    const blockIdToEl = { resumen: 'Resumen', grafica: 'Grafica', tabla: 'Tabla', planning: 'Planning' };
+    const blockIdToEl = { resumen: 'Resumen', grafica: 'Grafica', tabla: 'Tabla', tablareal: 'TablaReal', planning: 'Planning' };
     const selectedBar = container.querySelector('.planning-selected-bar');
     container.querySelectorAll('.planning-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -4289,6 +4422,7 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
 
 

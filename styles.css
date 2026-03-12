@@ -583,9 +583,17 @@ header h1 {
         padding: 10px 12px;
     }
     .planning-session {
-        flex-wrap: wrap;
         padding: 10px 12px;
         gap: 8px;
+    }
+    .planning-session-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .planning-session-compare {
+        flex-direction: column;
+        gap: 4px;
     }
     .planning-session-left {
         flex: 1;
@@ -598,8 +606,23 @@ header h1 {
         font-size: 0.8em;
     }
     .planning-status {
-        width: 100%;
-        text-align: right;
+        align-self: flex-start;
+    }
+    .planning-real-table {
+        font-size: 0.84em;
+        min-width: 760px;
+    }
+    .planning-real-table th,
+    .planning-real-table td {
+        padding: 6px 7px;
+    }
+    .planning-real-weeklabel {
+        min-width: 96px;
+        font-size: 0.9em;
+    }
+    .planning-real-elev {
+        font-size: 0.8em;
+        gap: 4px;
     }
 }
 
@@ -819,6 +842,109 @@ header h1 {
     color: var(--primary-color);
 }
 
+.planning-real-table-wrap {
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.planning-real-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92em;
+    background: var(--card-background);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.planning-real-table th,
+.planning-real-table td {
+    padding: 8px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    vertical-align: top;
+}
+
+.planning-real-table th:last-child,
+.planning-real-table td:last-child {
+    border-right: none;
+}
+
+.planning-real-table thead th {
+    background: rgba(59, 130, 246, 0.82);
+    color: #fff;
+    font-weight: 800;
+}
+
+.planning-real-weekno {
+    font-weight: 800;
+    color: var(--text-primary);
+    width: 58px;
+}
+
+.planning-real-weeklabel {
+    min-width: 110px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.planning-real-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.planning-real-empty {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.planning-real-km {
+    color: var(--text-primary);
+    font-size: 1.05em;
+    font-weight: 800;
+}
+
+.planning-real-time {
+    color: var(--danger-color);
+    font-size: 0.92em;
+    font-weight: 700;
+}
+
+.planning-real-pace {
+    color: var(--accent-green);
+    font-size: 0.92em;
+    font-weight: 700;
+}
+
+.planning-real-elev {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.86em;
+    font-weight: 700;
+}
+
+.planning-real-elev-up {
+    color: #a855f7;
+}
+
+.planning-real-elev-down {
+    color: #2563eb;
+}
+
+.planning-real-elev-sep {
+    color: var(--text-secondary);
+}
+
+.planning-real-sum .planning-real-km {
+    font-size: 1.1em;
+}
+
 .planning-kpi {
     background: var(--card-background);
     border: 1px solid var(--border-color);
@@ -889,13 +1015,80 @@ header h1 {
 
 .planning-session {
     display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
     padding: 12px 14px;
     border-radius: 12px;
     border: 1px solid var(--border-color);
     background: var(--background);
+}
+
+.planning-session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.planning-session-day {
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.planning-session-calendar {
+    margin-left: 8px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.planning-session-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.planning-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8em;
+    font-weight: 700;
+    border: 1px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-primary);
+}
+
+.planning-chip-type {
+    text-transform: capitalize;
+}
+
+.planning-chip-plan {
+    border-color: rgba(74, 144, 226, 0.3);
+    background: rgba(74, 144, 226, 0.08);
+    color: #1d4ed8;
+}
+
+.planning-chip-real {
+    border-color: rgba(5, 150, 105, 0.35);
+    background: rgba(5, 150, 105, 0.1);
+    color: #047857;
+}
+
+.planning-session-compare {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.planning-session-compare-empty {
+    justify-content: flex-start;
+    font-weight: 600;
 }
 
 .planning-session-left {
@@ -935,6 +1128,33 @@ header h1 {
 .planning-status {
     font-weight: 800;
     white-space: nowrap;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.78em;
+    border: 1px solid var(--border-color);
+    background: var(--card-background);
+}
+
+.planning-status--done {
+    color: var(--accent-green);
+    border-color: rgba(5, 150, 105, 0.35);
+    background: rgba(5, 150, 105, 0.08);
+}
+
+.planning-status--today {
+    color: #1d4ed8;
+    border-color: rgba(74, 144, 226, 0.35);
+    background: rgba(74, 144, 226, 0.08);
+}
+
+.planning-status--planned {
+    color: var(--text-secondary);
+}
+
+.planning-status--missed {
+    color: var(--danger-color);
+    border-color: rgba(231, 76, 60, 0.35);
+    background: rgba(231, 76, 60, 0.08);
 }
 
 .planning-done {
