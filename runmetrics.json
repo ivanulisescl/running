@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.2",
-  "exportedAt": "2026-03-12T11:26:57.770Z",
+  "exportedAt": "2026-03-12T12:24:27.992Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4866,9 +4866,174 @@
           "W13D2": 1770637973884.8853,
           "W13D3": 1770637973884.36
         }
+      },
+      {
+        "id": 1773318077294,
+        "raceName": "12km Villa de Gijón 2024",
+        "weeks": 9,
+        "daysPerWeek": 3,
+        "startDate": "2024-09-23",
+        "raceDate": "2024-11-24",
+        "raceDistanceKm": 12,
+        "schedule": [
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 10,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 11,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 3.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 12,
+              "type": "entrenamiento"
+            }
+          ]
+        ],
+        "assignments": {
+          "W1D1": 1770637973884.5493,
+          "W1D2": 1770637973884.9543,
+          "W1D3": 1770637973884.816,
+          "W2D1": 1770637973884.3635,
+          "W2D2": 1770637973884.7527,
+          "W2D3": 1770637973884.669,
+          "W3D1": 1770640037741.06,
+          "W3D2": 1770637973884.5532,
+          "W3D3": 1770637973884.8105,
+          "W4D1": 1770637973884.7847,
+          "W4D2": 1770637973884.241,
+          "W4D3": 1770637973884.2612,
+          "W5D2": 1770637973884.1619,
+          "W5D3": 1770637973884.5913,
+          "W6D1": 1770637973884.1296,
+          "W6D2": 1770637973884.9192,
+          "W6D3": 1770637973884.3828,
+          "W7D1": 1770637973884.1653,
+          "W7D2": 1770637973884.054,
+          "W7D3": 1770637973884.8977,
+          "W8D1": 1770637973884.1992,
+          "W8D2": 1770637973884.1223,
+          "W8D3": 1770637973884.0647,
+          "W9D1": 1770637973884.2114,
+          "W9D2": 1770637973884.6582,
+          "W9D3": 1770640037741.041
+        }
       }
     ],
-    "selectedPlanId": 1773314440051
+    "selectedPlanId": 1773318077294
   },
   "equipment": [
     {
