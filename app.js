@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.2.56'; // Versión actual de la app
+let currentAppVersion = '1.3.0'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -3176,6 +3176,7 @@ function renderPlanning() {
             const km = Number(s.distance) || 0;
             const mins = getSessionMinutesValue(s);
             const pace = getSessionPaceShort(s);
+            const type = normalizePlanningSessionType(s.type || 'entrenamiento');
             const up = Number(s.elevationGain) || 0;
             const down = Number(s.elevationLoss) || 0;
             weekKm += km;
@@ -3186,6 +3187,7 @@ function renderPlanning() {
                 <td>
                     <div class="planning-real-cell">
                         <div class="planning-real-km">${escapeHtml(km.toFixed(1))} km</div>
+                        <div class="planning-real-type">${escapeHtml(type)}</div>
                         <div class="planning-real-time">${escapeHtml(getSessionTimeDisplay(s))}</div>
                         <div class="planning-real-pace">${pace ? escapeHtml(pace) : '—'}</div>
                         <div class="planning-real-elev">
@@ -3197,14 +3199,10 @@ function renderPlanning() {
                 </td>
             `;
         }).join('');
-        const startDay = w.weekStart.getDate();
-        const endDay = w.weekEnd.getDate();
-        const startMonth = w.weekStart.toLocaleDateString('es-ES', { month: 'long' });
-        const endMonth = w.weekEnd.toLocaleDateString('es-ES', { month: 'long' });
-        const sameMonth = startMonth === endMonth;
-        const rangeLabel = sameMonth
-            ? `Del ${startDay} al ${endDay} de ${endMonth}`
-            : `Del ${startDay} de ${startMonth} al ${endDay} de ${endMonth}`;
+        const startDdMm = w.weekStart.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+        const endDdMm = w.weekEnd.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+        const rangeLabelTop = `Del ${startDdMm}`;
+        const rangeLabelBottom = `al ${endDdMm}`;
         const weekTime = weekKm > 0 ? minutesToTime(weekMinutes) : '—';
         const weekPace = weekKm > 0 && weekMinutes > 0
             ? (() => {
@@ -3217,7 +3215,7 @@ function renderPlanning() {
         return `
             <tr>
                 <td class="planning-real-weekno">${w.weekIndex}</td>
-                <td class="planning-real-weeklabel">${escapeHtml(rangeLabel)}</td>
+                <td class="planning-real-weeklabel"><span>${escapeHtml(rangeLabelTop)}</span><span>${escapeHtml(rangeLabelBottom)}</span></td>
                 ${dayCells}
                 <td>
                     <div class="planning-real-cell planning-real-sum">
@@ -4422,6 +4420,7 @@ function setupPWA() {
         installPrompt.classList.remove('show');
     });
 }
+
 
 
 
