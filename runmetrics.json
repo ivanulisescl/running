@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.2",
-  "exportedAt": "2026-03-12T10:56:11.886Z",
+  "exportedAt": "2026-03-12T11:26:57.770Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -817,13 +817,13 @@
     },
     {
       "date": "2025-08-12",
-      "distance": 8,
-      "time": "00:42:00",
-      "timeInMinutes": 42,
+      "distance": 3.55,
+      "time": "00:18:35",
+      "timeInMinutes": 18.583333333333332,
       "type": "rodaje",
       "notes": "",
-      "elevationGain": 135,
-      "elevationLoss": -135,
+      "elevationGain": 60,
+      "elevationLoss": 29,
       "id": 1770637973884.2842,
       "equipo": "Hokka Bondi 9 Grises",
       "Localidad": "Colunga",
@@ -4632,9 +4632,243 @@
           "W14D2": 1770637973884.8594,
           "W14D3": 1770637973884.5347
         }
+      },
+      {
+        "id": 1773314440051,
+        "raceName": "Media Maratón Ruta de la Reconquista 2025",
+        "weeks": 13,
+        "daysPerWeek": 3,
+        "startDate": "2025-03-03",
+        "raceDate": "2025-05-31",
+        "raceDistanceKm": 21.1,
+        "schedule": [
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 10,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 11,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 12,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 13,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 14,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 15,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 16,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 17,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 3,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 21.1,
+              "type": "entrenamiento"
+            }
+          ]
+        ],
+        "assignments": {
+          "W1D1": 1770637973884.4358,
+          "W1D2": 1770637973884.742,
+          "W1D3": 1770637973884.2253,
+          "W2D1": 1770637973884.9995,
+          "W2D2": 1770640037741.3892,
+          "W2D3": 1770637973884.82,
+          "W3D1": 1770637973884.6296,
+          "W3D2": 1770640037741.2585,
+          "W3D3": 1770637973884.368,
+          "W4D1": 1770637973884.4587,
+          "W4D2": 1770637973884.0168,
+          "W4D3": 1770637973884.1975,
+          "W5D1": 1770637973884.8335,
+          "W5D2": 1770637973884.2434,
+          "W5D3": 1770637973884.947,
+          "W6D1": 1770637973884.6675,
+          "W6D2": 1770637973884.8315,
+          "W6D3": 1770637973884.9897,
+          "W7D1": 1770637973884.5952,
+          "W7D2": 1770637973884.631,
+          "W7D3": 1770637973884.5247,
+          "W8D1": 1770637973884.3484,
+          "W8D2": 1770637973884.2302,
+          "W8D3": 1770637973884.6802,
+          "W9D1": 1770637973884.1968,
+          "W9D2": 1770637973884.2708,
+          "W9D3": 1770637973884.822,
+          "W10D1": 1770637973884.671,
+          "W10D2": 1770637973884.7595,
+          "W10D3": 1770637973884.9238,
+          "W11D1": 1770637973884.4377,
+          "W11D2": 1770637973884.8547,
+          "W11D3": 1770637973884.4866,
+          "W12D1": 1770637973884.02,
+          "W12D2": 1770637973884.011,
+          "W12D3": 1770637973884.949,
+          "W13D1": 1770637973884.7231,
+          "W13D2": 1770637973884.8853,
+          "W13D3": 1770637973884.36
+        }
       }
     ],
-    "selectedPlanId": 1770911600961
+    "selectedPlanId": 1773314440051
   },
   "equipment": [
     {
@@ -4666,4 +4900,3 @@
     }
   ]
 }
-
