@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.2",
-  "exportedAt": "2026-03-12T12:24:27.992Z",
+  "exportedAt": "2026-03-13T11:43:00.996Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -5031,9 +5031,222 @@
           "W9D2": 1770637973884.6582,
           "W9D3": 1770640037741.041
         }
+      },
+      {
+        "id": 1773401844115,
+        "raceName": "Media Maratón Salamanca 2024",
+        "weeks": 12,
+        "daysPerWeek": 3,
+        "startDate": "2023-12-11",
+        "raceDate": "2024-03-01",
+        "raceDistanceKm": 21.1,
+        "schedule": [
+          [
+            {
+              "plannedKm": 4.8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 4.8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 4.8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 4.8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5.9,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5.9,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5.9,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5.9,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 9.7,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.3,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.3,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 11.3,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.3,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.3,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 12.9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 10,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 14.5,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8.1,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 16.1,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.4,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 3.2,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 21.1,
+              "type": "carrera"
+            }
+          ]
+        ],
+        "assignments": {
+          "W1D1": 1770637973885.0151,
+          "W1D2": 1770637973885.9526,
+          "W1D3": 1770637973885.711,
+          "W2D1": 1770637973885.7278,
+          "W2D2": 1770637973885.1216,
+          "W2D3": 1770637973885.5557,
+          "W3D1": 1770637973885.592,
+          "W3D2": 1770637973885.7217,
+          "W3D3": 1770637973885.598,
+          "W4D1": 1770637973885.107,
+          "W4D2": 1770637973885.21,
+          "W4D3": 1770637973885.7397,
+          "W5D1": 1770637973885.4158,
+          "W5D2": 1770640037741.3965,
+          "W5D3": 1770637973884.7593,
+          "W6D1": 1770637973884.782,
+          "W6D2": 1770637973884.6614,
+          "W6D3": 1770637973884.3057,
+          "W7D1": 1770637973884.5046,
+          "W7D2": 1770637973884.5728,
+          "W7D3": 1770637973884.6958,
+          "W8D1": 1770637973884.8772,
+          "W8D2": 1770637973884.0142,
+          "W8D3": 1770637973884.7947,
+          "W9D1": 1770637973884.2559,
+          "W9D2": 1770640037741.236,
+          "W9D3": 1770637973884.9138,
+          "W10D1": 1770637973884.8186,
+          "W10D2": 1770637973884.1404,
+          "W10D3": 1770637973884.3909,
+          "W11D1": 1770637973884.7463,
+          "W11D2": 1770637973884.5383
+        }
       }
     ],
-    "selectedPlanId": 1773318077294
+    "selectedPlanId": 1773401844115
   },
   "equipment": [
     {
