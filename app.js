@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.2'; // Versión actual de la app
+let currentAppVersion = '1.3.3'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -10,6 +10,8 @@ let equipmentList = []; // Lista de equipos disponibles
 let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
 let records = []; // Récords (incluidos en runmetrics.json)
 const RUNMETRICS_FILENAME = 'runmetrics.json';
+const GITHUB_TOKEN_STORAGE_KEY = 'runningGitHubToken';
+const GITHUB_REPO = 'ivanulisescl/running';
 let planningPlans = []; // Planificaciones por carrera
 let selectedPlanningPlanId = null; // ID del plan seleccionado
 let planningOpenBlocks = new Set(['planning']); // Bloques abiertos en la vista de planificación
@@ -1395,6 +1397,106 @@ function setupMenu() {
     });
 }
 
+// Construir payload runmetrics.json (usado por Exportar y Subir al repo)
+function buildRunmetricsPayload() {
+    return {
+        app: 'RunMetrics',
+        version: currentAppVersion,
+        exportedAt: new Date().toISOString(),
+        sessions: sessions || [],
+        carreras: marcas || [],
+        records: records || [],
+        planning: {
+            plans: planningPlans || [],
+            selectedPlanId: selectedPlanningPlanId || null
+        },
+        equipment: (equipmentList || []).map(eq => {
+            const name = getEquipmentName(eq);
+            const stats = getEquipmentStatsFromSessions(name);
+            const item = typeof eq === 'object' && eq !== null ? { ...eq } : { name: String(eq), kilometros: 0, estado: 'Activo' };
+            if (!item.desde) item.desde = getEquipmentDesde(eq);
+            if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getEquipmentLimiteKm(eq);
+            item.numActividades = stats.actividades;
+            return item;
+        })
+    };
+}
+
+// Subir runmetrics.json al repositorio vía GitHub Contents API
+async function uploadToRepository() {
+    const syncStatus = document.getElementById('syncStatus');
+    let token = localStorage.getItem(GITHUB_TOKEN_STORAGE_KEY);
+    if (!token || !token.trim()) {
+        token = prompt('Introduce tu GitHub Personal Access Token (permiso repo):');
+        if (!token || !token.trim()) return;
+        token = token.trim();
+        localStorage.setItem(GITHUB_TOKEN_STORAGE_KEY, token);
+    }
+
+    if (syncStatus) {
+        syncStatus.style.display = 'block';
+        syncStatus.innerHTML = `<p style="color: var(--primary-color);">Subiendo <code>${RUNMETRICS_FILENAME}</code>...</p>`;
+    }
+    try {
+        const payload = buildRunmetricsPayload();
+        const content = JSON.stringify(payload, null, 2);
+        const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+        const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${RUNMETRICS_FILENAME}`;
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json'
+        };
+
+        let sha = null;
+        const getRes = await fetch(apiUrl, { headers });
+        if (getRes.ok) {
+            const getData = await getRes.json();
+            sha = getData.sha;
+        } else if (getRes.status !== 404) {
+            const errData = await getRes.json().catch(() => ({}));
+            if (getRes.status === 401) {
+                localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
+                throw new Error('Token inválido o expirado. Configura uno nuevo.');
+            }
+            throw new Error(errData.message || `Error ${getRes.status}: ${getRes.statusText}`);
+        }
+
+        const putBody = {
+            message: `Actualizar ${RUNMETRICS_FILENAME} (${new Date().toISOString().slice(0, 10)})`,
+            content: contentBase64
+        };
+        if (sha) putBody.sha = sha;
+
+        const putRes = await fetch(apiUrl, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(putBody)
+        });
+        if (!putRes.ok) {
+            const errData = await putRes.json().catch(() => ({}));
+            if (putRes.status === 401) {
+                localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
+                throw new Error('Token inválido o expirado. Configura uno nuevo.');
+            }
+            throw new Error(errData.message || `Error ${putRes.status}: ${putRes.statusText}`);
+        }
+
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ <code>${RUNMETRICS_FILENAME}</code> subido al repositorio.</p>`;
+            setTimeout(() => { syncStatus.style.display = 'none'; }, 4000);
+        }
+    } catch (err) {
+        if (syncStatus) {
+            syncStatus.style.display = 'block';
+            syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ ${err.message || 'Error al subir'}</p>`;
+            setTimeout(() => { syncStatus.style.display = 'none'; }, 6000);
+        }
+    }
+}
+
 // Configurar exportar/importar JSON para sincronización
 function setupSync() {
     const exportAllBtn = document.getElementById('exportAllBtnMenu');
@@ -1404,27 +1506,7 @@ function setupSync() {
 
     if (exportAllBtn) exportAllBtn.addEventListener('click', () => {
         document.getElementById('menuDropdown').style.display = 'none';
-        const payload = {
-            app: 'RunMetrics',
-            version: currentAppVersion,
-            exportedAt: new Date().toISOString(),
-            sessions: sessions || [],
-            carreras: marcas || [],
-            records: records || [],
-            planning: {
-                plans: planningPlans || [],
-                selectedPlanId: selectedPlanningPlanId || null
-            },
-            equipment: (equipmentList || []).map(eq => {
-                const name = getEquipmentName(eq);
-                const stats = getEquipmentStatsFromSessions(name);
-                const item = typeof eq === 'object' && eq !== null ? { ...eq } : { name: String(eq), kilometros: 0, estado: 'Activo' };
-                if (!item.desde) item.desde = getEquipmentDesde(eq);
-                if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getEquipmentLimiteKm(eq);
-                item.numActividades = stats.actividades;
-                return item;
-            })
-        };
+        const payload = buildRunmetricsPayload();
         const data = JSON.stringify(payload, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1450,6 +1532,43 @@ function setupSync() {
         resetFromRepoBtn.addEventListener('click', () => {
             document.getElementById('menuDropdown').style.display = 'none';
             resetFromRepository();
+        });
+    }
+
+    const uploadToRepoBtn = document.getElementById('uploadToRepoBtn');
+    if (uploadToRepoBtn) {
+        uploadToRepoBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            uploadToRepository();
+        });
+    }
+
+    const configTokenBtn = document.getElementById('configTokenBtn');
+    if (configTokenBtn) {
+        configTokenBtn.addEventListener('click', () => {
+            document.getElementById('menuDropdown').style.display = 'none';
+            const hasToken = !!localStorage.getItem(GITHUB_TOKEN_STORAGE_KEY);
+            const msg = hasToken
+                ? "Token guardado. Pega uno nuevo para cambiar, o escribe 'borrar' para eliminar."
+                : "Introduce tu GitHub Personal Access Token (permiso repo):";
+            const token = prompt(msg, '');
+            if (token === null) return;
+            const t = token.trim();
+            if (t === '' || t.toLowerCase() === 'borrar') {
+                localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
+                if (syncStatus) {
+                    syncStatus.style.display = 'block';
+                    syncStatus.innerHTML = '<p style="color: var(--secondary-color);">Token eliminado.</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 2000);
+                }
+            } else {
+                localStorage.setItem(GITHUB_TOKEN_STORAGE_KEY, t);
+                if (syncStatus) {
+                    syncStatus.style.display = 'block';
+                    syncStatus.innerHTML = '<p style="color: var(--secondary-color);">Token guardado.</p>';
+                    setTimeout(() => { syncStatus.style.display = 'none'; }, 2000);
+                }
+            }
         });
     }
 

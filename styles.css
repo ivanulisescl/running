@@ -269,6 +269,12 @@ header h1 {
     text-align: center;
 }
 
+.menu-item-sub {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    padding: 10px 20px;
+}
+
 .status-message {
     margin: 15px 0;
     padding: 12px;
