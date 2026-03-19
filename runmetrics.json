@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.5",
-  "exportedAt": "2026-03-19T11:24:35.114Z",
+  "exportedAt": "2026-03-19T18:16:56.293Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -23,7 +23,7 @@
       "time": "00:38:12",
       "timeInMinutes": 38.2,
       "type": "series",
-      "notes": "7x200",
+      "notes": "",
       "elevationGain": 43,
       "elevationLoss": 28,
       "id": 1770637973884.2363,
@@ -107,7 +107,7 @@
       "time": "00:36:54",
       "timeInMinutes": 36.9,
       "type": "series",
-      "notes": "2x600+2x500+1x300",
+      "notes": "",
       "elevationGain": 11,
       "elevationLoss": 15,
       "id": 1770637973884.8997,
@@ -3959,7 +3959,7 @@
       "timeInMinutes": 39.46666666666667,
       "type": "series",
       "localizacion": "Gijón",
-      "notes": "5x200",
+      "notes": "",
       "elevationGain": 26,
       "elevationLoss": 14,
       "equipo": "Hokka Bondi 9 Grises",
@@ -4057,7 +4057,7 @@
       "timeInMinutes": 28.933333333333334,
       "type": "series",
       "localizacion": "Gijón",
-      "notes": "6x200",
+      "notes": "",
       "elevationGain": 120,
       "elevationLoss": 120,
       "equipo": "Hokka Bondi 9 Grises",
@@ -4090,6 +4090,20 @@
       "elevationLoss": 120,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-03-16T18:26:58.329Z"
+    },
+    {
+      "id": 1773944158961,
+      "date": "2026-03-19",
+      "distance": 6.01,
+      "time": "00:41:25",
+      "timeInMinutes": 41.416666666666664,
+      "type": "series",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 180,
+      "elevationLoss": 180,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-03-19T18:15:58.961Z"
     }
   ],
   "carreras": [
@@ -4181,13 +4195,6 @@
       "ritmo": "3:57 /km",
       "actividad": "Gijón Carrera",
       "fecha": "Feb 17, 2025"
-    },
-    {
-      "categoria": "1 mi",
-      "record": "6:33.6",
-      "ritmo": "4:05 /km",
-      "actividad": "Villaviciosa Ruta Imperial Carlos I",
-      "fecha": "Ago 24, 2025"
     },
     {
       "categoria": "5 km",
@@ -4409,7 +4416,8 @@
           "W1D1": 1773085146676,
           "W1D2": 1773252800044,
           "W1D3": 1773424881491,
-          "W2D1": 1773685618329
+          "W2D1": 1773685618329,
+          "W2D2": 1773944158961
         }
       },
       {
@@ -4926,7 +4934,7 @@
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 75
+      "numActividades": 76
     }
   ],
   "weight": [
