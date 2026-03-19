@@ -17,7 +17,9 @@ let selectedPlanningPlanId = null; // ID del plan seleccionado
 let planningOpenBlocks = new Set(['planning']); // Bloques abiertos en la vista de planificación
 const PLANNING_PLANS_STORAGE_KEY = 'runningPlanningPlans';
 const PLANNING_SELECTED_PLAN_STORAGE_KEY = 'runningPlanningSelectedPlanId';
-let planningEditingPlanId = null; // ID del plan en edición (null = nuevo)
+const WEIGHT_STORAGE_KEY = 'runningWeight';
+let planningEditingPlanId = null;
+let weightEntries = []; // { date, kg } // ID del plan en edición (null = nuevo)
 let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado para Distancia total (por mes)
 let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
 let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMarcas();
     loadRecords();
     loadPlanningPlans();
+    loadWeight();
     loadRunmetricsFromRepoIfEmpty();
     setupForm();
     setupNewSessionButton();
@@ -57,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSync();
     setupGarminImport();
     setupPlanningSection();
+    setupPesoSection();
     updateStats();
     setupPWA();
     setupVersionCheck();
@@ -111,7 +115,8 @@ const MAIN_SECTIONS = {
     equipment: { btnId: 'equipmentBtn', sectionId: 'equipmentSection' },
     marcas: { btnId: 'marcasBtn', sectionId: 'marcasSection' },
     records: { btnId: 'recordsBtn', sectionId: 'recordsSection' },
-    planning: { btnId: 'planningBtn', sectionId: 'planningSection' }
+    planning: { btnId: 'planningBtn', sectionId: 'planningSection' },
+    peso: { btnId: 'pesoBtn', sectionId: 'pesoSection' }
 };
 
 function hideAllMainSections() {
@@ -151,7 +156,7 @@ function toggleSection(sectionId) {
 }
 
 function setActiveNavButton(activeBtnId) {
-    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn', 'planningBtn'].forEach(id => {
+    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn', 'planningBtn', 'pesoBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.classList.toggle('active', id === activeBtnId);
     });
@@ -221,6 +226,15 @@ function setupNavigationButtons() {
             if (planningSection.style.display !== 'none') renderPlanning();
         });
     }
+    const pesoBtn = document.getElementById('pesoBtn');
+    const pesoSection = document.getElementById('pesoSection');
+    if (pesoBtn && pesoSection) {
+        pesoBtn.addEventListener('click', () => {
+            toggleSection('pesoSection');
+            setActiveNavButton(pesoSection.style.display !== 'none' ? 'pesoBtn' : null);
+            if (pesoSection.style.display !== 'none') renderPeso();
+        });
+    }
     const marcasBtn = document.getElementById('marcasBtn');
     const marcasSection = document.getElementById('marcasSection');
     if (marcasBtn && marcasSection) {
@@ -248,6 +262,114 @@ function loadRecords() {
     } catch (_) {}
 }
 
+function loadWeight() {
+    const saved = localStorage.getItem(WEIGHT_STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+            weightEntries = parsed
+                .filter(e => e && typeof e.date === 'string' && typeof e.kg === 'number')
+                .map(e => ({ ...e, id: e.id != null ? e.id : Date.now() + Math.random() }));
+        }
+    } catch (_) {}
+}
+
+function saveWeight() {
+    localStorage.setItem(WEIGHT_STORAGE_KEY, JSON.stringify(weightEntries));
+}
+
+function renderPeso() {
+    const container = document.getElementById('pesoContent');
+    if (!container) return;
+
+    if (!Array.isArray(weightEntries) || weightEntries.length === 0) {
+        container.innerHTML = '<p class="empty-state">No hay registros. Pulsa Añadir para registrar tu peso.</p>';
+        return;
+    }
+
+    const sorted = [...weightEntries].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const rowsHtml = sorted.map((e) => {
+        const date = escapeHtml(String(e.date ?? '—'));
+        const kg = escapeHtml(String(Number(e.kg).toFixed(1)));
+        const id = e.id != null ? String(e.id) : '';
+        return `
+            <tr>
+                <td>${date}</td>
+                <td class="peso-col-kg">${kg} kg</td>
+                <td class="peso-col-actions">
+                    <button type="button" class="btn btn-danger btn-small peso-delete-btn" data-id="${id}">Eliminar</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="peso-table-wrapper-inner">
+            <table class="peso-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col" class="peso-col-kg">Peso (kg)</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHtml}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    container.querySelectorAll('.peso-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const origIdx = weightEntries.findIndex(w => String(w.id) === id || (id === '' && w.id == null));
+            if (origIdx >= 0) {
+                weightEntries.splice(origIdx, 1);
+                saveWeight();
+                renderPeso();
+            }
+        });
+    });
+}
+
+function setupPesoSection() {
+    const addBtn = document.getElementById('pesoAddBtn');
+    const formCard = document.getElementById('pesoFormCard');
+    const form = document.getElementById('pesoForm');
+    const cancelBtn = document.getElementById('pesoCancelBtn');
+    const dateInput = document.getElementById('pesoDate');
+    const kgInput = document.getElementById('pesoKg');
+
+    if (addBtn && formCard) {
+        addBtn.addEventListener('click', () => {
+            formCard.style.display = formCard.style.display === 'none' ? 'block' : 'none';
+            if (formCard.style.display === 'block' && dateInput) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+                if (kgInput) kgInput.value = '';
+            }
+        });
+    }
+    if (cancelBtn && formCard) {
+        cancelBtn.addEventListener('click', () => {
+            formCard.style.display = 'none';
+        });
+    }
+    if (form && dateInput && kgInput) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const date = dateInput.value.trim();
+            const kg = parseFloat(kgInput.value);
+            if (!date || !Number.isFinite(kg) || kg < 20 || kg > 300) return;
+            weightEntries.push({ id: Date.now() + Math.random(), date, kg });
+            saveWeight();
+            formCard.style.display = 'none';
+            renderPeso();
+        });
+    }
+}
+
 function normalizeSessionFromExternal(s) {
     if (!s || typeof s !== 'object') return null;
 
@@ -271,7 +393,7 @@ function normalizeSessionFromExternal(s) {
 function coerceRunmetricsPayload(data) {
     // Formato legacy: array de sesiones
     if (Array.isArray(data)) {
-        return { sessionsArr: data, carrerasArr: [], recordsArr: [] };
+        return { sessionsArr: data, carrerasArr: [], recordsArr: [], weightArr: [] };
     }
 
     // Formato nuevo: { sessions, carreras, records }
@@ -281,13 +403,14 @@ function coerceRunmetricsPayload(data) {
             : (Array.isArray(data.sesiones) ? data.sesiones : []);
         const carrerasArr = Array.isArray(data.carreras) ? data.carreras : [];
         const recordsArr = Array.isArray(data.records) ? data.records : [];
+        const weightArr = Array.isArray(data.weight) ? data.weight : [];
 
         const hasPlanning = !!(data.planning && typeof data.planning === 'object');
         if (!sessionsArr.length && !carrerasArr.length && !recordsArr.length && !hasPlanning) {
             throw new Error(`Archivo inválido: faltan sessions/carreras/records/planning en ${RUNMETRICS_FILENAME}`);
         }
 
-        return { sessionsArr, carrerasArr, recordsArr };
+        return { sessionsArr, carrerasArr, recordsArr, weightArr };
     }
 
     throw new Error(`Archivo inválido: formato no reconocido (${RUNMETRICS_FILENAME})`);
@@ -311,13 +434,19 @@ async function loadRunmetricsFromRepoIfEmpty() {
 
     try {
         const data = await fetchRunmetricsFromRepo();
-        const { sessionsArr, carrerasArr, recordsArr } = coerceRunmetricsPayload(data);
+        const { sessionsArr, carrerasArr, recordsArr, weightArr } = coerceRunmetricsPayload(data);
 
         sessions = (sessionsArr || [])
             .map(normalizeSessionFromExternal)
             .filter(Boolean);
         marcas = (carrerasArr || []).filter(Boolean).map(m => ({ ...m }));
         records = (recordsArr || []).filter(Boolean).map(r => ({ ...r }));
+        if (weightArr && weightArr.length > 0) {
+            weightEntries = weightArr
+                .filter(w => w && typeof w.date === 'string' && typeof w.kg === 'number')
+                .map(w => ({ id: Date.now() + Math.random(), date: w.date, kg: w.kg }));
+            saveWeight();
+        }
         if (data && typeof data === 'object' && data.planning && typeof data.planning === 'object') {
             const plansRaw = Array.isArray(data.planning.plans) ? data.planning.plans : [];
             planningPlans = plansRaw.map(normalizePlanningPlan).filter(Boolean);
@@ -342,6 +471,7 @@ async function loadRunmetricsFromRepoIfEmpty() {
         updateStats();
         renderMarcas();
         renderPlanning();
+        renderPeso();
     } catch (_) {
         // Silencioso: no bloquear si no hay repo/online
     }
@@ -1282,7 +1412,7 @@ async function resetFromRepository() {
         }
 
         const data = await fetchRunmetricsFromRepo();
-        const { sessionsArr, carrerasArr, recordsArr } = coerceRunmetricsPayload(data);
+        const { sessionsArr, carrerasArr, recordsArr, weightArr } = coerceRunmetricsPayload(data);
 
         sessions = (sessionsArr || [])
             .map(normalizeSessionFromExternal)
@@ -1300,6 +1430,12 @@ async function resetFromRepository() {
         } else {
             planningPlans = [];
             selectedPlanningPlanId = null;
+        }
+        if (weightArr && weightArr.length > 0) {
+            weightEntries = weightArr
+                .filter(w => w && typeof w.date === 'string' && typeof w.kg === 'number')
+                .map(w => ({ id: Date.now() + Math.random(), date: w.date, kg: w.kg }));
+            saveWeight();
         }
         if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
             equipmentList = data.equipment.map(item => {
@@ -1329,12 +1465,13 @@ async function resetFromRepository() {
         renderMarcas();
         renderRecords();
         renderPlanning();
+        renderPeso();
 
         if (syncStatus) {
             syncStatus.style.display = 'block';
             syncStatus.innerHTML =
                 `<p style="color: var(--secondary-color);">✅ Resetear hecho desde <code>${RUNMETRICS_FILENAME}</code>. ` +
-                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}. Equipos: ${equipmentList.length}.</p>`;
+                `Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}. Equipos: ${equipmentList.length}. Peso: ${weightEntries.length}.</p>`;
             setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
         }
     } catch (err) {
@@ -1418,7 +1555,8 @@ function buildRunmetricsPayload() {
             if (typeof item.limiteKm !== 'number' || item.limiteKm <= 0) item.limiteKm = getEquipmentLimiteKm(eq);
             item.numActividades = stats.actividades;
             return item;
-        })
+        }),
+        weight: (weightEntries || []).map(w => ({ date: w.date, kg: w.kg }))
     };
 }
 
@@ -1611,7 +1749,7 @@ function setupSync() {
             }
 
             // Formato runmetrics.json: { sessions, carreras, records }
-            const { sessionsArr, carrerasArr, recordsArr } = coerceRunmetricsPayload(data);
+            const { sessionsArr, carrerasArr, recordsArr, weightArr } = coerceRunmetricsPayload(data);
 
             // Reemplazar TODO con el contenido del archivo (si alguna sección falta, se deja vacía)
             sessions = (sessionsArr || [])
@@ -1634,6 +1772,12 @@ function setupSync() {
             if (data && typeof data === 'object' && Array.isArray(data.equipment)) {
                 equipmentList = data.equipment.map(normalizeEquipmentFromExternal);
             }
+            if (weightArr && weightArr.length > 0) {
+                weightEntries = weightArr
+                    .filter(w => w && typeof w.date === 'string' && typeof w.kg === 'number')
+                    .map(w => ({ id: Date.now() + Math.random(), date: w.date, kg: w.kg }));
+                saveWeight();
+            }
 
             saveSessions();
             saveMarcas();
@@ -1650,9 +1794,10 @@ function setupSync() {
             const recordsSection = document.getElementById('recordsSection');
             if (recordsSection && recordsSection.style.display !== 'none') renderRecords();
             renderPlanning();
+            renderPeso();
 
             if (syncStatus) {
-                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}. Equipos: ${equipmentList.length}.</p>`;
+                syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ Importado <code>${RUNMETRICS_FILENAME}</code> (reemplazado). Sesiones: ${sessions.length}. Carreras: ${marcas.length}. Récords: ${records.length}. Planificaciones: ${planningPlans.length}. Equipos: ${equipmentList.length}. Peso: ${weightEntries.length}.</p>`;
                 setTimeout(() => { syncStatus.style.display = 'none'; }, 5000);
             }
         } catch (err) {

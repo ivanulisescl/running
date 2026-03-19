@@ -114,7 +114,7 @@ header h1 {
 
 .header-row-5 {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     width: 100%;
 }
@@ -256,6 +256,69 @@ header h1 {
 }
 
 .records-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Peso */
+.peso-actions {
+    margin-bottom: 16px;
+}
+
+.peso-form-card {
+    margin-bottom: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--background);
+    border: 1px solid var(--border-color);
+}
+
+.peso-table-wrapper {
+    width: 100%;
+}
+
+.peso-table-wrapper-inner {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--background);
+}
+
+.peso-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 280px;
+}
+
+.peso-table th,
+.peso-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    color: var(--text-primary);
+}
+
+.peso-table thead th {
+    background: var(--card-background);
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
+}
+
+.peso-table tbody tr:hover td {
+    background: rgba(74, 144, 226, 0.06);
+}
+
+.peso-col-kg {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.peso-col-actions {
+    text-align: right;
+}
+
+.peso-table tbody tr:last-child td {
     border-bottom: none;
 }
 
