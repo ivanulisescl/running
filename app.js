@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.4'; // Versión actual de la app
+let currentAppVersion = '1.3.5'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -298,7 +298,7 @@ function renderPeso() {
                 <td>${date}</td>
                 <td class="peso-col-kg">${kg} kg</td>
                 <td class="peso-col-actions">
-                    <button type="button" class="btn btn-danger btn-small peso-delete-btn" data-id="${id}">Eliminar</button>
+                    <button type="button" class="peso-delete-btn" data-id="${id}" title="Eliminar">×</button>
                 </td>
             </tr>
         `;
