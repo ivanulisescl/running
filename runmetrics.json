@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.5",
-  "exportedAt": "2026-03-20T07:11:00.830Z",
+  "exportedAt": "2026-03-21T12:53:42.992Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4104,6 +4104,20 @@
       "elevationLoss": 180,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-03-19T18:15:58.961Z"
+    },
+    {
+      "id": 1774093624906,
+      "date": "2026-03-21",
+      "distance": 8,
+      "time": "00:42:20",
+      "timeInMinutes": 42.333333333333336,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 110,
+      "elevationLoss": 110,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-03-21T11:47:04.906Z"
     }
   ],
   "carreras": [
@@ -4417,7 +4431,8 @@
           "W1D2": 1773252800044,
           "W1D3": 1773424881491,
           "W2D1": 1773685618329,
-          "W2D2": 1773944158961
+          "W2D2": 1773944158961,
+          "W2D3": 1774093624906
         }
       },
       {
@@ -4911,6 +4926,7 @@
   "equipment": [
     {
       "name": "Asics Gel Nimbus 25",
+      "color": "Negras",
       "kilometros": 0,
       "estado": "Retirado",
       "desde": "2023-07-30",
@@ -4919,6 +4935,7 @@
     },
     {
       "name": "Asics Gel Nimbus 26",
+      "color": "Azules",
       "kilometros": 0,
       "estado": "Retirado",
       "desde": "2024-09-24",
@@ -4927,11 +4944,12 @@
     },
     {
       "name": "Hokka Bondi 9",
+      "color": "Grises",
       "kilometros": 0,
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 76
+      "numActividades": 77
     }
   ],
   "weight": [
