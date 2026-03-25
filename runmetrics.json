@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.3.5",
-  "exportedAt": "2026-03-24T19:39:08.675Z",
+  "version": "1.3.6",
+  "exportedAt": "2026-03-25T17:02:48.003Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4934,9 +4934,189 @@
           "W13D2": 1770637973884.8853,
           "W13D3": 1770637973884.36
         }
+      },
+      {
+        "id": 1774458038258,
+        "raceName": "Media Maratón Villa de Gijón 2026",
+        "weeks": 12,
+        "daysPerWeek": 3,
+        "startDate": "2026-07-20",
+        "raceDate": "2026-10-10",
+        "raceDistanceKm": 21.1,
+        "schedule": [
+          [
+            {
+              "plannedKm": 5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 7,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 5.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 5.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "series"
+            },
+            {
+              "plannedKm": 9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 10,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7,
+              "type": "series"
+            },
+            {
+              "plannedKm": 11,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 12,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 13,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 14,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 15,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 16,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 17,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 3,
+              "type": "series"
+            },
+            {
+              "plannedKm": 21.1,
+              "type": "carrera"
+            }
+          ]
+        ],
+        "assignments": {}
       }
     ],
-    "selectedPlanId": 1770911600961
+    "selectedPlanId": 1774458038258
   },
   "equipment": [
     {
