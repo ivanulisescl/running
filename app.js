@@ -2366,6 +2366,13 @@ function renderSessions() {
     }).join('');
 }
 
+// Series: no entran en el ritmo medio ni en la gráfica de evolución del ritmo
+function isSessionTypeSeries(s) {
+    if (!s) return false;
+    const t = String(s.type || '').toLowerCase();
+    return t === 'series' || t === 'serie';
+}
+
 // Filtrar sesiones por período
 function filterSessionsByPeriod(period) {
     if (period === 'all') {
@@ -2431,8 +2438,23 @@ function updateStats() {
         if (typeof s.time === 'string') return sum + timeToMinutes(s.time);
         return sum + s.time;
     }, 0);
+
+    const paceSessions = filteredSessions.filter(s => !isSessionTypeSeries(s));
+    const paceDistance = paceSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
+    const paceTimeInMinutes = paceSessions.reduce((sum, s) => {
+        if (s.timeInMinutes) return sum + s.timeInMinutes;
+        if (typeof s.time === 'string') return sum + timeToMinutes(s.time);
+        return sum + (s.time || 0);
+    }, 0);
     
-    const avgPace = totalDistance > 0 ? (totalTimeInMinutes / totalDistance).toFixed(2) : '--';
+    const avgPace = (() => {
+        if (paceDistance <= 0) return '--';
+        const paceMinPerKm = paceTimeInMinutes / paceDistance;
+        const totalSeconds = Math.round(paceMinPerKm * 60);
+        const mm = Math.floor(totalSeconds / 60);
+        const ss = totalSeconds % 60;
+        return `${mm}:${String(ss).padStart(2, '0')}`;
+    })();
     const totalTimeFormatted = minutesToTime(totalTimeInMinutes);
 
     document.getElementById('totalSessions').textContent = totalSessions;
@@ -4378,6 +4400,7 @@ function updatePaceYearChart() {
 
     (sessions || []).forEach(s => {
         if (!s || !s.date) return;
+        if (isSessionTypeSeries(s)) return;
         const d = new Date(s.date + 'T00:00:00');
         if (d.getFullYear() !== paceSelectedYear) return;
         const km = s.distance || 0;
@@ -4398,7 +4421,7 @@ function updatePaceYearChart() {
         data: {
             labels,
             datasets: [{
-                label: `Ritmo (min/km) (${paceSelectedYear})`,
+                label: `Ritmo (mm:ss/km) (${paceSelectedYear})`,
                 data: paceMinPerKm,
                 borderColor: 'rgba(255, 255, 255, 0.9)',
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
