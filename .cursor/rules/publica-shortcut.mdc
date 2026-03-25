@@ -1,0 +1,19 @@
+---
+description: Atajo "publica" para commit y push
+alwaysApply: true
+---
+
+# Atajo Publica
+
+- Si el usuario escribe exactamente `publica`, interpretar como solicitud explícita de publicación (**siempre** incluye subir la versión):
+  1. Revisar cambios con `git status`.
+  2. **Actualizar versión** (obligatorio en cada `publica`): subir el número en patch (p. ej. 1.3.5 → 1.3.6) y añadir una entrada breve al changelog en:
+     - `version.json` (`version`, `buildDate` si aplica, primer ítem en `changelog`)
+     - `app.js` (`currentAppVersion`)
+     - `index.html` (`currentVersion`, `styles.css?v=…`, `app.js?v=…`)
+     - `manifest.json` (`version`)
+     - `service-worker.js` (`CACHE_NAME`, `styles.css?v=…` en `urlsToCache`)
+  3. Incluir en el commit los archivos modificados del repo (excepto copias/temporales evidentes como `*copia*`, `*copy*`, `*.bak`, `*.tmp`). No incluir `.cursor/` salvo que el usuario pida explícitamente versionar reglas.
+  4. Crear commit con mensaje breve que refleje los cambios (puede incluir la versión, p. ej. `v1.3.6: …`).
+  5. Ejecutar `git push` (si el remoto rechaza, `git pull --rebase` y volver a `git push`).
+- Mantener siempre respuesta y mensajes en español.

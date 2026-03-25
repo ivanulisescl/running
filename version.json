@@ -1,7 +1,9 @@
 {
-  "version": "1.3.5",
-  "buildDate": "2026-03-17",
+  "version": "1.3.6",
+  "buildDate": "2026-03-25",
   "changelog": [
+    "Regla publica (Cursor): cada publicacion incrementa version",
+    "Estadísticas: ritmo medio mm:ss; evolución etiqueta mm:ss/km; sin Series en ritmo",
     "Peso: aspa roja en lugar de botón Eliminar; récord milla eliminado",
     "Peso: sección para registrar peso en kg con tabla y Añadir",
     "Opciones: Subir al repositorio desde móvil (GitHub Contents API + token)",
