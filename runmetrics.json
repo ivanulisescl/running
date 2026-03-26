@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.6",
-  "exportedAt": "2026-03-25T17:02:48.003Z",
+  "exportedAt": "2026-03-26T19:34:23.528Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4132,6 +4132,20 @@
       "elevationLoss": 88,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-03-24T19:35:46.728Z"
+    },
+    {
+      "id": 1774548989722,
+      "date": "2026-03-26",
+      "distance": 6.06,
+      "time": "00:33:17",
+      "timeInMinutes": 33.28333333333333,
+      "type": "series",
+      "localizacion": "",
+      "notes": "7x500",
+      "elevationGain": 80,
+      "elevationLoss": 80,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-03-26T18:16:29.722Z"
     }
   ],
   "carreras": [
@@ -4447,7 +4461,8 @@
           "W2D1": 1773685618329,
           "W2D2": 1773944158961,
           "W2D3": 1774093624906,
-          "W3D1": 1774380946728
+          "W3D1": 1774380946728,
+          "W3D2": 1774548989722
         }
       },
       {
@@ -5116,7 +5131,7 @@
         "assignments": {}
       }
     ],
-    "selectedPlanId": 1774458038258
+    "selectedPlanId": 1770911600961
   },
   "equipment": [
     {
@@ -5144,7 +5159,7 @@
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 78
+      "numActividades": 79
     }
   ],
   "weight": [
