@@ -157,6 +157,10 @@ header h1 {
     line-height: 1.45;
 }
 
+.fuerza-panel .fuerza-week-note:not(:first-child) {
+    margin-top: 1.25rem;
+}
+
 .fuerza-week-note strong {
     color: var(--text-primary);
     font-weight: 600;
