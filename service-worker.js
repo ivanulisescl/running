@@ -1,7 +1,7 @@
 // Cambiar CACHE_NAME y ?v= en urlsToCache al publicar nueva versión (mismo que app.js)
-const CACHE_NAME = 'running-v1.3.6';
+const CACHE_NAME = 'running-v1.3.7';
 const urlsToCache = [
-  './styles.css?v=1.3.6',
+  './styles.css?v=1.3.7',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -47,6 +47,22 @@ self.addEventListener('fetch', (event) => {
     // Documento, app.js y version.json: siempre red, no cachear (cache: 'no-store' para móvil)
     event.respondWith(
       fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Fotos equipment-photos: red primero (cache-first en móvil dejaba Sin foto si hubo 404 o caché raro)
+  if (url.includes('equipment-photos')) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }

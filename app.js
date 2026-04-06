@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.6'; // Versión actual de la app
+let currentAppVersion = '1.3.7'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -834,7 +834,7 @@ function renderEquipmentList() {
         const photoJpgEsc = photoJpg ? escapeHtml(photoJpg) : '';
         const photoWebpEsc = photoWebp ? escapeHtml(photoWebp) : '';
         const photoHtml = photoSlug
-            ? `<img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="lazy" data-photo-url="${photoJpgEsc}" data-photo-fallback="${photoWebpEsc}" onerror="if(this.dataset.triedFallback!=='1'&&this.dataset.photoFallback){this.dataset.triedFallback='1';this.src=this.dataset.photoFallback;return;}this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span>`
+            ? `<img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="eager" decoding="async" data-photo-url="${photoJpgEsc}" data-photo-fallback="${photoWebpEsc}" onerror="if(this.dataset.triedFallback!=='1'&&this.dataset.photoFallback){this.dataset.triedFallback='1';this.src=this.dataset.photoFallback;return;}this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span>`
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
