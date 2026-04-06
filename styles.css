@@ -119,6 +119,80 @@ header h1 {
     width: 100%;
 }
 
+.header-row-6 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+}
+
+.fuerza-subnav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.fuerza-subnav .fuerza-tab {
+    width: 100%;
+}
+
+.fuerza-subnav .fuerza-tab.is-active {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+.fuerza-subnav .fuerza-tab:not(.is-active) {
+    opacity: 0.85;
+}
+
+.fuerza-panel {
+    min-height: 48px;
+}
+
+.fuerza-exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.fuerza-exercise-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color, #1a1a1a);
+}
+
+.fuerza-exercise-thumb {
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    line-height: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fuerza-exercise-thumb:hover,
+.fuerza-exercise-thumb:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    outline: none;
+}
+
+.fuerza-exercise-thumb:focus-visible {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.fuerza-exercise-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 16 / 9;
+    background: var(--border-color, #e5e5e5);
+}
+
 .btn-header {
     background: var(--primary-color);
     color: white;

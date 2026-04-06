@@ -1,7 +1,7 @@
 // Cambiar CACHE_NAME y ?v= en urlsToCache al publicar nueva versión (mismo que app.js)
-const CACHE_NAME = 'running-v1.3.10';
+const CACHE_NAME = 'running-v1.3.11';
 const urlsToCache = [
-  './styles.css?v=1.3.10',
+  './styles.css?v=1.3.11',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -51,8 +51,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Fotos equipment-photos: solo red, sin tocar Cache API (evita respuestas raras en iOS / PWA)
-  if (url.includes('equipment-photos')) {
+  // Fotos equipment-photos y fuerza-photos: solo red, sin tocar Cache API (evita respuestas raras en iOS / PWA)
+  if (url.includes('equipment-photos') || url.includes('fuerza-photos')) {
     event.respondWith(fetch(event.request));
     return;
   }

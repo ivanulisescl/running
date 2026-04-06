@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.10'; // Versión actual de la app
+let currentAppVersion = '1.3.11'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGarminImport();
     setupPlanningSection();
     setupPesoSection();
+    setupFuerzaSection();
     updateStats();
     setupPWA();
     setupVersionCheck();
@@ -116,7 +117,8 @@ const MAIN_SECTIONS = {
     marcas: { btnId: 'marcasBtn', sectionId: 'marcasSection' },
     records: { btnId: 'recordsBtn', sectionId: 'recordsSection' },
     planning: { btnId: 'planningBtn', sectionId: 'planningSection' },
-    peso: { btnId: 'pesoBtn', sectionId: 'pesoSection' }
+    peso: { btnId: 'pesoBtn', sectionId: 'pesoSection' },
+    fuerza: { btnId: 'fuerzaBtn', sectionId: 'fuerzaSection' }
 };
 
 function hideAllMainSections() {
@@ -156,7 +158,7 @@ function toggleSection(sectionId) {
 }
 
 function setActiveNavButton(activeBtnId) {
-    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn', 'planningBtn', 'pesoBtn'].forEach(id => {
+    ['newSessionBtn', 'statsBtn', 'historyBtn', 'equipmentBtn', 'marcasBtn', 'recordsBtn', 'planningBtn', 'pesoBtn', 'fuerzaBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.classList.toggle('active', id === activeBtnId);
     });
@@ -233,6 +235,14 @@ function setupNavigationButtons() {
             toggleSection('pesoSection');
             setActiveNavButton(pesoSection.style.display !== 'none' ? 'pesoBtn' : null);
             if (pesoSection.style.display !== 'none') renderPeso();
+        });
+    }
+    const fuerzaBtn = document.getElementById('fuerzaBtn');
+    const fuerzaSection = document.getElementById('fuerzaSection');
+    if (fuerzaBtn && fuerzaSection) {
+        fuerzaBtn.addEventListener('click', () => {
+            toggleSection('fuerzaSection');
+            setActiveNavButton(fuerzaSection.style.display !== 'none' ? 'fuerzaBtn' : null);
         });
     }
     const marcasBtn = document.getElementById('marcasBtn');
@@ -368,6 +378,27 @@ function setupPesoSection() {
             renderPeso();
         });
     }
+}
+
+function setupFuerzaSection() {
+    const abdomenBtn = document.getElementById('fuerzaAbdomenBtn');
+    const piernasBtn = document.getElementById('fuerzaPiernasBtn');
+    const abdomenPanel = document.getElementById('fuerzaAbdomenPanel');
+    const piernasPanel = document.getElementById('fuerzaPiernasPanel');
+    if (!abdomenBtn || !piernasBtn || !abdomenPanel || !piernasPanel) return;
+
+    function setFuerzaTab(which) {
+        const isAbdomen = which === 'abdomen';
+        abdomenBtn.classList.toggle('is-active', isAbdomen);
+        piernasBtn.classList.toggle('is-active', !isAbdomen);
+        abdomenBtn.setAttribute('aria-selected', isAbdomen ? 'true' : 'false');
+        piernasBtn.setAttribute('aria-selected', !isAbdomen ? 'true' : 'false');
+        abdomenPanel.style.display = isAbdomen ? 'block' : 'none';
+        piernasPanel.style.display = isAbdomen ? 'none' : 'block';
+    }
+
+    abdomenBtn.addEventListener('click', () => setFuerzaTab('abdomen'));
+    piernasBtn.addEventListener('click', () => setFuerzaTab('piernas'));
 }
 
 function normalizeSessionFromExternal(s) {
