@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.17'; // Versión actual de la app
+let currentAppVersion = '1.3.18'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -389,6 +389,136 @@ function setupFuerzaSection() {
     const fuerzaBtn = document.getElementById('fuerzaBtn');
     if (!abdomenBtn || !piernasBtn || !abdomenPanel || !piernasPanel) return;
 
+    const FUERZA_TIMER_TOTAL_MS = 30000;
+    const timerEl = document.getElementById('fuerzaTimer');
+    const timerDisplay = document.getElementById('fuerzaTimerDisplay');
+    const timerToggle = document.getElementById('fuerzaTimerToggle');
+    const timerReset = document.getElementById('fuerzaTimerReset');
+
+    let fuerzaTimerInterval = null;
+    let fuerzaTimerEndTime = null;
+    let fuerzaTimerRemainingMs = FUERZA_TIMER_TOTAL_MS;
+    let fuerzaBeepAudioContext = null;
+
+    function playFuerzaTimerBeep() {
+        try {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            if (!fuerzaBeepAudioContext || fuerzaBeepAudioContext.state === 'closed') {
+                fuerzaBeepAudioContext = new Ctx();
+            }
+            const ctx = fuerzaBeepAudioContext;
+            const runBeep = () => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                const t0 = ctx.currentTime;
+                gain.gain.setValueAtTime(0.001, t0);
+                gain.gain.linearRampToValueAtTime(0.2, t0 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.28);
+                osc.start(t0);
+                osc.stop(t0 + 0.3);
+            };
+            if (ctx.state === 'suspended') {
+                ctx.resume().then(runBeep).catch(() => {});
+            } else {
+                runBeep();
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    function formatFuerzaTimer(ms) {
+        const totalSec = Math.max(0, Math.ceil(ms / 1000));
+        const m = Math.floor(totalSec / 60);
+        const sec = totalSec % 60;
+        return `${m}:${String(sec).padStart(2, '0')}`;
+    }
+
+    function refreshFuerzaTimerDisplay() {
+        if (!timerDisplay) return;
+        const showMs = fuerzaTimerEndTime != null
+            ? Math.max(0, fuerzaTimerEndTime - Date.now())
+            : fuerzaTimerRemainingMs;
+        timerDisplay.textContent = formatFuerzaTimer(showMs);
+    }
+
+    function stopFuerzaTimerInterval() {
+        if (fuerzaTimerInterval != null) {
+            clearInterval(fuerzaTimerInterval);
+            fuerzaTimerInterval = null;
+        }
+    }
+
+    function pauseFuerzaTimer() {
+        if (fuerzaTimerEndTime != null) {
+            fuerzaTimerRemainingMs = Math.max(0, fuerzaTimerEndTime - Date.now());
+            fuerzaTimerEndTime = null;
+        }
+        stopFuerzaTimerInterval();
+        if (timerToggle) timerToggle.textContent = 'Iniciar';
+        if (timerEl) timerEl.classList.remove('fuerza-timer--running');
+    }
+
+    function resetFuerzaTimer() {
+        pauseFuerzaTimer();
+        fuerzaTimerRemainingMs = FUERZA_TIMER_TOTAL_MS;
+        fuerzaTimerEndTime = null;
+        if (timerEl) timerEl.classList.remove('fuerza-timer--done');
+        refreshFuerzaTimerDisplay();
+    }
+
+    function onFuerzaTimerComplete() {
+        pauseFuerzaTimer();
+        fuerzaTimerRemainingMs = 0;
+        refreshFuerzaTimerDisplay();
+        if (timerEl) timerEl.classList.add('fuerza-timer--done');
+        playFuerzaTimerBeep();
+        try {
+            if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+        } catch (e) { /* ignore */ }
+    }
+
+    function tickFuerzaTimer() {
+        if (fuerzaSection && fuerzaSection.style.display === 'none') {
+            pauseFuerzaTimer();
+            return;
+        }
+        const left = fuerzaTimerEndTime != null ? Math.max(0, fuerzaTimerEndTime - Date.now()) : fuerzaTimerRemainingMs;
+        refreshFuerzaTimerDisplay();
+        if (left <= 0 && fuerzaTimerEndTime != null) {
+            onFuerzaTimerComplete();
+        }
+    }
+
+    function startFuerzaTimer() {
+        if (fuerzaTimerEndTime != null) return;
+        if (fuerzaTimerRemainingMs <= 0) fuerzaTimerRemainingMs = FUERZA_TIMER_TOTAL_MS;
+        fuerzaTimerEndTime = Date.now() + fuerzaTimerRemainingMs;
+        if (timerEl) {
+            timerEl.classList.add('fuerza-timer--running');
+            timerEl.classList.remove('fuerza-timer--done');
+        }
+        if (timerToggle) timerToggle.textContent = 'Pausar';
+        stopFuerzaTimerInterval();
+        fuerzaTimerInterval = setInterval(tickFuerzaTimer, 250);
+        tickFuerzaTimer();
+    }
+
+    if (timerToggle && timerReset && timerDisplay) {
+        refreshFuerzaTimerDisplay();
+        timerToggle.addEventListener('click', () => {
+            if (fuerzaTimerEndTime != null) {
+                pauseFuerzaTimer();
+            } else {
+                startFuerzaTimer();
+            }
+        });
+        timerReset.addEventListener('click', () => resetFuerzaTimer());
+    }
+
     function loadYoutubeEmbedsIn(panel) {
         if (!panel) return;
         panel.querySelectorAll('iframe[data-src]').forEach((iframe) => {
@@ -416,7 +546,10 @@ function setupFuerzaSection() {
     if (fuerzaBtn && fuerzaSection) {
         fuerzaBtn.addEventListener('click', () => {
             requestAnimationFrame(() => {
-                if (fuerzaSection.style.display === 'none') return;
+                if (fuerzaSection.style.display === 'none') {
+                    pauseFuerzaTimer();
+                    return;
+                }
                 loadYoutubeEmbedsIn(abdomenPanel.style.display !== 'none' ? abdomenPanel : piernasPanel);
             });
         });
