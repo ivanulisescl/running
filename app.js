@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.9'; // Versión actual de la app
+let currentAppVersion = '1.3.10'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -556,6 +556,7 @@ function getDefaultColorForEquipmentName(name) {
     if (/nimbus\s*25/.test(n)) return 'Negras';
     if (/nimbus\s*26/.test(n)) return 'Azules';
     if (/bondi\s*9|hokka/.test(n)) return 'Grises';
+    if (/glycerine\s*23|brooks.*glycerine\s*23/.test(n)) return 'Azules';
     return '';
 }
 
@@ -605,7 +606,8 @@ function normalizeEquipmentFromExternal(item) {
 const EQUIPMENT_DESDE_DEFAULTS = [
     { match: (n) => /nimbus\s*25|25\s*negras/i.test(n), desde: '2023-07-30' },
     { match: (n) => /nimbus\s*26|26\s*azules/i.test(n), desde: '2024-09-24' },
-    { match: (n) => /hokka|bondi\s*9/i.test(n), desde: '2025-08-02' }
+    { match: (n) => /hokka|bondi\s*9/i.test(n), desde: '2025-08-02' },
+    { match: (n) => /glycerine\s*23|brooks.*glycerine\s*23/i.test(n), desde: '2026-04-06' }
 ];
 
 function getDefaultDesdeForEquipmentName(name) {
@@ -650,7 +652,8 @@ function loadEquipment() {
         equipmentList = [
             { name: 'Asics Gel Nimbus 25', color: 'Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
             { name: 'Asics Gel Nimbus 26', color: 'Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
-            { name: 'Hokka Bondi 9', color: 'Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 }
+            { name: 'Hokka Bondi 9', color: 'Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 },
+            { name: 'Brooks Glycerine 23', color: '', kilometros: 0, estado: 'Activo', desde: '2026-04-06', limiteKm: 800 }
         ];
         saveEquipment();
     }
