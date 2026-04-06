@@ -150,6 +150,18 @@ header h1 {
     min-height: 48px;
 }
 
+.fuerza-week-note {
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    margin: 0 0 8px 0;
+    line-height: 1.45;
+}
+
+.fuerza-week-note strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
 .fuerza-exercise-list {
     display: flex;
     flex-direction: column;
