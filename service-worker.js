@@ -1,7 +1,7 @@
 // Cambiar CACHE_NAME y ?v= en urlsToCache al publicar nueva versión (mismo que app.js)
-const CACHE_NAME = 'running-v1.3.7';
+const CACHE_NAME = 'running-v1.3.8';
 const urlsToCache = [
-  './styles.css?v=1.3.7',
+  './styles.css?v=1.3.8',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -51,19 +51,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Fotos equipment-photos: red primero (cache-first en móvil dejaba Sin foto si hubo 404 o caché raro)
+  // Fotos equipment-photos: solo red, sin tocar Cache API (evita respuestas raras en iOS / PWA)
   if (url.includes('equipment-photos')) {
-    event.respondWith(
-      fetch(event.request, { cache: 'no-store' })
-        .then((response) => {
-          if (response && response.status === 200 && response.type === 'basic') {
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
+    event.respondWith(fetch(event.request));
     return;
   }
 

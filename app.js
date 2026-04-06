@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.7'; // Versión actual de la app
+let currentAppVersion = '1.3.8'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -749,18 +749,54 @@ function getEquipmentPhotoSlug(equipmentName) {
     return s;
 }
 
-// URL absoluta de la foto de un equipo (resuelve bien en GitHub Pages, file:// y cualquier ruta).
+// Base del directorio de la app (terminal con /) para resolver equipment-photos en GitHub Pages y PWA móvil.
+function getEquipmentPhotoBaseForAssets() {
+    if (typeof window === 'undefined' || !window.location) return '';
+    const { origin, pathname } = window.location;
+    let path = pathname || '/';
+    if (!path.endsWith('/')) {
+        if (/\.html?$/i.test(path)) {
+            path = path.slice(0, path.lastIndexOf('/') + 1);
+        } else {
+            path = path + '/';
+        }
+    }
+    return origin + path;
+}
+
+// URL absoluta de la foto de un equipo
 function getEquipmentPhotoUrl(slug, extension) {
     if (!slug || typeof extension !== 'string') return '';
     if (typeof window === 'undefined' || !window.location) return 'equipment-photos/' + slug + extension;
     try {
-        const p = window.location.pathname || '/';
-        const dir = p.endsWith('/') ? p : (p.lastIndexOf('/') > 0 ? p.substring(0, p.lastIndexOf('/') + 1) : p + '/');
-        const base = window.location.origin + dir;
+        const base = getEquipmentPhotoBaseForAssets();
         return new URL('equipment-photos/' + slug + extension, base).href;
     } catch (_) {
         return 'equipment-photos/' + slug + extension;
     }
+}
+
+// Misma foto como ruta relativa (fallback si la absoluta falla en algún WebView)
+function getEquipmentPhotoRelativeUrl(slug, extension) {
+    if (!slug || typeof extension !== 'string') return '';
+    return './equipment-photos/' + slug + extension;
+}
+
+function equipmentPhotoOnError(img) {
+    if (!img || img.tagName !== 'IMG') return;
+    if (img.dataset.triedFallback !== '1' && img.dataset.photoFallback) {
+        img.dataset.triedFallback = '1';
+        img.src = img.dataset.photoFallback;
+        return;
+    }
+    if (img.dataset.triedRel !== '1' && img.dataset.photoRel) {
+        img.dataset.triedRel = '1';
+        img.src = img.dataset.photoRel;
+        return;
+    }
+    img.style.display = 'none';
+    const ph = img.parentElement && img.parentElement.querySelector('.equipment-photo-placeholder');
+    if (ph) ph.style.display = 'block';
 }
 
 // Calcular kilómetros y actividades de un equipo desde las sesiones
@@ -831,10 +867,12 @@ function renderEquipmentList() {
         const cacheBust = '?v=' + (typeof currentAppVersion !== 'undefined' ? currentAppVersion : '1');
         const photoJpg = photoSlug ? getEquipmentPhotoUrl(photoSlug, '.jpg') + cacheBust : '';
         const photoWebp = photoSlug ? getEquipmentPhotoUrl(photoSlug, '.webp') + cacheBust : '';
+        const photoJpgRel = photoSlug ? getEquipmentPhotoRelativeUrl(photoSlug, '.jpg') + cacheBust : '';
         const photoJpgEsc = photoJpg ? escapeHtml(photoJpg) : '';
         const photoWebpEsc = photoWebp ? escapeHtml(photoWebp) : '';
+        const photoJpgRelEsc = photoJpgRel ? escapeHtml(photoJpgRel) : '';
         const photoHtml = photoSlug
-            ? `<img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="eager" decoding="async" data-photo-url="${photoJpgEsc}" data-photo-fallback="${photoWebpEsc}" onerror="if(this.dataset.triedFallback!=='1'&&this.dataset.photoFallback){this.dataset.triedFallback='1';this.src=this.dataset.photoFallback;return;}this.style.display='none';var s=this.parentElement.querySelector('.equipment-photo-placeholder');if(s)s.style.display='block'"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span>`
+            ? `<img class="equipment-photo" src="${photoJpgEsc}" alt="" loading="eager" decoding="async" data-photo-fallback="${photoWebpEsc}" data-photo-rel="${photoJpgRelEsc}" onerror="equipmentPhotoOnError(this)"><span class="equipment-photo-placeholder" style="display:none">Sin foto</span>`
             : '<span class="equipment-photo-placeholder">Sin foto</span>';
         return `
             <div class="equipment-card">
