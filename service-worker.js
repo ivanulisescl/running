@@ -1,7 +1,7 @@
 // Cambiar CACHE_NAME y ?v= en urlsToCache al publicar nueva versión (mismo que app.js)
-const CACHE_NAME = 'running-v1.3.16';
+const CACHE_NAME = 'running-v1.3.17';
 const urlsToCache = [
-  './styles.css?v=1.3.16',
+  './styles.css?v=1.3.17',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -21,19 +21,21 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activación del Service Worker
+// Activación: limpiar cachés viejas y tomar control de todas las pestañas (evita quedar en v. anterior hasta cerrar la app)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Eliminando cache antiguo:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then((cacheNames) =>
+        Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Eliminando cache antiguo:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        )
+      )
+      .then(() => self.clients.claim())
   );
 });
 
