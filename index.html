@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.15">
+    <link rel="stylesheet" href="styles.css?v=1.3.16">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.15</span>
+                <span id="currentVersion">v1.3.16</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -369,93 +369,94 @@
                 </div>
             </section>
 
-            <!-- Fuerza -->
+            <!-- Fuerza (vídeos embebidos YouTube) -->
             <section id="fuerzaSection" class="card main-section" style="display: none;">
                 <h2>Fuerza</h2>
                 <div class="fuerza-subnav" role="tablist" aria-label="Zona de fuerza">
                     <button type="button" id="fuerzaAbdomenBtn" class="btn-header fuerza-tab is-active" role="tab" aria-selected="true">Abdomen</button>
                     <button type="button" id="fuerzaPiernasBtn" class="btn-header fuerza-tab" role="tab" aria-selected="false">Piernas</button>
                 </div>
+                <p class="fuerza-instructions">Tiempo de realización de cada ejercicio: 30'' // Nº de series: 4 // Descanso entre series: 1'. En cada serie realizar los 4 ejercicios de forma continua, con descanso muy breve (10''–15'') entre ellos.</p>
                 <div id="fuerzaAbdomenPanel" class="fuerza-panel" role="tabpanel">
                     <p class="fuerza-week-note"><strong>Semanas 1–4</strong></p>
                     <div class="fuerza-exercise-list">
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Crunch hasta vertical</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=Qr_qGJpz8YI" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Crunch hasta vertical">
-                                <img src="fuerza-photos/abdomen-01-crunch-hasta-vertical.jpg" alt="Crunch hasta vertical" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/Qr_qGJpz8YI?rel=0&amp;modestbranding=1" title="Crunch hasta vertical" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Elevación cadera</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=H9pmEbisrcc" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Elevación cadera">
-                                <img src="fuerza-photos/abdomen-02-elevacion-cadera.jpg" alt="Elevación cadera" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/H9pmEbisrcc?rel=0&amp;modestbranding=1" title="Elevación cadera" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Plancha elevando rodilla alterna</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=CU6kxrBB20I" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Plancha elevando rodilla alterna">
-                                <img src="fuerza-photos/abdomen-03-plancha-rodilla-alterna.jpg" alt="Plancha elevando rodilla alterna" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/CU6kxrBB20I?rel=0&amp;modestbranding=1" title="Plancha elevando rodilla alterna" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Elevación pierna y brazo contrario</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=jCcjdHaPwmM" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Elevación pierna y brazo contrario">
-                                <img src="fuerza-photos/abdomen-04-pierna-brazo-contrario.jpg" alt="Elevación pierna y brazo contrario" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/jCcjdHaPwmM?rel=0&amp;modestbranding=1" title="Elevación pierna y brazo contrario" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                     </div>
                     <p class="fuerza-week-note"><strong>Semanas 5–8</strong></p>
                     <div class="fuerza-exercise-list">
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Crunch flex-ext. Rodillas</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=MfziojPDDhU" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Crunch flex-ext. Rodillas">
-                                <img src="fuerza-photos/abdomen-05-crunch-flex-ext-rodillas.jpg" alt="Crunch flex-ext. Rodillas" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/MfziojPDDhU?rel=0&amp;modestbranding=1" title="Crunch flex-ext. Rodillas" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Elevación alterna pierna hasta vertical</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=-YtwPb9U4kM" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Elevación alterna pierna hasta vertical">
-                                <img src="fuerza-photos/abdomen-06-elevacion-alterna-pierna-vertical.jpg" alt="Elevación alterna pierna hasta vertical" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/-YtwPb9U4kM?rel=0&amp;modestbranding=1" title="Elevación alterna pierna hasta vertical" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Plancha lateral</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=fDlbpMqz-f8" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Plancha lateral">
-                                <img src="fuerza-photos/abdomen-07-plancha-lateral.jpg" alt="Plancha lateral" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/fDlbpMqz-f8?rel=0&amp;modestbranding=1" title="Plancha lateral" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Lumbar-patada crol</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=wPXhGrM5WGk" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Lumbar-patada crol">
-                                <img src="fuerza-photos/abdomen-08-lumbar-patada-crol.jpg" alt="Lumbar-patada crol" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/wPXhGrM5WGk?rel=0&amp;modestbranding=1" title="Lumbar-patada crol" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                     </div>
                     <p class="fuerza-week-note"><strong>Semanas 9–12</strong></p>
                     <div class="fuerza-exercise-list">
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Elevación de cadera</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=H9pmEbisrcc" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Elevación de cadera">
-                                <img src="fuerza-photos/abdomen-02-elevacion-cadera.jpg" alt="Elevación de cadera" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/H9pmEbisrcc?rel=0&amp;modestbranding=1" title="Elevación de cadera" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Crunch flex-ext. Rodillas</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=MfziojPDDhU" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Crunch flex-ext. Rodillas">
-                                <img src="fuerza-photos/abdomen-05-crunch-flex-ext-rodillas.jpg" alt="Crunch flex-ext. Rodillas" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/MfziojPDDhU?rel=0&amp;modestbranding=1" title="Crunch flex-ext. Rodillas" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Plancha lateral elevación cadera</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=M0D9jEH51t0" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Plancha lateral elevación cadera">
-                                <img src="fuerza-photos/abdomen-09-plancha-lateral-elevacion-cadera.jpg" alt="Plancha lateral elevación cadera" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/M0D9jEH51t0?rel=0&amp;modestbranding=1" title="Plancha lateral elevación cadera" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Puente elev. Rodilla</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=qK1T1qxhMs0" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Puente elev. Rodilla">
-                                <img src="fuerza-photos/abdomen-10-puente-elev-rodilla.jpg" alt="Puente elev. Rodilla" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/qK1T1qxhMs0?rel=0&amp;modestbranding=1" title="Puente elev. Rodilla" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                     </div>
                 </div>
@@ -464,81 +465,81 @@
                     <div class="fuerza-exercise-list">
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Sentadilla</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=PaP9F1DSY8s" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Sentadilla">
-                                <img src="fuerza-photos/piernas-01-sentadilla.jpg" alt="Sentadilla" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/PaP9F1DSY8s?rel=0&amp;modestbranding=1" title="Sentadilla" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Multisaltos lateral 1 pierna</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=pRcO17mIrmw" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Multisaltos lateral 1 pierna">
-                                <img src="fuerza-photos/piernas-02-multisaltos-lateral-1-pierna.jpg" alt="Multisaltos lateral 1 pierna" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/pRcO17mIrmw?rel=0&amp;modestbranding=1" title="Multisaltos lateral 1 pierna" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Puente</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=5IihqZewicU" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Puente">
-                                <img src="fuerza-photos/piernas-03-puente.jpg" alt="Puente" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/5IihqZewicU?rel=0&amp;modestbranding=1" title="Puente" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Zancada atrás</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=P8GHvrmpvUA" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Zancada atrás">
-                                <img src="fuerza-photos/piernas-04-zancada-atras.jpg" alt="Zancada atrás" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/P8GHvrmpvUA?rel=0&amp;modestbranding=1" title="Zancada atrás" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                     </div>
                     <p class="fuerza-week-note"><strong>Semanas 5–8</strong></p>
                     <div class="fuerza-exercise-list">
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Salto arriba sentadilla</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=hD_rD6jdHF8" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Salto arriba sentadilla">
-                                <img src="fuerza-photos/piernas-05-salto-arriba-sentadilla.jpg" alt="Salto arriba sentadilla" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/hD_rD6jdHF8?rel=0&amp;modestbranding=1" title="Salto arriba sentadilla" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Puente a una pierna</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=mqGaDjL3050" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Puente a una pierna">
-                                <img src="fuerza-photos/piernas-06-puente-una-pierna.jpg" alt="Puente a una pierna" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/mqGaDjL3050?rel=0&amp;modestbranding=1" title="Puente a una pierna" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Subida a banco</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=s656ki2H6Aw" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Subida a banco">
-                                <img src="fuerza-photos/piernas-07-subida-banco.jpg" alt="Subida a banco" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/s656ki2H6Aw?rel=0&amp;modestbranding=1" title="Subida a banco" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Zancadas alternas con salto</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=TM72PUcogO8" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Zancadas alternas con salto">
-                                <img src="fuerza-photos/piernas-08-zancadas-alternas-salto.jpg" alt="Zancadas alternas con salto" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/TM72PUcogO8?rel=0&amp;modestbranding=1" title="Zancadas alternas con salto" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                     </div>
                     <p class="fuerza-week-note"><strong>Semanas 9–12</strong></p>
                     <div class="fuerza-exercise-list">
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Sentadas a una pierna</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=NPxUmcuBgGg" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Sentadas a una pierna">
-                                <img src="fuerza-photos/piernas-09-sentadas-una-pierna.jpg" alt="Sentadas a una pierna" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/NPxUmcuBgGg?rel=0&amp;modestbranding=1" title="Sentadas a una pierna" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Split pie en banco</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=HSSDqMB4MEk" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Split pie en banco">
-                                <img src="fuerza-photos/piernas-10-split-pie-banco.jpg" alt="Split pie en banco" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/HSSDqMB4MEk?rel=0&amp;modestbranding=1" title="Split pie en banco" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Puente a una pierna</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=mqGaDjL3050" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Puente a una pierna">
-                                <img src="fuerza-photos/piernas-06-puente-una-pierna.jpg" alt="Puente a una pierna" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/mqGaDjL3050?rel=0&amp;modestbranding=1" title="Puente a una pierna" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                         <article class="fuerza-exercise">
                             <h3 class="fuerza-exercise-title">Saltos burpee</h3>
-                            <a class="fuerza-exercise-thumb" href="https://www.youtube.com/watch?v=LPDDbDUmZlM" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo en YouTube: Saltos burpee">
-                                <img src="fuerza-photos/piernas-11-saltos-burpee.jpg" alt="Saltos burpee" loading="lazy" width="1280" height="720">
-                            </a>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/LPDDbDUmZlM?rel=0&amp;modestbranding=1" title="Saltos burpee" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
                         </article>
                     </div>
                 </div>
@@ -635,7 +636,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.15"></script>
+    <script src="app.js?v=1.3.16"></script>
 </body>
 </html>
 

@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.15'; // Versión actual de la app
+let currentAppVersion = '1.3.16'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -385,7 +385,19 @@ function setupFuerzaSection() {
     const piernasBtn = document.getElementById('fuerzaPiernasBtn');
     const abdomenPanel = document.getElementById('fuerzaAbdomenPanel');
     const piernasPanel = document.getElementById('fuerzaPiernasPanel');
+    const fuerzaSection = document.getElementById('fuerzaSection');
+    const fuerzaBtn = document.getElementById('fuerzaBtn');
     if (!abdomenBtn || !piernasBtn || !abdomenPanel || !piernasPanel) return;
+
+    function loadYoutubeEmbedsIn(panel) {
+        if (!panel) return;
+        panel.querySelectorAll('iframe[data-src]').forEach((iframe) => {
+            const url = iframe.getAttribute('data-src');
+            if (url && !iframe.getAttribute('src')) {
+                iframe.setAttribute('src', url);
+            }
+        });
+    }
 
     function setFuerzaTab(which) {
         const isAbdomen = which === 'abdomen';
@@ -395,10 +407,20 @@ function setupFuerzaSection() {
         piernasBtn.setAttribute('aria-selected', !isAbdomen ? 'true' : 'false');
         abdomenPanel.style.display = isAbdomen ? 'block' : 'none';
         piernasPanel.style.display = isAbdomen ? 'none' : 'block';
+        loadYoutubeEmbedsIn(isAbdomen ? abdomenPanel : piernasPanel);
     }
 
     abdomenBtn.addEventListener('click', () => setFuerzaTab('abdomen'));
     piernasBtn.addEventListener('click', () => setFuerzaTab('piernas'));
+
+    if (fuerzaBtn && fuerzaSection) {
+        fuerzaBtn.addEventListener('click', () => {
+            requestAnimationFrame(() => {
+                if (fuerzaSection.style.display === 'none') return;
+                loadYoutubeEmbedsIn(abdomenPanel.style.display !== 'none' ? abdomenPanel : piernasPanel);
+            });
+        });
+    }
 }
 
 function normalizeSessionFromExternal(s) {
