@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.19">
+    <link rel="stylesheet" href="styles.css?v=1.3.20">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.19</span>
+                <span id="currentVersion">v1.3.20</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -375,9 +375,11 @@
                 <div class="fuerza-subnav" role="tablist" aria-label="Zona de fuerza">
                     <button type="button" id="fuerzaAbdomenBtn" class="btn-header fuerza-tab is-active" role="tab" aria-selected="true">Abdomen</button>
                     <button type="button" id="fuerzaPiernasBtn" class="btn-header fuerza-tab" role="tab" aria-selected="false">Piernas</button>
+                    <button type="button" id="fuerzaTecnicaBtn" class="btn-header fuerza-tab" role="tab" aria-selected="false">Técnica</button>
                 </div>
-                <p class="fuerza-instructions">Tiempo de realización de cada ejercicio: 30'' // Nº de series: 4 // Descanso entre series: 1'. En cada serie realizar los 4 ejercicios de forma continua, con descanso muy breve (10''–15'') entre ellos.</p>
-                <div class="fuerza-timer" id="fuerzaTimer" aria-label="Temporizador de ejercicio, 30 segundos">
+                <p id="fuerzaInstrStrength" class="fuerza-instructions">Tiempo de realización de cada ejercicio: 30'' // Nº de series: 4 // Descanso entre series: 1'. En cada serie realizar los 4 ejercicios de forma continua, con descanso muy breve (10''–15'') entre ellos.</p>
+                <p id="fuerzaInstrTecnica" class="fuerza-instructions" style="display: none;">Técnica de carrera — Tiempo por ejercicio: 15'' // Nº de series: 2 // Descanso entre series: 30''. En cada serie realizar los 4 ejercicios seguidos, con descanso muy breve (10''–15'') entre cada uno.</p>
+                <div class="fuerza-timer" id="fuerzaTimer" aria-label="Temporizador de ejercicio (30 s en Abdomen/Piernas, 15 s en Técnica)">
                     <div class="fuerza-timer-display" id="fuerzaTimerDisplay" role="timer" aria-live="polite">0:30</div>
                     <div class="fuerza-timer-actions">
                         <button type="button" class="btn btn-primary" id="fuerzaTimerToggle">Iniciar</button>
@@ -550,6 +552,89 @@
                         </article>
                     </div>
                 </div>
+                <div id="fuerzaTecnicaPanel" class="fuerza-panel" style="display: none;" role="tabpanel">
+                    <p class="fuerza-week-note"><strong>Semanas 1–4</strong></p>
+                    <div class="fuerza-exercise-list">
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Talonam. rodilla arriba</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/smyXt0kWjI8?rel=0&amp;modestbranding=1" title="Talonam. rodilla arriba" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Saltos alternat. rebote</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/pRcO17mIrmw?rel=0&amp;modestbranding=1" title="Saltos alternat. rebote" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Skipping alto</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/hD_rD6jdHF8?rel=0&amp;modestbranding=1" title="Skipping alto" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Talón a glúteo</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/TDcn8D_ZbIM?rel=0&amp;modestbranding=1" title="Talón a glúteo" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                    </div>
+                    <p class="fuerza-week-note"><strong>Semanas 5–8</strong></p>
+                    <div class="fuerza-exercise-list">
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Saltos alternat. rebote</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/pRcO17mIrmw?rel=0&amp;modestbranding=1" title="Saltos alternat. rebote" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Skipping con rebote</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/TDcn8D_ZbIM?rel=0&amp;modestbranding=1" title="Skipping con rebote" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Skipping progresivo</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/smyXt0kWjI8?rel=0&amp;modestbranding=1" title="Skipping progresivo" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Combinac. Skip-Talón</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/hD_rD6jdHF8?rel=0&amp;modestbranding=1" title="Combinac. Skip-Talón" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                    </div>
+                    <p class="fuerza-week-note"><strong>Semanas 9–12</strong></p>
+                    <div class="fuerza-exercise-list">
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Saltos alternat. rebote</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/hD_rD6jdHF8?rel=0&amp;modestbranding=1" title="Saltos alternat. rebote" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Skipping ruso</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/smyXt0kWjI8?rel=0&amp;modestbranding=1" title="Skipping ruso" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Skipping con parada</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/TDcn8D_ZbIM?rel=0&amp;modestbranding=1" title="Skipping con parada" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                        <article class="fuerza-exercise">
+                            <h3 class="fuerza-exercise-title">Combinac. Skip-Talón</h3>
+                            <div class="fuerza-exercise-embed">
+                                <iframe data-src="https://www.youtube.com/embed/pRcO17mIrmw?rel=0&amp;modestbranding=1" title="Combinac. Skip-Talón" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            </div>
+                        </article>
+                    </div>
+                </div>
             </section>
 
             <!-- Mensajes de estado (ocultos por defecto) -->
@@ -643,7 +728,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.19"></script>
+    <script src="app.js?v=1.3.20"></script>
 </body>
 </html>
 

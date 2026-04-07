@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.19'; // Versión actual de la app
+let currentAppVersion = '1.3.20'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -383,13 +383,19 @@ function setupPesoSection() {
 function setupFuerzaSection() {
     const abdomenBtn = document.getElementById('fuerzaAbdomenBtn');
     const piernasBtn = document.getElementById('fuerzaPiernasBtn');
+    const tecnicaBtn = document.getElementById('fuerzaTecnicaBtn');
     const abdomenPanel = document.getElementById('fuerzaAbdomenPanel');
     const piernasPanel = document.getElementById('fuerzaPiernasPanel');
+    const tecnicaPanel = document.getElementById('fuerzaTecnicaPanel');
     const fuerzaSection = document.getElementById('fuerzaSection');
     const fuerzaBtn = document.getElementById('fuerzaBtn');
-    if (!abdomenBtn || !piernasBtn || !abdomenPanel || !piernasPanel) return;
+    const instrStrength = document.getElementById('fuerzaInstrStrength');
+    const instrTecnica = document.getElementById('fuerzaInstrTecnica');
+    if (!abdomenBtn || !piernasBtn || !tecnicaBtn || !abdomenPanel || !piernasPanel || !tecnicaPanel) return;
 
-    const FUERZA_TIMER_TOTAL_MS = 30000;
+    const FUERZA_TIMER_STRENGTH_MS = 30000;
+    const FUERZA_TIMER_TECNICA_MS = 15000;
+    let fuerzaTimerTotalMs = FUERZA_TIMER_STRENGTH_MS;
     const timerEl = document.getElementById('fuerzaTimer');
     const timerDisplay = document.getElementById('fuerzaTimerDisplay');
     const timerToggle = document.getElementById('fuerzaTimerToggle');
@@ -397,7 +403,7 @@ function setupFuerzaSection() {
 
     let fuerzaTimerInterval = null;
     let fuerzaTimerEndTime = null;
-    let fuerzaTimerRemainingMs = FUERZA_TIMER_TOTAL_MS;
+    let fuerzaTimerRemainingMs = fuerzaTimerTotalMs;
     let fuerzaBeepAudioContext = null;
 
     function playFuerzaTimerBeep() {
@@ -464,7 +470,7 @@ function setupFuerzaSection() {
 
     function resetFuerzaTimer() {
         pauseFuerzaTimer();
-        fuerzaTimerRemainingMs = FUERZA_TIMER_TOTAL_MS;
+        fuerzaTimerRemainingMs = fuerzaTimerTotalMs;
         fuerzaTimerEndTime = null;
         if (timerEl) timerEl.classList.remove('fuerza-timer--done');
         refreshFuerzaTimerDisplay();
@@ -495,7 +501,7 @@ function setupFuerzaSection() {
 
     function startFuerzaTimer() {
         if (fuerzaTimerEndTime != null) return;
-        if (fuerzaTimerRemainingMs <= 0) fuerzaTimerRemainingMs = FUERZA_TIMER_TOTAL_MS;
+        if (fuerzaTimerRemainingMs <= 0) fuerzaTimerRemainingMs = fuerzaTimerTotalMs;
         fuerzaTimerEndTime = Date.now() + fuerzaTimerRemainingMs;
         if (timerEl) {
             timerEl.classList.add('fuerza-timer--running');
@@ -531,17 +537,30 @@ function setupFuerzaSection() {
 
     function setFuerzaTab(which) {
         const isAbdomen = which === 'abdomen';
+        const isPiernas = which === 'piernas';
+        const isTecnica = which === 'tecnica';
         abdomenBtn.classList.toggle('is-active', isAbdomen);
-        piernasBtn.classList.toggle('is-active', !isAbdomen);
+        piernasBtn.classList.toggle('is-active', isPiernas);
+        tecnicaBtn.classList.toggle('is-active', isTecnica);
         abdomenBtn.setAttribute('aria-selected', isAbdomen ? 'true' : 'false');
-        piernasBtn.setAttribute('aria-selected', !isAbdomen ? 'true' : 'false');
+        piernasBtn.setAttribute('aria-selected', isPiernas ? 'true' : 'false');
+        tecnicaBtn.setAttribute('aria-selected', isTecnica ? 'true' : 'false');
         abdomenPanel.style.display = isAbdomen ? 'block' : 'none';
-        piernasPanel.style.display = isAbdomen ? 'none' : 'block';
-        loadYoutubeEmbedsIn(isAbdomen ? abdomenPanel : piernasPanel);
+        piernasPanel.style.display = isPiernas ? 'block' : 'none';
+        tecnicaPanel.style.display = isTecnica ? 'block' : 'none';
+        if (instrStrength) instrStrength.style.display = isTecnica ? 'none' : 'block';
+        if (instrTecnica) instrTecnica.style.display = isTecnica ? 'block' : 'none';
+
+        fuerzaTimerTotalMs = isTecnica ? FUERZA_TIMER_TECNICA_MS : FUERZA_TIMER_STRENGTH_MS;
+        resetFuerzaTimer();
+
+        const panel = isAbdomen ? abdomenPanel : isPiernas ? piernasPanel : tecnicaPanel;
+        loadYoutubeEmbedsIn(panel);
     }
 
     abdomenBtn.addEventListener('click', () => setFuerzaTab('abdomen'));
     piernasBtn.addEventListener('click', () => setFuerzaTab('piernas'));
+    tecnicaBtn.addEventListener('click', () => setFuerzaTab('tecnica'));
 
     if (fuerzaBtn && fuerzaSection) {
         fuerzaBtn.addEventListener('click', () => {
@@ -550,7 +569,12 @@ function setupFuerzaSection() {
                     pauseFuerzaTimer();
                     return;
                 }
-                loadYoutubeEmbedsIn(abdomenPanel.style.display !== 'none' ? abdomenPanel : piernasPanel);
+                const panel = abdomenPanel.style.display !== 'none'
+                    ? abdomenPanel
+                    : piernasPanel.style.display !== 'none'
+                        ? piernasPanel
+                        : tecnicaPanel;
+                loadYoutubeEmbedsIn(panel);
             });
         });
     }
