@@ -1,7 +1,8 @@
 {
-  "version": "1.3.20",
-  "buildDate": "2026-04-08",
+  "version": "1.3.21",
+  "buildDate": "2026-04-09",
   "changelog": [
+    "Fuerza Técnica: vídeos YouTube del plan (enlaces por ejercicio y bloque de semanas)",
     "Fuerza: pestaña Técnica (bloques por semanas 1–4, 5–8, 9–12), temporizador 15 s e instrucciones del plan",
     "Fuerza: enlace de vídeo corregido para Lumbar-patada crol (YouTube)",
     "Fuerza: temporizador 30 s (iniciar/pausar/reiniciar), pitido al terminar y vibración; pausa al salir de la sección",
