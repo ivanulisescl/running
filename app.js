@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.23'; // Versión actual de la app
+let currentAppVersion = '1.3.24'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -771,13 +771,15 @@ function getDefaultColorForEquipmentName(name) {
 }
 
 function normalizeEquipmentFromExternal(item) {
-    let name, color;
+    let name, color, talla;
     if (typeof item === 'string') {
         const split = splitLegacyEquipmentName(item);
         name = split.name;
         color = split.color;
+        talla = '';
     } else {
         name = (item && item.name) || '';
+        talla = (item && item.talla != null) ? String(item.talla).trim() : '';
         if (item && item.color != null) {
             color = String(item.color).trim();
             // Si el nombre ya incluye el color al final, quitarlo para evitar duplicados.
@@ -809,7 +811,7 @@ function normalizeEquipmentFromExternal(item) {
     const limiteKm = typeof item === 'object' && item && typeof item.limiteKm === 'number' && item.limiteKm > 0
         ? item.limiteKm
         : getDefaultLimiteKmForEquipmentName(displayName);
-    return { name, color, kilometros, estado, desde, limiteKm };
+    return { name, color, talla, kilometros, estado, desde, limiteKm };
 }
 
 // Fechas "desde" por defecto para equipos conocidos (nombre contiene la clave)
@@ -860,10 +862,10 @@ function loadEquipment() {
     } else {
         // Equipos iniciales por defecto (desde: cuándo se empezó a usar)
         equipmentList = [
-            { name: 'Asics Gel Nimbus 25', color: 'Negras', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
-            { name: 'Asics Gel Nimbus 26', color: 'Azules', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
-            { name: 'Hokka Bondi 9', color: 'Grises', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 },
-            { name: 'Brooks Glycerine 23', color: '', kilometros: 0, estado: 'Activo', desde: '2026-04-06', limiteKm: 800 }
+            { name: 'Asics Gel Nimbus 25', color: 'Negras', talla: '', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
+            { name: 'Asics Gel Nimbus 26', color: 'Azules', talla: '', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
+            { name: 'Hokka Bondi 9', color: 'Grises', talla: '', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 },
+            { name: 'Brooks Glycerine 23', color: '', talla: '', kilometros: 0, estado: 'Activo', desde: '2026-04-06', limiteKm: 800 }
         ];
         saveEquipment();
     }
@@ -905,8 +907,10 @@ function setupEquipmentSection() {
 function addNewEquipment() {
     const input = document.getElementById('newEquipmentInput');
     const colorInput = document.getElementById('newEquipmentColor');
+    const tallaInput = document.getElementById('newEquipmentSize');
     const equipmentName = input.value.trim();
     const equipmentColor = (colorInput && colorInput.value) ? colorInput.value.trim() : '';
+    const equipmentTalla = (tallaInput && tallaInput.value) ? tallaInput.value.trim() : '';
     
     if (!equipmentName) {
         alert('Por favor ingresa un nombre para el equipo');
@@ -922,13 +926,14 @@ function addNewEquipment() {
     const hoy = new Date().toISOString().split('T')[0];
     const desde = getDefaultDesdeForEquipmentName(displayName) || hoy;
     const limiteKm = getDefaultLimiteKmForEquipmentName(displayName);
-    equipmentList.push({ name: equipmentName, color: equipmentColor, kilometros: 0, estado: 'Activo', desde, limiteKm });
+    equipmentList.push({ name: equipmentName, color: equipmentColor, talla: equipmentTalla, kilometros: 0, estado: 'Activo', desde, limiteKm });
     saveEquipment();
     renderEquipmentList();
     updateEquipmentSelect();
     
     input.value = '';
     if (colorInput) colorInput.value = '';
+    if (tallaInput) tallaInput.value = '';
 }
 
 function getEquipmentName(eq) {
@@ -1068,6 +1073,9 @@ function renderEquipmentList() {
         const stats = getEquipmentStatsFromSessions(equipment);
         const estado = typeof equipment === 'object' ? (equipment.estado || 'Activo') : 'Activo';
         const info = parseEquipmentInfo(equipment);
+        const talla = (typeof equipment === 'object' && equipment && equipment.talla != null)
+            ? String(equipment.talla).trim()
+            : '';
         const desdeIso = getEquipmentDesde(equipment);
         const desdeLabel = desdeIso && desdeIso !== '1970-01-01' ? formatDate(desdeIso) : '—';
         const limiteKm = getEquipmentLimiteKm(equipment);
@@ -1101,6 +1109,10 @@ function renderEquipmentList() {
                     ${info.color ? `<div class="equipment-color">
                         <span class="color-label">Color:</span>
                         <span class="color-value">${escapeHtml(info.color)}</span>
+                    </div>` : ''}
+                    ${talla ? `<div class="equipment-color">
+                        <span class="color-label">Talla:</span>
+                        <span class="color-value">${escapeHtml(talla)}</span>
                     </div>` : ''}
                     <div class="equipment-desde">
                         <span class="desde-label">Desde:</span>
