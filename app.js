@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.24'; // Versión actual de la app
+let currentAppVersion = '1.3.25'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -770,6 +770,15 @@ function getDefaultColorForEquipmentName(name) {
     return '';
 }
 
+function getDefaultSizeForEquipmentName(name) {
+    const n = (name || '').trim().toLowerCase();
+    if (/nimbus\s*25/.test(n)) return '46.5';
+    if (/nimbus\s*26/.test(n)) return 'US 12 / EU 46.5 / 29.5 cm';
+    if (/bondi\s*9|hokka/.test(n)) return 'US 12D / EU 46 2/3';
+    if (/glycerine\s*23|brooks.*glycerine\s*23/.test(n)) return '12';
+    return '';
+}
+
 function normalizeEquipmentFromExternal(item) {
     let name, color, talla;
     if (typeof item === 'string') {
@@ -802,6 +811,7 @@ function normalizeEquipmentFromExternal(item) {
     }
     // Si no hay color explícito, intentar inferirlo para modelos conocidos
     if (!color) color = getDefaultColorForEquipmentName(name);
+    if (!talla) talla = getDefaultSizeForEquipmentName(name);
     const displayName = color ? name + ' ' + color : name;
     const estado = typeof item === 'object' && item && item.estado ? item.estado : 'Activo';
     const kilometros = typeof item === 'object' && item && typeof item.kilometros === 'number' ? item.kilometros : 0;
@@ -862,10 +872,10 @@ function loadEquipment() {
     } else {
         // Equipos iniciales por defecto (desde: cuándo se empezó a usar)
         equipmentList = [
-            { name: 'Asics Gel Nimbus 25', color: 'Negras', talla: '', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
-            { name: 'Asics Gel Nimbus 26', color: 'Azules', talla: '', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
-            { name: 'Hokka Bondi 9', color: 'Grises', talla: '', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 },
-            { name: 'Brooks Glycerine 23', color: '', talla: '', kilometros: 0, estado: 'Activo', desde: '2026-04-06', limiteKm: 800 }
+            { name: 'Asics Gel Nimbus 25', color: 'Negras', talla: '46.5', kilometros: 0, estado: 'Retirado', desde: '2023-07-30', limiteKm: 700 },
+            { name: 'Asics Gel Nimbus 26', color: 'Azules', talla: 'US 12 / EU 46.5 / 29.5 cm', kilometros: 0, estado: 'Retirado', desde: '2024-09-24', limiteKm: 800 },
+            { name: 'Hokka Bondi 9', color: 'Grises', talla: 'US 12D / EU 46 2/3', kilometros: 0, estado: 'Activo por defecto', desde: '2025-08-02', limiteKm: 800 },
+            { name: 'Brooks Glycerine 23', color: '', talla: '12', kilometros: 0, estado: 'Activo', desde: '2026-04-06', limiteKm: 800 }
         ];
         saveEquipment();
     }

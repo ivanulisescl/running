@@ -1,7 +1,8 @@
 {
-  "version": "1.3.24",
+  "version": "1.3.25",
   "buildDate": "2026-04-11",
   "changelog": [
+    "Equipo: tallas por defecto para modelos conocidos (visible tras reset/sin importar JSON)",
     "Equipo: nuevo campo talla en ficha y datos actualizados de zapatillas",
     "Fuerza Técnica: un solo reproductor por ejercicio (quitada miniatura JPG duplicada)",
     "Fuerza Técnica: imágenes JPG en fuerza-photos y miniatura encima del vídeo en la pestaña",
