@@ -1,7 +1,8 @@
 {
-  "version": "1.3.22",
-  "buildDate": "2026-04-10",
+  "version": "1.3.23",
+  "buildDate": "2026-04-11",
   "changelog": [
+    "Fuerza Técnica: un solo reproductor por ejercicio (quitada miniatura JPG duplicada)",
     "Fuerza Técnica: imágenes JPG en fuerza-photos y miniatura encima del vídeo en la pestaña",
     "Fuerza Técnica: vídeos YouTube del plan (enlaces por ejercicio y bloque de semanas)",
     "Fuerza: pestaña Técnica (bloques por semanas 1–4, 5–8, 9–12), temporizador 15 s e instrucciones del plan",
