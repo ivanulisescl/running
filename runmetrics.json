@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.25",
-  "exportedAt": "2026-04-13T09:42:33.614Z",
+  "exportedAt": "2026-04-14T18:21:30.775Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4244,6 +4244,20 @@
       "elevationLoss": 110,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-04-10T17:36:40.231Z"
+    },
+    {
+      "id": 1776187822707,
+      "date": "2026-04-14",
+      "distance": 7.51,
+      "time": "00:44:09",
+      "timeInMinutes": 44.15,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 30,
+      "elevationLoss": 30,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-04-14T17:30:22.707Z"
     }
   ],
   "carreras": [
@@ -5267,7 +5281,7 @@
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 85
+      "numActividades": 86
     },
     {
       "name": "Brooks Glycerine 23",
