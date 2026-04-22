@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.25'; // Versión actual de la app
+let currentAppVersion = '1.3.26'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1505,7 +1505,8 @@ function saveMarcas() {
 }
 
 function getMarcaBySessionId(sessionId) {
-    return marcas.find(m => m.id === sessionId);
+    const targetId = String(sessionId);
+    return marcas.find(m => String(m.id) === targetId);
 }
 
 function getCarreraSessions() {
@@ -1617,7 +1618,7 @@ function renderMarcas() {
         `;
     }).join('');
     container.querySelectorAll('.btn-add-marca, .btn-edit-marca').forEach(btn => {
-        btn.addEventListener('click', () => openMarcaForm(parseFloat(btn.getAttribute('data-session-id'))));
+        btn.addEventListener('click', () => openMarcaForm(btn.getAttribute('data-session-id')));
     });
 }
 
@@ -1648,7 +1649,11 @@ function setupMarcaForm() {
     if (!form || !container) return;
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const sessionId = parseFloat(document.getElementById('marcaSessionId').value);
+        const sessionId = document.getElementById('marcaSessionId').value;
+        if (!sessionId) {
+            alert('No se pudo identificar la sesión de la carrera.');
+            return;
+        }
         const numParticipantes = parseInt(document.getElementById('marcaNumParticipantes').value, 10) || null;
         const puestoGeneral = parseInt(document.getElementById('marcaPuestoGeneral').value, 10) || null;
         const categoria = (document.getElementById('marcaCategoria').value || '').trim() || null;
