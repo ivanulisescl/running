@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.3.25",
-  "exportedAt": "2026-04-21T11:36:28.901Z",
+  "version": "1.3.26",
+  "exportedAt": "2026-04-27T06:13:46.407Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4300,6 +4300,34 @@
       "elevationLoss": 35,
       "equipo": "Hokka Bondi 9 Grises",
       "createdAt": "2026-04-21T11:35:54.968Z"
+    },
+    {
+      "id": 1776965398970,
+      "date": "2026-04-23",
+      "distance": 8,
+      "time": "00:43:22",
+      "timeInMinutes": 43.36666666666667,
+      "type": "series",
+      "localizacion": "Gijón",
+      "notes": "6x800",
+      "elevationGain": 40,
+      "elevationLoss": 40,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-04-23T17:29:58.970Z"
+    },
+    {
+      "id": 1777199622077,
+      "date": "2026-04-26",
+      "distance": 15,
+      "time": "01:22:12",
+      "timeInMinutes": 82.2,
+      "type": "carrera",
+      "localizacion": "Colunga",
+      "notes": "Diantrín",
+      "elevationGain": 360,
+      "elevationLoss": 360,
+      "equipo": "Hokka Bondi 9 Grises",
+      "createdAt": "2026-04-26T10:33:42.077Z"
     }
   ],
   "carreras": [
@@ -4382,6 +4410,14 @@
       "categoria": "Absoluta",
       "participantesCategoria": null,
       "puestoCategoria": null
+    },
+    {
+      "id": "1777199622077",
+      "numParticipantes": 259,
+      "puestoGeneral": 61,
+      "categoria": "Veterano B",
+      "participantesCategoria": 25,
+      "puestoCategoria": 7
     }
   ],
   "records": [
@@ -4627,7 +4663,9 @@
           "W6D1": 1776187822707,
           "W6D2": 1776443687620,
           "W6D3": 1776593217775,
-          "W7D1": 1776771354968
+          "W7D1": 1776771354968,
+          "W7D2": 1776965398970,
+          "W7D3": 1777199622077
         }
       },
       {
@@ -5327,7 +5365,7 @@
       "estado": "Activo por defecto",
       "desde": "2025-08-02",
       "limiteKm": 800,
-      "numActividades": 89
+      "numActividades": 91
     },
     {
       "name": "Brooks Glycerine 23",
