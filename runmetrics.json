@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.26",
-  "exportedAt": "2026-04-27T06:13:46.407Z",
+  "exportedAt": "2026-04-27T06:17:32.132Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4319,8 +4319,8 @@
       "id": 1777199622077,
       "date": "2026-04-26",
       "distance": 15,
-      "time": "01:22:12",
-      "timeInMinutes": 82.2,
+      "time": "01:22:05",
+      "timeInMinutes": 82.08333333333333,
       "type": "carrera",
       "localizacion": "Colunga",
       "notes": "Diantrín",
