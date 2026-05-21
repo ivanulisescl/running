@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.27'; // Versión actual de la app
+let currentAppVersion = '1.3.28'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -396,6 +396,10 @@ function renderPesoChart() {
         return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
     });
     const data = sorted.map(e => Number(e.kg));
+    const dataMin = Math.min(...data);
+    const dataMax = Math.max(...data);
+    const yMin = Math.floor(dataMin / 5) * 5;
+    const yMax = Math.ceil(dataMax / 5) * 5;
 
     const ctx = document.getElementById('pesoChart');
     if (!ctx) return;
@@ -427,11 +431,14 @@ function renderPesoChart() {
             },
             scales: {
                 y: {
+                    min: yMin,
+                    max: yMax,
                     title: { display: true, text: 'kg' },
                     ticks: {
+                        stepSize: 5,
                         callback: (value) => {
                             const v = typeof value === 'number' ? value : parseFloat(value);
-                            return isFinite(v) ? v.toFixed(1) : value;
+                            return isFinite(v) ? String(Math.round(v)) : value;
                         }
                     }
                 },

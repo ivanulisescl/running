@@ -1,7 +1,8 @@
 {
-  "version": "1.3.27",
+  "version": "1.3.28",
   "buildDate": "2026-05-21",
   "changelog": [
+    "Peso: eje vertical de la gráfica entre mín/máx redondeados al múltiplo de 5 inferior y superior",
     "Peso: botones Tabla y Gráfica junto a Añadir (evolución del peso en gráfico de línea)",
     "Carreras: botones Añadir marca/Editar corregidos para IDs de sesión no numéricos",
     "Equipo: tallas por defecto para modelos conocidos (visible tras reset/sin importar JSON)",
