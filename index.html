@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.26">
+    <link rel="stylesheet" href="styles.css?v=1.3.27">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.26</span>
+                <span id="currentVersion">v1.3.27</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -345,6 +345,10 @@
                 <p class="section-intro">Registro de peso en kg.</p>
                 <div class="peso-actions">
                     <button type="button" id="pesoAddBtn" class="btn btn-primary">Añadir</button>
+                    <div class="peso-view-toggle">
+                        <button type="button" id="pesoViewTable" class="btn-view-mode active" title="Ver tabla">Tabla</button>
+                        <button type="button" id="pesoViewChart" class="btn-view-mode" title="Ver gráfica">Gráfica</button>
+                    </div>
                 </div>
                 <div id="pesoFormCard" class="peso-form-card" style="display: none;">
                     <form id="pesoForm">
@@ -729,7 +733,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.26"></script>
+    <script src="app.js?v=1.3.27"></script>
 </body>
 </html>
 

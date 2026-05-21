@@ -411,7 +411,32 @@ header h1 {
 
 /* Peso */
 .peso-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
+}
+
+.peso-view-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.peso-chart-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+    height: 320px;
+    padding: 12px 8px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--background);
+}
+
+.peso-chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .peso-form-card {

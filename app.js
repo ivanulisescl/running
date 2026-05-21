@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.26'; // Versión actual de la app
+let currentAppVersion = '1.3.27'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -20,6 +20,7 @@ const PLANNING_SELECTED_PLAN_STORAGE_KEY = 'runningPlanningSelectedPlanId';
 const WEIGHT_STORAGE_KEY = 'runningWeight';
 let planningEditingPlanId = null;
 let weightEntries = []; // { date, kg } // ID del plan en edición (null = nuevo)
+let pesoViewMode = 'table'; // 'table' | 'chart'
 let totalDistanceSelectedYear = new Date().getFullYear(); // Año seleccionado para Distancia total (por mes)
 let totalElevationSelectedYear = new Date().getFullYear(); // Año seleccionado para Desnivel acumulado (por mes)
 let typeSelectedYear = new Date().getFullYear(); // Año seleccionado para Tipo de entrenamiento
@@ -289,9 +290,31 @@ function saveWeight() {
     localStorage.setItem(WEIGHT_STORAGE_KEY, JSON.stringify(weightEntries));
 }
 
+function updatePesoViewButtons() {
+    const btnTable = document.getElementById('pesoViewTable');
+    const btnChart = document.getElementById('pesoViewChart');
+    if (!btnTable || !btnChart) return;
+    btnTable.classList.toggle('active', pesoViewMode === 'table');
+    btnChart.classList.toggle('active', pesoViewMode === 'chart');
+}
+
 function renderPeso() {
+    updatePesoViewButtons();
+    if (pesoViewMode === 'chart') {
+        renderPesoChart();
+    } else {
+        renderPesoTable();
+    }
+}
+
+function renderPesoTable() {
     const container = document.getElementById('pesoContent');
     if (!container) return;
+
+    if (charts.pesoChart) {
+        charts.pesoChart.destroy();
+        charts.pesoChart = null;
+    }
 
     if (!Array.isArray(weightEntries) || weightEntries.length === 0) {
         container.innerHTML = '<p class="empty-state">No hay registros. Pulsa Añadir para registrar tu peso.</p>';
@@ -344,13 +367,106 @@ function renderPeso() {
     });
 }
 
+function renderPesoChart() {
+    const container = document.getElementById('pesoContent');
+    if (!container) return;
+
+    if (!Array.isArray(weightEntries) || weightEntries.length === 0) {
+        if (charts.pesoChart) {
+            charts.pesoChart.destroy();
+            charts.pesoChart = null;
+        }
+        container.innerHTML = '<p class="empty-state">No hay registros. Pulsa Añadir para registrar tu peso.</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="peso-chart-wrapper">
+            <canvas id="pesoChart" aria-label="Evolución del peso"></canvas>
+        </div>
+    `;
+
+    const sorted = [...weightEntries]
+        .filter(e => e && e.date && Number.isFinite(Number(e.kg)))
+        .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+    const labels = sorted.map(e => {
+        const d = new Date(e.date + 'T00:00:00');
+        if (isNaN(d.getTime())) return String(e.date);
+        return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    });
+    const data = sorted.map(e => Number(e.kg));
+
+    const ctx = document.getElementById('pesoChart');
+    if (!ctx) return;
+
+    if (charts.pesoChart) charts.pesoChart.destroy();
+
+    charts.pesoChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Peso (kg)',
+                data,
+                borderColor: '#4A90E2',
+                backgroundColor: 'rgba(74, 144, 226, 0.15)',
+                pointBackgroundColor: '#4A90E2',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    title: { display: true, text: 'kg' },
+                    ticks: {
+                        callback: (value) => {
+                            const v = typeof value === 'number' ? value : parseFloat(value);
+                            return isFinite(v) ? v.toFixed(1) : value;
+                        }
+                    }
+                },
+                x: {
+                    ticks: { maxRotation: 45, minRotation: 0 }
+                }
+            }
+        }
+    });
+}
+
 function setupPesoSection() {
     const addBtn = document.getElementById('pesoAddBtn');
+    const btnTable = document.getElementById('pesoViewTable');
+    const btnChart = document.getElementById('pesoViewChart');
     const formCard = document.getElementById('pesoFormCard');
     const form = document.getElementById('pesoForm');
     const cancelBtn = document.getElementById('pesoCancelBtn');
     const dateInput = document.getElementById('pesoDate');
     const kgInput = document.getElementById('pesoKg');
+
+    if (btnTable) {
+        btnTable.addEventListener('click', () => {
+            if (pesoViewMode === 'table') return;
+            pesoViewMode = 'table';
+            renderPeso();
+        });
+    }
+    if (btnChart) {
+        btnChart.addEventListener('click', () => {
+            if (pesoViewMode === 'chart') return;
+            pesoViewMode = 'chart';
+            renderPeso();
+        });
+    }
 
     if (addBtn && formCard) {
         addBtn.addEventListener('click', () => {
