@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.28",
-  "exportedAt": "2026-05-31T11:40:44.003Z",
+  "exportedAt": "2026-05-31T11:43:41.189Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4533,7 +4533,7 @@
       "timeInMinutes": 102.66666666666667,
       "type": "carrera",
       "localizacion": "Cangas de Onís",
-      "notes": "",
+      "notes": "Media Maratón Reconquista",
       "elevationGain": 200,
       "elevationLoss": 200,
       "equipo": "Brooks Glycerine 23 Azules",
