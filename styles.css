@@ -409,6 +409,31 @@ header h1 {
     border-bottom: none;
 }
 
+.records-actions {
+    margin-bottom: 16px;
+}
+
+.records-col-actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.records-col-actions .edit-btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+.record-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.record-form-delete {
+    margin-right: auto;
+}
+
 /* Peso */
 .peso-actions {
     display: flex;

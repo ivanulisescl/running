@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.28'; // Versión actual de la app
+let currentAppVersion = '1.3.29'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -9,6 +9,7 @@ let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
 let marcas = []; // Mejores marcas por carrera (id = session id de tipo carrera)
 let records = []; // Récords (incluidos en runmetrics.json)
+let editingRecordIndex = null; // Índice en records[] al editar (null = nuevo)
 const RUNMETRICS_FILENAME = 'runmetrics.json';
 const GITHUB_TOKEN_STORAGE_KEY = 'runningGitHubToken';
 const GITHUB_REPO = 'ivanulisescl/running';
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupActivitiesMonthSelector();
     setupEquipmentSection();
     setupMarcaForm();
+    setupRecordForm();
     setupClearButton();
     setupHistoryViewToggle();
     setupHistoryTypeFilter();
@@ -810,24 +812,127 @@ async function loadRunmetricsFromRepoIfEmpty() {
     }
 }
 
+function recordDisplayValue(val) {
+    return val == null || val === '' ? '—' : String(val);
+}
+
+function recordInputToValue(val) {
+    const s = (val || '').trim();
+    return s === '' ? null : s;
+}
+
+function closeRecordForm() {
+    const container = document.getElementById('recordFormContainer');
+    if (container) container.style.display = 'none';
+    editingRecordIndex = null;
+    const form = document.getElementById('recordForm');
+    if (form) form.reset();
+    const deleteBtn = document.getElementById('recordFormDelete');
+    if (deleteBtn) deleteBtn.style.display = 'none';
+}
+
+function openRecordForm(index) {
+    const container = document.getElementById('recordFormContainer');
+    const titleEl = document.getElementById('recordFormTitle');
+    const deleteBtn = document.getElementById('recordFormDelete');
+    const indexInput = document.getElementById('recordEditIndex');
+    if (!container || !titleEl) return;
+
+    const isEdit = index != null && index >= 0 && index < records.length;
+    editingRecordIndex = isEdit ? index : null;
+
+    if (isEdit) {
+        const r = records[index];
+        titleEl.textContent = 'Editar récord';
+        if (indexInput) indexInput.value = String(index);
+        document.getElementById('recordCategoria').value = r.categoria ?? '';
+        document.getElementById('recordValor').value = r.record ?? '';
+        document.getElementById('recordRitmo').value = r.ritmo ?? '';
+        document.getElementById('recordActividad').value = r.actividad ?? '';
+        document.getElementById('recordFecha').value = r.fecha ?? '';
+        if (deleteBtn) deleteBtn.style.display = '';
+    } else {
+        titleEl.textContent = 'Añadir récord';
+        const form = document.getElementById('recordForm');
+        if (form) form.reset();
+        if (indexInput) indexInput.value = '';
+        if (deleteBtn) deleteBtn.style.display = 'none';
+    }
+
+    container.style.display = 'block';
+    document.getElementById('recordCategoria')?.focus();
+}
+
+function setupRecordForm() {
+    const form = document.getElementById('recordForm');
+    const container = document.getElementById('recordFormContainer');
+    const cancelBtn = document.getElementById('recordFormCancel');
+    const deleteBtn = document.getElementById('recordFormDelete');
+    const addBtn = document.getElementById('addRecordBtn');
+    if (!form || !container) return;
+
+    if (addBtn) {
+        addBtn.addEventListener('click', () => openRecordForm(null));
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const categoria = (document.getElementById('recordCategoria').value || '').trim();
+        if (!categoria) {
+            alert('La categoría es obligatoria.');
+            return;
+        }
+        const entry = {
+            categoria,
+            record: recordInputToValue(document.getElementById('recordValor').value),
+            ritmo: recordInputToValue(document.getElementById('recordRitmo').value),
+            actividad: recordInputToValue(document.getElementById('recordActividad').value),
+            fecha: recordInputToValue(document.getElementById('recordFecha').value)
+        };
+        if (editingRecordIndex != null && editingRecordIndex >= 0 && editingRecordIndex < records.length) {
+            records[editingRecordIndex] = entry;
+        } else {
+            records.push(entry);
+        }
+        saveRecords();
+        renderRecords();
+        closeRecordForm();
+    });
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => closeRecordForm());
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            if (editingRecordIndex == null || editingRecordIndex < 0 || editingRecordIndex >= records.length) return;
+            const cat = records[editingRecordIndex].categoria || 'este récord';
+            if (!confirm(`¿Eliminar el récord «${cat}»?`)) return;
+            records.splice(editingRecordIndex, 1);
+            saveRecords();
+            renderRecords();
+            closeRecordForm();
+        });
+    }
+}
+
 function renderRecords() {
     const container = document.getElementById('recordsContent');
     if (!container) return;
 
     if (!Array.isArray(records) || records.length === 0) {
         container.innerHTML = `
-            <p class="section-intro">Importa <strong>${RUNMETRICS_FILENAME}</strong> para cargar tus récords.</p>
-            <p class="empty-state">No hay récords cargados.</p>
+            <p class="empty-state">No hay récords. Pulsa «Añadir récord» o importa <strong>${RUNMETRICS_FILENAME}</strong>.</p>
         `;
         return;
     }
 
-    const rowsHtml = records.map(r => {
-        const categoria = escapeHtml(String(r.categoria ?? '—'));
-        const record = escapeHtml(String(r.record ?? '—'));
-        const ritmo = escapeHtml(String(r.ritmo ?? '—'));
-        const actividad = escapeHtml(String(r.actividad ?? '—'));
-        const fecha = escapeHtml(String(r.fecha ?? '—'));
+    const rowsHtml = records.map((r, i) => {
+        const categoria = escapeHtml(recordDisplayValue(r.categoria));
+        const record = escapeHtml(recordDisplayValue(r.record));
+        const ritmo = escapeHtml(recordDisplayValue(r.ritmo));
+        const actividad = escapeHtml(recordDisplayValue(r.actividad));
+        const fecha = escapeHtml(recordDisplayValue(r.fecha));
         return `
             <tr>
                 <td>${categoria}</td>
@@ -835,12 +940,14 @@ function renderRecords() {
                 <td class="records-col-right">${ritmo}</td>
                 <td>${actividad}</td>
                 <td class="records-col-right">${fecha}</td>
+                <td class="records-col-actions">
+                    <button type="button" class="edit-btn btn-small btn-edit-record" data-record-index="${i}">Editar</button>
+                </td>
             </tr>
         `;
     }).join('');
 
     container.innerHTML = `
-        <p class="section-intro">Mejores marcas y distancias destacadas.</p>
         <div class="records-table-wrapper" role="region" aria-label="Tabla de récords">
             <table class="records-table">
                 <thead>
@@ -850,6 +957,7 @@ function renderRecords() {
                         <th scope="col" class="records-col-right">Ritmo</th>
                         <th scope="col">Actividad</th>
                         <th scope="col" class="records-col-right">Fecha</th>
+                        <th scope="col" class="records-col-actions">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -858,6 +966,13 @@ function renderRecords() {
             </table>
         </div>
     `;
+
+    container.querySelectorAll('.btn-edit-record').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-record-index'), 10);
+            if (!isNaN(idx)) openRecordForm(idx);
+        });
+    });
 }
 
 // Estados posibles de un equipo

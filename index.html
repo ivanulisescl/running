@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.28">
+    <link rel="stylesheet" href="styles.css?v=1.3.29">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.28</span>
+                <span id="currentVersion">v1.3.29</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -261,8 +261,49 @@
             <!-- Récords -->
             <section id="recordsSection" class="card main-section" style="display: none;">
                 <h2>Récords</h2>
+                <p class="section-intro">Mejores marcas y distancias destacadas. Edita o añade récords manualmente.</p>
+                <div class="records-actions">
+                    <button type="button" id="addRecordBtn" class="btn btn-primary btn-small">Añadir récord</button>
+                </div>
                 <div id="recordsContent">
-                    <!-- Se rellena dinámicamente desde runmetrics.json -->
+                    <!-- Tabla de récords (dinámica) -->
+                </div>
+                <div id="recordFormContainer" class="marca-form-container" style="display: none;">
+                    <h3 id="recordFormTitle">Editar récord</h3>
+                    <form id="recordForm">
+                        <input type="hidden" id="recordEditIndex" value="">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recordCategoria">Categoría</label>
+                                <input type="text" id="recordCategoria" required placeholder="Ej: 5 km">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recordValor">Récord</label>
+                                <input type="text" id="recordValor" placeholder="Ej: 21:12 o 21.10km">
+                            </div>
+                            <div class="form-group">
+                                <label for="recordRitmo">Ritmo</label>
+                                <input type="text" id="recordRitmo" placeholder="Ej: 4:14 /km">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recordActividad">Actividad</label>
+                                <input type="text" id="recordActividad" placeholder="Ej: Gijón San Silvestre">
+                            </div>
+                            <div class="form-group">
+                                <label for="recordFecha">Fecha</label>
+                                <input type="text" id="recordFecha" placeholder="Ej: Dic 31, 2024">
+                            </div>
+                        </div>
+                        <div class="form-actions record-form-actions">
+                            <button type="button" id="recordFormDelete" class="btn delete-btn record-form-delete" style="display: none;">Eliminar</button>
+                            <button type="button" id="recordFormCancel" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
                 </div>
             </section>
 
@@ -733,7 +774,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.28"></script>
+    <script src="app.js?v=1.3.29"></script>
 </body>
 </html>
 
