@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.29",
-  "exportedAt": "2026-06-01T08:49:38.799Z",
+  "exportedAt": "2026-06-01T09:39:44.110Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4529,8 +4529,8 @@
       "id": 1780162616999,
       "date": "2026-05-30",
       "distance": 21.14,
-      "time": "01:42:40",
-      "timeInMinutes": 102.66666666666667,
+      "time": "01:42:41",
+      "timeInMinutes": 102.68333333333334,
       "type": "carrera",
       "localizacion": "Cangas de Onís",
       "notes": "Media Maratón Reconquista",
@@ -4631,11 +4631,11 @@
     },
     {
       "id": "1780162616999",
-      "numParticipantes": 1530,
-      "puestoGeneral": 577,
+      "numParticipantes": 1258,
+      "puestoGeneral": 579,
       "categoria": "VET C",
-      "participantesCategoria": 180,
-      "puestoCategoria": 86
+      "participantesCategoria": 153,
+      "puestoCategoria": 88
     }
   ],
   "records": [
