@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
-  "version": "1.3.28",
-  "exportedAt": "2026-05-31T11:43:41.189Z",
+  "version": "1.3.29",
+  "exportedAt": "2026-06-01T08:49:38.799Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4662,10 +4662,10 @@
     },
     {
       "categoria": "Medio maratón",
-      "record": "1:42:50",
-      "ritmo": "4:52 /km",
-      "actividad": "Media Maratón Salamanca",
-      "fecha": "Mar 3, 2024"
+      "record": "1:42:40",
+      "ritmo": "4:51 /km",
+      "actividad": "Media Maratón Reconquista 2026",
+      "fecha": "May 30, 2026"
     },
     {
       "categoria": "Maratón",
@@ -4676,10 +4676,10 @@
     },
     {
       "categoria": "Carrera más larga",
-      "record": "21.10km",
+      "record": "21.14km",
       "ritmo": null,
-      "actividad": "Media Maratón Salamanca",
-      "fecha": "Mar 3, 2024"
+      "actividad": "Media Maratón Reconquista 2026",
+      "fecha": "May 30, 2026"
     }
   ],
   "planning": {
