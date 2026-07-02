@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.29",
-  "exportedAt": "2026-07-01T07:07:48.374Z",
+  "exportedAt": "2026-07-02T17:42:21.727Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -4650,6 +4650,20 @@
       "elevationLoss": 30,
       "equipo": "Brooks Glycerine 23 Azules",
       "createdAt": "2026-06-30T17:21:01.441Z"
+    },
+    {
+      "id": 1783014136362,
+      "date": "2026-07-02",
+      "distance": 7.11,
+      "time": "00:39:36",
+      "timeInMinutes": 39.6,
+      "type": "entrenamiento",
+      "localizacion": "Colunga",
+      "notes": "",
+      "elevationGain": 81,
+      "elevationLoss": 81,
+      "equipo": "Brooks Glycerine 23 Azules",
+      "createdAt": "2026-07-02T17:42:16.362Z"
     }
   ],
   "carreras": [
@@ -5720,7 +5734,7 @@
       "estado": "Activo",
       "desde": "2026-04-06",
       "limiteKm": 800,
-      "numActividades": 14
+      "numActividades": 15
     }
   ],
   "weight": [
