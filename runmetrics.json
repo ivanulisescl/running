@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.29",
-  "exportedAt": "2026-07-15T18:54:55.705Z",
+  "exportedAt": "2026-07-20T15:22:00.037Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -5587,8 +5587,8 @@
         "raceName": "Media Maratón Sevilla 2026",
         "weeks": 12,
         "daysPerWeek": 3,
-        "startDate": "2026-07-10",
-        "raceDate": "2026-09-04",
+        "startDate": "2026-09-07",
+        "raceDate": "2026-11-29",
         "raceDistanceKm": 21.1,
         "schedule": [
           [
