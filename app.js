@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.29'; // Versión actual de la app
+let currentAppVersion = '1.3.30'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2971,11 +2971,11 @@ function updateStats() {
         const ss = totalSeconds % 60;
         return `${mm}:${String(ss).padStart(2, '0')}`;
     })();
-    const totalTimeFormatted = minutesToTime(totalTimeInMinutes);
+    const totalHours = Math.round(totalTimeInMinutes / 60);
 
     document.getElementById('totalSessions').textContent = totalSessions;
-    document.getElementById('totalDistance').textContent = totalDistance.toFixed(1);
-    document.getElementById('totalTime').textContent = totalTimeFormatted;
+    document.getElementById('totalDistance').textContent = String(Math.round(totalDistance));
+    document.getElementById('totalTime').textContent = String(totalHours);
     document.getElementById('avgPace').textContent = avgPace;
     
     // Selector de año (Distancia total por mes) es independiente del período
@@ -4292,6 +4292,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
 // Actualizar todas las gráficas
 function updateCharts(filteredSessions) {
     updateTotalDistanceYearChart();
+    updateTotalDistanceByYearChart();
     updateTotalElevationYearChart();
     updateTypeYearChart();
     updateLocationsYearChart();
@@ -4599,6 +4600,12 @@ function updateTotalDistanceYearChart() {
         if (d.getFullYear() !== totalDistanceSelectedYear) return;
         data[d.getMonth()] += s.distance || 0;
     });
+
+    const yearTotalKm = data.reduce((sum, km) => sum + km, 0);
+    const yearTotalEl = document.getElementById('totalDistanceYearTotal');
+    if (yearTotalEl) {
+        yearTotalEl.textContent = `Total: ${Math.round(yearTotalKm)} km`;
+    }
     
     if (charts.totalDistanceChart) {
         charts.totalDistanceChart.destroy();
@@ -4632,6 +4639,68 @@ function updateTotalDistanceYearChart() {
                 },
                 x: {
                     ticks: { color: 'white', maxRotation: 45 },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de barras: Distancia total por año (independiente del filtro de período)
+function updateTotalDistanceByYearChart() {
+    const ctx = document.getElementById('totalDistanceByYearChart');
+    if (!ctx) return;
+
+    const { years } = getAvailableStatsYears();
+    const labels = [...years].sort((a, b) => a - b);
+    const data = labels.map(() => 0);
+
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const y = new Date(s.date + 'T00:00:00').getFullYear();
+        const idx = labels.indexOf(y);
+        if (idx < 0) return;
+        data[idx] += s.distance || 0;
+    });
+
+    const allYearsTotalKm = data.reduce((sum, km) => sum + km, 0);
+    const totalEl = document.getElementById('totalDistanceByYearTotal');
+    if (totalEl) {
+        totalEl.textContent = `Total: ${Math.round(allYearsTotalKm)} km`;
+    }
+
+    if (charts.totalDistanceByYearChart) {
+        charts.totalDistanceByYearChart.destroy();
+    }
+
+    charts.totalDistanceByYearChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.map(String),
+            datasets: [{
+                label: 'Km',
+                data: data,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                },
+                x: {
+                    ticks: { color: 'white' },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 }
             }
