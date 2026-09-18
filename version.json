@@ -1,7 +1,8 @@
 {
-  "version": "1.3.30",
+  "version": "1.3.31",
   "buildDate": "2026-09-18",
   "changelog": [
+    "Estadísticas: Distancia total por año primero; sin total en la gráfica por mes",
     "Estadísticas: km y horas en entero; total anual en gráfica por mes; nueva gráfica Distancia total (por año)",
     "Récords: edición, alta y eliminación desde la app",
     "Peso: eje vertical de la gráfica entre mín/máx redondeados al múltiplo de 5 inferior y superior",

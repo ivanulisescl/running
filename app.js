@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.30'; // Versión actual de la app
+let currentAppVersion = '1.3.31'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -4291,8 +4291,8 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
 
 // Actualizar todas las gráficas
 function updateCharts(filteredSessions) {
-    updateTotalDistanceYearChart();
     updateTotalDistanceByYearChart();
+    updateTotalDistanceYearChart();
     updateTotalElevationYearChart();
     updateTypeYearChart();
     updateLocationsYearChart();
@@ -4600,12 +4600,6 @@ function updateTotalDistanceYearChart() {
         if (d.getFullYear() !== totalDistanceSelectedYear) return;
         data[d.getMonth()] += s.distance || 0;
     });
-
-    const yearTotalKm = data.reduce((sum, km) => sum + km, 0);
-    const yearTotalEl = document.getElementById('totalDistanceYearTotal');
-    if (yearTotalEl) {
-        yearTotalEl.textContent = `Total: ${Math.round(yearTotalKm)} km`;
-    }
     
     if (charts.totalDistanceChart) {
         charts.totalDistanceChart.destroy();
