@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.31'; // Versión actual de la app
+let currentAppVersion = '1.3.32'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -4628,11 +4628,11 @@ function updateTotalDistanceYearChart() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: 'white' },
+                    ticks: { color: 'white', maxTicksLimit: 6 },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
                 x: {
-                    ticks: { color: 'white', maxRotation: 45 },
+                    ticks: { color: 'white', maxRotation: 45, autoSkip: true },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 }
             }

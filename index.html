@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.31">
+    <link rel="stylesheet" href="styles.css?v=1.3.32">
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,7 +20,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.31</span>
+                <span id="currentVersion">v1.3.32</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-1">
@@ -191,7 +191,9 @@
                         <div class="chart-year-control">
                             <span id="totalDistanceByYearTotal" class="chart-year-total" aria-live="polite">Total: 0 km</span>
                         </div>
-                        <canvas id="totalDistanceByYearChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="totalDistanceByYearChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -202,7 +204,9 @@
                                 <!-- Se rellena dinámicamente -->
                             </select>
                         </div>
-                        <canvas id="totalDistanceChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="totalDistanceChart"></canvas>
+                        </div>
                     </div>
                     
                     <div class="chart-wrapper">
@@ -213,7 +217,9 @@
                                 <!-- Se rellena dinámicamente -->
                             </select>
                         </div>
-                        <canvas id="totalElevationChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="totalElevationChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -226,7 +232,9 @@
                                 <button type="button" id="activitiesMonthNext" class="btn btn-small btn-month-nav" aria-label="Mes siguiente">▶</button>
                             </div>
                         </div>
-                        <canvas id="activitiesChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="activitiesChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -237,7 +245,9 @@
                                 <!-- Se rellena dinámicamente -->
                             </select>
                         </div>
-                        <canvas id="typeChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="typeChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -248,7 +258,9 @@
                                 <!-- Se rellena dinámicamente -->
                             </select>
                         </div>
-                        <canvas id="locationsChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="locationsChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -259,7 +271,9 @@
                                 <!-- Se rellena dinámicamente -->
                             </select>
                         </div>
-                        <canvas id="paceChart"></canvas>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="paceChart"></canvas>
+                        </div>
                     </div>
 
                     
@@ -782,7 +796,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.31"></script>
+    <script src="app.js?v=1.3.32"></script>
 </body>
 </html>
 
