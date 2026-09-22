@@ -2323,17 +2323,6 @@ header h1 {
     color: #111;
 }
 
-.chart-year-total {
-    font-size: 0.9em;
-    font-weight: 700;
-    color: white;
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 999px;
-    padding: 6px 12px;
-    white-space: nowrap;
-}
-
 .chart-month-control {
     display: flex;
     align-items: center;

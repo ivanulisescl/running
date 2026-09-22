@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.32'; // Versión actual de la app
+let currentAppVersion = '1.3.33'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -4640,6 +4640,72 @@ function updateTotalDistanceYearChart() {
     });
 }
 
+// Etiquetas de valor encima de cada barra
+const barValueLabelsPlugin = {
+    id: 'barValueLabels',
+    afterDatasetsDraw(chart, _args, pluginOptions) {
+        const { ctx } = chart;
+        const suffix = (pluginOptions && pluginOptions.suffix) || '';
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+            const meta = chart.getDatasetMeta(datasetIndex);
+            if (!meta || meta.hidden) return;
+            meta.data.forEach((bar, index) => {
+                const raw = Number(dataset.data[index]);
+                if (!Number.isFinite(raw)) return;
+                const value = Math.round(raw);
+                const { x, y } = bar.getProps(['x', 'y'], true);
+                ctx.save();
+                ctx.fillStyle = 'white';
+                ctx.font = '700 12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(`${value}${suffix}`, x, y - 4);
+                ctx.restore();
+            });
+        });
+    }
+};
+
+// Porcentaje de cada porción en gráficas de quesito
+const piePercentLabelsPlugin = {
+    id: 'piePercentLabels',
+    afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const dataset = chart.data.datasets[0];
+        if (!dataset) return;
+        const values = (dataset.data || []).map(Number);
+        const total = values.reduce((sum, v) => sum + (Number.isFinite(v) ? v : 0), 0);
+        if (total <= 0) return;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || meta.hidden) return;
+        meta.data.forEach((arc, index) => {
+            const value = values[index];
+            if (!Number.isFinite(value) || value <= 0) return;
+            const pct = Math.round((value / total) * 100);
+            if (pct < 1) return;
+            const props = arc.getProps(['x', 'y', 'startAngle', 'endAngle', 'outerRadius', 'innerRadius'], true);
+            const sliceAngle = props.endAngle - props.startAngle;
+            if (sliceAngle < 0.22) return;
+            const angle = (props.startAngle + props.endAngle) / 2;
+            const radius = props.innerRadius + (props.outerRadius - props.innerRadius) * 0.62;
+            const x = props.x + Math.cos(angle) * radius;
+            const y = props.y + Math.sin(angle) * radius;
+            const text = `${pct}%`;
+            ctx.save();
+            ctx.font = '700 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(20, 60, 110, 0.55)';
+            ctx.fillStyle = 'white';
+            ctx.strokeText(text, x, y);
+            ctx.fillText(text, x, y);
+            ctx.restore();
+        });
+    }
+};
+
 // Gráfica de barras: Distancia total por año (independiente del filtro de período)
 function updateTotalDistanceByYearChart() {
     const ctx = document.getElementById('totalDistanceByYearChart');
@@ -4657,18 +4723,13 @@ function updateTotalDistanceByYearChart() {
         data[idx] += s.distance || 0;
     });
 
-    const allYearsTotalKm = data.reduce((sum, km) => sum + km, 0);
-    const totalEl = document.getElementById('totalDistanceByYearTotal');
-    if (totalEl) {
-        totalEl.textContent = `Total: ${Math.round(allYearsTotalKm)} km`;
-    }
-
     if (charts.totalDistanceByYearChart) {
         charts.totalDistanceByYearChart.destroy();
     }
 
     charts.totalDistanceByYearChart = new Chart(ctx, {
         type: 'bar',
+        plugins: [barValueLabelsPlugin],
         data: {
             labels: labels.map(String),
             datasets: [{
@@ -4682,14 +4743,21 @@ function updateTotalDistanceByYearChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: { top: 22 }
+            },
             plugins: {
                 legend: {
                     display: false
+                },
+                barValueLabels: {
+                    suffix: ' km'
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
+                    grace: '12%',
                     ticks: { color: 'white' },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
@@ -4851,6 +4919,7 @@ function updateTypeYearChart() {
     
     charts.typeChart = new Chart(ctx, {
         type: 'pie',
+        plugins: [piePercentLabelsPlugin],
         data: {
             labels: labels,
             datasets: [{
@@ -4938,6 +5007,7 @@ function updateLocationsYearChart() {
 
     charts.locationsChart = new Chart(ctx, {
         type: 'pie',
+        plugins: [piePercentLabelsPlugin],
         data: {
             labels: labels,
             datasets: [{

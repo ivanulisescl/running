@@ -1,7 +1,8 @@
 {
-  "version": "1.3.32",
-  "buildDate": "2026-09-21",
+  "version": "1.3.33",
+  "buildDate": "2026-09-22",
   "changelog": [
+    "Estadísticas: km por año en cada columna; porcentajes en Tipo de entrenamiento y Lugares",
     "Estadísticas: las gráficas ya no se ensanchan ni se salen al elegir otro año; foto Brooks Ghost Trail",
     "Estadísticas: Distancia total por año primero; sin total en la gráfica por mes",
     "Estadísticas: km y horas en entero; total anual en gráfica por mes; nueva gráfica Distancia total (por año)",
