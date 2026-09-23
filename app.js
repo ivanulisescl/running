@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.33'; // Versión actual de la app
+let currentAppVersion = '1.3.34'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPlanningPlans();
     loadWeight();
     loadRunmetricsFromRepoIfEmpty();
+    persistSiteStorage();
+    loadGitHubToken();
     setupForm();
     setupNewSessionButton();
     setupNavigationButtons();
@@ -2076,15 +2078,118 @@ function buildRunmetricsPayload() {
     };
 }
 
+// Chrome en Android puede borrar localStorage si falta espacio. El token se guarda
+// también en IndexedDB y se pide almacenamiento persistente para que no lo tire.
+function persistSiteStorage() {
+    try {
+        if (navigator.storage && typeof navigator.storage.persist === 'function') {
+            navigator.storage.persist().catch(() => {});
+        }
+    } catch (_) {}
+}
+
+function openGitHubTokenDb() {
+    return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+            reject(new Error('indexedDB'));
+            return;
+        }
+        const req = indexedDB.open('runningGitHubTokenDb', 1);
+        req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+async function readGitHubTokenFromDb() {
+    try {
+        const db = await openGitHubTokenDb();
+        const value = await new Promise((resolve) => {
+            const tx = db.transaction('kv', 'readonly');
+            const req = tx.objectStore('kv').get(GITHUB_TOKEN_STORAGE_KEY);
+            req.onsuccess = () => resolve(typeof req.result === 'string' ? req.result.trim() : '');
+            req.onerror = () => resolve('');
+        });
+        db.close();
+        return value;
+    } catch (_) {
+        return '';
+    }
+}
+
+async function writeGitHubTokenToDb(token) {
+    try {
+        const db = await openGitHubTokenDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction('kv', 'readwrite');
+            tx.objectStore('kv').put(token, GITHUB_TOKEN_STORAGE_KEY);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+        db.close();
+    } catch (_) {}
+}
+
+async function deleteGitHubTokenFromDb() {
+    try {
+        const db = await openGitHubTokenDb();
+        await new Promise((resolve) => {
+            const tx = db.transaction('kv', 'readwrite');
+            tx.objectStore('kv').delete(GITHUB_TOKEN_STORAGE_KEY);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => resolve();
+        });
+        db.close();
+    } catch (_) {}
+}
+
+function readGitHubTokenFromLocalStorage() {
+    try {
+        return (localStorage.getItem(GITHUB_TOKEN_STORAGE_KEY) || '').trim();
+    } catch (_) {
+        return '';
+    }
+}
+
+async function saveGitHubToken(token) {
+    const t = (token || '').trim();
+    if (!t) {
+        await clearGitHubToken();
+        return;
+    }
+    try {
+        localStorage.setItem(GITHUB_TOKEN_STORAGE_KEY, t);
+    } catch (_) {}
+    await writeGitHubTokenToDb(t);
+    persistSiteStorage();
+}
+
+async function clearGitHubToken() {
+    try {
+        localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
+    } catch (_) {}
+    await deleteGitHubTokenFromDb();
+}
+
+async function loadGitHubToken() {
+    let token = readGitHubTokenFromLocalStorage();
+    if (!token) token = await readGitHubTokenFromDb();
+    if (token) await saveGitHubToken(token);
+    return token;
+}
+
 // Subir runmetrics.json al repositorio vía GitHub Contents API
 async function uploadToRepository() {
     const syncStatus = document.getElementById('syncStatus');
-    let token = localStorage.getItem(GITHUB_TOKEN_STORAGE_KEY);
-    if (!token || !token.trim()) {
+    let token = await loadGitHubToken();
+    if (!token) {
         token = prompt('Introduce tu GitHub Personal Access Token (permiso repo):');
         if (!token || !token.trim()) return;
         token = token.trim();
-        localStorage.setItem(GITHUB_TOKEN_STORAGE_KEY, token);
+        await saveGitHubToken(token);
     }
 
     if (syncStatus) {
@@ -2111,8 +2216,7 @@ async function uploadToRepository() {
         } else if (getRes.status !== 404) {
             const errData = await getRes.json().catch(() => ({}));
             if (getRes.status === 401) {
-                localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
-                throw new Error('Token inválido o expirado. Configura uno nuevo.');
+                throw new Error('GitHub ha rechazado el token. Sigue guardado en el móvil. Si en GitHub sigue vigente, vuelve a intentar; si no, pega otro en Configurar token.');
             }
             throw new Error(errData.message || `Error ${getRes.status}: ${getRes.statusText}`);
         }
@@ -2131,8 +2235,7 @@ async function uploadToRepository() {
         if (!putRes.ok) {
             const errData = await putRes.json().catch(() => ({}));
             if (putRes.status === 401) {
-                localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
-                throw new Error('Token inválido o expirado. Configura uno nuevo.');
+                throw new Error('GitHub ha rechazado el token. Sigue guardado en el móvil. Si en GitHub sigue vigente, vuelve a intentar; si no, pega otro en Configurar token.');
             }
             throw new Error(errData.message || `Error ${putRes.status}: ${putRes.statusText}`);
         }
@@ -2199,9 +2302,9 @@ function setupSync() {
 
     const configTokenBtn = document.getElementById('configTokenBtn');
     if (configTokenBtn) {
-        configTokenBtn.addEventListener('click', () => {
+        configTokenBtn.addEventListener('click', async () => {
             document.getElementById('menuDropdown').style.display = 'none';
-            const hasToken = !!localStorage.getItem(GITHUB_TOKEN_STORAGE_KEY);
+            const hasToken = !!(await loadGitHubToken());
             const msg = hasToken
                 ? "Token guardado. Pega uno nuevo para cambiar, o escribe 'borrar' para eliminar."
                 : "Introduce tu GitHub Personal Access Token (permiso repo):";
@@ -2209,14 +2312,14 @@ function setupSync() {
             if (token === null) return;
             const t = token.trim();
             if (t === '' || t.toLowerCase() === 'borrar') {
-                localStorage.removeItem(GITHUB_TOKEN_STORAGE_KEY);
+                await clearGitHubToken();
                 if (syncStatus) {
                     syncStatus.style.display = 'block';
                     syncStatus.innerHTML = '<p style="color: var(--secondary-color);">Token eliminado.</p>';
                     setTimeout(() => { syncStatus.style.display = 'none'; }, 2000);
                 }
             } else {
-                localStorage.setItem(GITHUB_TOKEN_STORAGE_KEY, t);
+                await saveGitHubToken(t);
                 if (syncStatus) {
                     syncStatus.style.display = 'block';
                     syncStatus.innerHTML = '<p style="color: var(--secondary-color);">Token guardado.</p>';
