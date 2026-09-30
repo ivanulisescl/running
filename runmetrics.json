@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.34",
-  "exportedAt": "2026-09-23T08:57:17.314Z",
+  "exportedAt": "2026-09-30T15:15:52.645Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -5000,6 +5000,48 @@
       "elevationLoss": 32,
       "equipo": "Brooks Glycerine 23 Azules",
       "createdAt": "2026-09-22T18:02:12.443Z"
+    },
+    {
+      "id": 1790270850805,
+      "date": "2026-09-24",
+      "distance": 7.3,
+      "time": "00:41:59",
+      "timeInMinutes": 41.983333333333334,
+      "type": "series",
+      "localizacion": "Gijón",
+      "notes": "7x700",
+      "elevationGain": 30,
+      "elevationLoss": 30,
+      "equipo": "Brooks Glycerine 23 Azules",
+      "createdAt": "2026-09-24T17:27:30.805Z"
+    },
+    {
+      "id": 1790506228748,
+      "date": "2026-09-27",
+      "distance": 9.16,
+      "time": "00:58:51",
+      "timeInMinutes": 58.85,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 298,
+      "elevationLoss": 298,
+      "equipo": "Brooks Glycerine 23 Azules",
+      "createdAt": "2026-09-27T10:50:28.748Z"
+    },
+    {
+      "id": 1790705027176,
+      "date": "2026-09-29",
+      "distance": 7.01,
+      "time": "00:42:35",
+      "timeInMinutes": 42.583333333333336,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 28,
+      "elevationLoss": 28,
+      "equipo": "Brooks Glycerine 23 Azules",
+      "createdAt": "2026-09-29T18:03:47.176Z"
     }
   ],
   "carreras": [
@@ -6176,7 +6218,10 @@
           "W2D1": 1789494137028,
           "W2D2": 1789679023024,
           "W2D3": 1789926478009,
-          "W3D1": 1790100132443
+          "W3D1": 1790100132443,
+          "W3D2": 1790270850805,
+          "W3D3": 1790506228748,
+          "W4D1": 1790705027176
         }
       }
     ],
@@ -6221,7 +6266,7 @@
       "estado": "Activo",
       "desde": "2026-04-06",
       "limiteKm": 800,
-      "numActividades": 39
+      "numActividades": 42
     },
     {
       "name": "Brooks Ghost Trail",
