@@ -1,7 +1,7 @@
 // Cambiar CACHE_NAME y ?v= en urlsToCache al publicar nueva versión (mismo que app.js)
-const CACHE_NAME = 'running-v1.3.36';
+const CACHE_NAME = 'running-v1.3.37';
 const urlsToCache = [
-  './styles.css?v=1.3.36',
+  './styles.css?v=1.3.37',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',

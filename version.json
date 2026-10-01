@@ -1,7 +1,8 @@
 {
-  "version": "1.3.36",
+  "version": "1.3.37",
   "buildDate": "2026-10-01",
   "changelog": [
+    "Aviso de nueva versión solo si version.json es más reciente que la app",
     "Cabecera: iconos unificados a 24 px; menú anclado, estado de equipo y scroll de planificación; aviso al subir el JSON",
     "Cabecera: iconos, botones azules alineados a la izquierda, + circular centrado y Subir al repo junto a Fuerza",
     "Token GitHub: copia en IndexedDB y almacenamiento persistente para que Chrome en Android no lo borre",
