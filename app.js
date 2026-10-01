@@ -1388,9 +1388,11 @@ function renderEquipmentList() {
                     </div>
                     <div class="equipment-estado">
                         <span class="estado-label">Estado:</span>
-                        <select class="equipment-estado-select" onchange="updateEquipment(${index}, 'estado', this.value)">
-                            ${estadoOptions}
-                        </select>
+                        <div class="equipment-estado-field">
+                            <select class="equipment-estado-select" onchange="updateEquipment(${index}, 'estado', this.value)">
+                                ${estadoOptions}
+                            </select>
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -3950,7 +3952,7 @@ function renderPlanning() {
                 `;
 
             return `
-                <div class="planning-session ${klass}">
+                <div class="planning-session ${klass}${isDone ? '' : ' planning-session-unassigned'}">
                     <div class="planning-session-header">
                         <div class="planning-session-day">Día ${escapeHtml(String(di + 1))}</div>
                         <div class="planning-status ${statusClass}">${escapeHtml(statusText)}</div>
@@ -4021,7 +4023,7 @@ function renderPlanning() {
                 <div class="planning-week-km">${raceSession ? escapeHtml((Number(raceSession.distance) || 0).toFixed(2)) + ' km' : '—'}</div>
             </div>
             <div class="planning-sessions">
-                <div class="planning-session ${raceSession ? 'planning-done' : ''}">
+                <div class="planning-session ${raceSession ? 'planning-done' : 'planning-session-unassigned'}">
                     <div class="planning-session-left">
                         <div class="planning-session-date">${escapeHtml(plan.raceName)}</div>
                         <div class="planning-session-sub">
@@ -4222,13 +4224,15 @@ function renderPlanning() {
             const scrollYBeforeClose = willOpen ? null : window.scrollY;
             applyBlockState(blockId, willOpen);
             if (willOpen) {
-                const bar = container.querySelector('.planning-selected-bar');
-                if (bar) {
-                    requestAnimationFrame(() => {
-                        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                        bar.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-                    });
-                }
+                requestAnimationFrame(() => {
+                    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    const behavior = reduceMotion ? 'auto' : 'smooth';
+                    const unassigned = blockId === 'planning'
+                        ? container.querySelector('#planningBlockPlanning .planning-session-unassigned')
+                        : null;
+                    const target = unassigned || container.querySelector('.planning-selected-bar');
+                    if (target) target.scrollIntoView({ behavior, block: 'start' });
+                });
             } else if (scrollYBeforeClose != null) {
                 btn.blur();
                 const keep = () => window.scrollTo({ top: scrollYBeforeClose, behavior: 'auto' });
