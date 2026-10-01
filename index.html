@@ -111,6 +111,69 @@
             height: 18px;
             stroke: currentColor;
         }
+        #uploadToRepoHeaderBtn:disabled {
+            opacity: 1;
+            cursor: progress;
+            background: var(--primary-color, #4A90E2);
+            color: #fff;
+        }
+        #uploadToRepoHeaderBtn .upload-arrow {
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+        #uploadToRepoHeaderBtn.is-uploading .upload-arrow {
+            animation: upload-arrow-rise 0.9s ease-in-out infinite;
+        }
+        @keyframes upload-arrow-rise {
+            0% { transform: translateY(2px); opacity: 0.35; }
+            55% { transform: translateY(-4px); opacity: 1; }
+            100% { transform: translateY(-4px); opacity: 0; }
+        }
+        .upload-toast {
+            position: fixed;
+            left: 50%;
+            z-index: 120;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: min(480px, calc(100vw - 32px));
+            margin: 0;
+            padding: 12px 14px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+        .upload-toast[hidden] {
+            display: none !important;
+        }
+        .upload-toast.is-ok {
+            background: color-mix(in srgb, var(--secondary-color, #50C878) 18%, #fff);
+            color: #1e7a45;
+            border: 1px solid color-mix(in srgb, var(--secondary-color, #50C878) 50%, #fff);
+        }
+        .upload-toast.is-error {
+            background: color-mix(in srgb, var(--danger-color, #E74C3C) 14%, #fff);
+            color: #a93226;
+            border: 1px solid color-mix(in srgb, var(--danger-color, #E74C3C) 45%, #fff);
+        }
+        .upload-toast-icon {
+            width: 24px;
+            height: 24px;
+            flex: 0 0 24px;
+        }
+        .upload-toast-text {
+            margin: 0;
+            font-size: 0.95em;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #uploadToRepoHeaderBtn.is-uploading .upload-arrow {
+                animation: none;
+                opacity: 1;
+            }
+        }
     </style>
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -172,13 +235,17 @@
                 </div>
                 <div class="header-row-6">
                     <button id="fuerzaBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>Fuerza</button>
-                    <button type="button" id="uploadToRepoHeaderBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>Subir al repo</button>
+                    <button type="button" id="uploadToRepoHeaderBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><g class="upload-arrow"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/></g></svg><span class="upload-repo-label">Subir al repo</span></button>
                 </div>
                 <div class="header-row-add">
                     <button id="newSessionBtn" class="btn-header btn-header-main" aria-label="Nueva sesión"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
                 </div>
             </div>
         </header>
+        <div id="uploadToast" class="upload-toast" hidden role="status" aria-live="polite">
+            <svg class="upload-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+            <p class="upload-toast-text"></p>
+        </div>
 
         <main>
             <!-- Formulario para agregar sesión -->

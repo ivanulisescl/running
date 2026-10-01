@@ -2183,8 +2183,59 @@ async function loadGitHubToken() {
 }
 
 // Subir runmetrics.json al repositorio vía GitHub Contents API
-async function uploadToRepository() {
+let uploadToastTimer = null;
+
+function setHeaderUploadBusy(busy) {
+    const btn = document.getElementById('uploadToRepoHeaderBtn');
+    if (!btn) return;
+    const label = btn.querySelector('.upload-repo-label');
+    btn.classList.toggle('is-uploading', busy);
+    btn.disabled = busy;
+    btn.setAttribute('aria-busy', busy ? 'true' : 'false');
+    if (label) label.textContent = busy ? 'Subiendo…' : 'Subir al repo';
+}
+
+function hideHeaderUploadToast() {
+    const toast = document.getElementById('uploadToast');
+    if (!toast) return;
+    if (uploadToastTimer) {
+        clearTimeout(uploadToastTimer);
+        uploadToastTimer = null;
+    }
+    toast.hidden = true;
+    toast.classList.remove('is-ok', 'is-error');
+}
+
+function showHeaderUploadToast(kind, message) {
+    const toast = document.getElementById('uploadToast');
+    if (!toast) return;
+    if (uploadToastTimer) {
+        clearTimeout(uploadToastTimer);
+        uploadToastTimer = null;
+    }
+    const icon = toast.querySelector('.upload-toast-icon');
+    const text = toast.querySelector('.upload-toast-text');
+    const ok = kind === 'ok';
+    toast.classList.remove('is-ok', 'is-error');
+    toast.classList.add(ok ? 'is-ok' : 'is-error');
+    if (icon) {
+        icon.innerHTML = ok
+            ? '<path d="M20 6 9 17l-5-5"/>'
+            : '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>';
+    }
+    if (text) text.textContent = message;
+    const header = document.querySelector('header');
+    const bottom = header ? header.getBoundingClientRect().bottom : 72;
+    toast.style.top = Math.min(Math.max(bottom + 8, 12), Math.max(12, window.innerHeight - 88)) + 'px';
+    toast.hidden = false;
+    if (ok) uploadToastTimer = setTimeout(hideHeaderUploadToast, 4000);
+}
+
+async function uploadToRepository(source) {
+    const fromHeader = source === 'header';
     const syncStatus = document.getElementById('syncStatus');
+    const headerBtn = document.getElementById('uploadToRepoHeaderBtn');
+    if (fromHeader && headerBtn && headerBtn.disabled) return;
     let token = await loadGitHubToken();
     if (!token) {
         token = prompt('Introduce tu GitHub Personal Access Token (permiso repo):');
@@ -2193,7 +2244,10 @@ async function uploadToRepository() {
         await saveGitHubToken(token);
     }
 
-    if (syncStatus) {
+    if (fromHeader) {
+        hideHeaderUploadToast();
+        setHeaderUploadBusy(true);
+    } else if (syncStatus) {
         syncStatus.style.display = 'block';
         syncStatus.innerHTML = `<p style="color: var(--primary-color);">Subiendo <code>${RUNMETRICS_FILENAME}</code>...</p>`;
     }
@@ -2241,13 +2295,19 @@ async function uploadToRepository() {
             throw new Error(errData.message || `Error ${putRes.status}: ${putRes.statusText}`);
         }
 
-        if (syncStatus) {
+        if (fromHeader) {
+            setHeaderUploadBusy(false);
+            showHeaderUploadToast('ok', `${RUNMETRICS_FILENAME} subido`);
+        } else if (syncStatus) {
             syncStatus.style.display = 'block';
             syncStatus.innerHTML = `<p style="color: var(--secondary-color);">✅ <code>${RUNMETRICS_FILENAME}</code> subido al repositorio.</p>`;
             setTimeout(() => { syncStatus.style.display = 'none'; }, 4000);
         }
     } catch (err) {
-        if (syncStatus) {
+        if (fromHeader) {
+            setHeaderUploadBusy(false);
+            showHeaderUploadToast('error', err.message || 'Error al subir');
+        } else if (syncStatus) {
             syncStatus.style.display = 'block';
             syncStatus.innerHTML = `<p style="color: var(--danger-color);">❌ ${err.message || 'Error al subir'}</p>`;
             setTimeout(() => { syncStatus.style.display = 'none'; }, 6000);
@@ -2301,7 +2361,11 @@ function setupSync() {
     const uploadToRepoBtn = document.getElementById('uploadToRepoBtn');
     if (uploadToRepoBtn) uploadToRepoBtn.addEventListener('click', onUploadToRepo);
     const uploadToRepoHeaderBtn = document.getElementById('uploadToRepoHeaderBtn');
-    if (uploadToRepoHeaderBtn) uploadToRepoHeaderBtn.addEventListener('click', onUploadToRepo);
+    if (uploadToRepoHeaderBtn) {
+        uploadToRepoHeaderBtn.addEventListener('click', () => uploadToRepository('header'));
+    }
+    const uploadToast = document.getElementById('uploadToast');
+    if (uploadToast) uploadToast.addEventListener('click', hideHeaderUploadToast);
 
     const configTokenBtn = document.getElementById('configTokenBtn');
     if (configTokenBtn) {

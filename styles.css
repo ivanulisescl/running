@@ -642,6 +642,80 @@ header h1 {
     font-size: 0.9em;
 }
 
+#uploadToRepoHeaderBtn:disabled {
+    opacity: 1;
+    cursor: progress;
+    background: var(--primary-color);
+    color: #fff;
+}
+
+#uploadToRepoHeaderBtn .upload-arrow {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+#uploadToRepoHeaderBtn.is-uploading .upload-arrow {
+    animation: upload-arrow-rise 0.9s ease-in-out infinite;
+}
+
+@keyframes upload-arrow-rise {
+    0% { transform: translateY(2px); opacity: 0.35; }
+    55% { transform: translateY(-4px); opacity: 1; }
+    100% { transform: translateY(-4px); opacity: 0; }
+}
+
+.upload-toast {
+    position: fixed;
+    left: 50%;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(480px, calc(100vw - 32px));
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+
+.upload-toast[hidden] {
+    display: none !important;
+}
+
+.upload-toast.is-ok {
+    background: color-mix(in srgb, var(--secondary-color) 18%, #fff);
+    color: #1e7a45;
+    border: 1px solid color-mix(in srgb, var(--secondary-color) 50%, #fff);
+}
+
+.upload-toast.is-error {
+    background: color-mix(in srgb, var(--danger-color) 14%, #fff);
+    color: #a93226;
+    border: 1px solid color-mix(in srgb, var(--danger-color) 45%, #fff);
+}
+
+.upload-toast-icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+}
+
+.upload-toast-text {
+    margin: 0;
+    font-size: 0.95em;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #uploadToRepoHeaderBtn.is-uploading .upload-arrow {
+        animation: none;
+        opacity: 1;
+    }
+}
+
 .update-banner {
     display: none;
     align-items: center;
