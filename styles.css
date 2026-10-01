@@ -2984,6 +2984,71 @@ header h1 {
         font-size: 0.85em;
         right: 8px;
     }
+
+    #sessionFormSection.card {
+        padding: 12px 14px;
+    }
+
+    #sessionFormSection h2 {
+        font-size: 1.15em;
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+    }
+
+    #sessionFormSection .form-group,
+    #sessionFormSection .form-row {
+        margin-bottom: 8px;
+    }
+
+    #sessionFormSection .form-row {
+        gap: 8px;
+    }
+
+    #sessionFormSection .form-group label {
+        margin-bottom: 2px;
+        font-size: 0.8em;
+        line-height: 1.15;
+    }
+
+    #sessionFormSection .form-group input,
+    #sessionFormSection .form-group select,
+    #sessionFormSection .form-group textarea {
+        min-height: 36px;
+        padding: 6px 8px;
+        font-size: 0.95em;
+    }
+
+    #sessionFormSection .form-group input,
+    #sessionFormSection .form-group select,
+    #sessionFormSection .time-input-group input {
+        height: 36px;
+    }
+
+    #sessionFormSection .form-group input[type="date"],
+    #sessionFormSection .form-group input[type="number"] {
+        height: 36px !important;
+        min-height: 36px !important;
+        max-height: 36px !important;
+        padding: 6px 8px !important;
+    }
+
+    #sessionFormSection .time-input-group input {
+        min-height: 36px;
+        padding: 6px 22px 6px 8px !important;
+    }
+
+    #sessionFormSection textarea {
+        height: 48px;
+        min-height: 48px;
+    }
+
+    #sessionFormSection .form-actions {
+        margin-top: 0;
+    }
+
+    #sessionFormSection .form-actions .btn {
+        padding: 8px 14px;
+    }
     
     .header-top {
         flex-direction: column;
