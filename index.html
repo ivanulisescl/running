@@ -7,7 +7,61 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.34">
+    <link rel="stylesheet" href="styles.css?v=1.3.35">
+    <style>
+        .header-actions .btn-header {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            line-height: 1;
+            min-height: 44px;
+            background: var(--primary-color, #4A90E2);
+            color: #fff;
+            border: none;
+        }
+        .header-actions .btn-header-icon {
+            display: block;
+            width: 24px;
+            height: 24px;
+            flex: 0 0 auto;
+            stroke-width: 1.8;
+        }
+        .header-actions .btn-header:hover {
+            background: var(--primary-dark, #357ABD);
+        }
+        .header-actions .btn-header.active {
+            box-shadow: inset 0 0 0 2px #fff;
+        }
+        .header-row-6 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .header-row-add {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .header-actions .btn-header-main {
+            width: 72px;
+            height: 72px;
+            min-height: 72px;
+            padding: 0;
+            border-radius: 50%;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(53, 122, 189, 0.45);
+        }
+        .header-actions .btn-header-main .btn-header-icon {
+            width: 34px;
+            height: 34px;
+            stroke-width: 2.4;
+        }
+        .header-actions .btn-header-main:hover {
+            box-shadow: 0 10px 22px rgba(53, 122, 189, 0.55);
+        }
+    </style>
     <link rel="icon" type="image/png" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -20,54 +74,55 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.34</span>
+                <span id="currentVersion">v1.3.35</span>
             </div>
             <div class="header-actions">
-                <div class="header-row-1">
-                    <button id="newSessionBtn" class="btn-header btn-header-main">— Nueva sesión —</button>
-                </div>
                 <div class="header-row-2">
-                    <button id="statsBtn" class="btn-header">Estadísticas</button>
-                    <button id="historyBtn" class="btn-header">Historial</button>
+                    <button id="statsBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>Estadísticas</button>
+                    <button id="historyBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.7 7.1M3 4v7h7"/><path d="M12 7v5l3 2"/></svg>Historial</button>
                 </div>
                 <div class="header-row-3">
-                    <button id="equipmentBtn" class="btn-header">Equipo</button>
-                    <button id="marcasBtn" class="btn-header">Carreras</button>
+                    <button id="equipmentBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 4 3 1 1 6 3 3a3 3 0 0 1 1 2v3H3a2 2 0 0 1-2-2v-2l5-3 5-8 3 3 3-2M2 16h20M8 9l3 2M10 6l3 2"/></svg>Equipo</button>
+                    <button id="marcasBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="4" r="2"/><path d="m12 8 3-1 3 4h3M15 7l-3 7 4 3-2 5M12 14l-4 3-3 5M12 8l-4 4H5M2 7h4M2 16h3"/></svg>Carreras</button>
                 </div>
                 <div class="header-row-4">
-                    <button id="recordsBtn" class="btn-header">Récords</button>
-                    <button id="menuBtn" class="btn-header">Opciones</button>
+                    <button id="recordsBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h8v5a4 4 0 0 1-8 0V3ZM8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 21v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>Récords</button>
+                    <button id="menuBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.7 2.4-1.5.9-2.4-.6-2.5 4.3 1.7 1.8v1.8l-1.7 1.8 2.5 4.3 2.4-.6 1.5.9.7 2.4h5l.7-2.4 1.5-.9 2.4.6 2.5-4.3-1.7-1.8v-1.8l1.7-1.8-2.5-4.3-2.4.6-1.5-.9L14.5 3Z"/><circle cx="12" cy="12.7" r="3"/></svg>Opciones</button>
                 </div>
                 <div class="header-row-5">
-                    <button id="planningBtn" class="btn-header">Planificación</button>
-                    <button id="pesoBtn" class="btn-header">Peso</button>
+                    <button id="planningBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>Planificación</button>
+                    <button id="pesoBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7 10a5 5 0 0 1 10 0H7ZM12 10l2-3"/></svg>Peso</button>
                 </div>
                 <div class="header-row-6">
-                    <button id="fuerzaBtn" class="btn-header">Fuerza</button>
+                    <button id="fuerzaBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="3" height="14" rx="1"/><rect x="16" y="5" width="3" height="14" rx="1"/><path d="M8 12h8M5 8H3v8h2M19 8h2v8h-2M1 12h2M21 12h2"/></svg>Fuerza</button>
+                    <button type="button" id="uploadToRepoHeaderBtn" class="btn-header"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>Subir al repo</button>
+                </div>
+                <div class="header-row-add">
+                    <button id="newSessionBtn" class="btn-header btn-header-main" aria-label="Nueva sesión"><svg class="btn-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
                 </div>
             </div>
             
             <!-- Menú desplegable -->
             <div id="menuDropdown" class="menu-dropdown">
                 <button type="button" id="exportAllBtnMenu" class="menu-item">
-                    <span>📤</span> Exportar (<code>runmetrics.json</code>)
+                    <span>📤</span> Exportar
                 </button>
                 <input type="file" id="importAllFile" accept=".json" style="display: none;">
                 <button type="button" id="importAllBtnMenu" class="menu-item">
-                    <span>📥</span> Importar (<code>runmetrics.json</code>)
+                    <span>📥</span> Importar
                 </button>
                 <input type="file" id="garminFile" accept=".tcx,.gpx,.csv" style="display: none;" multiple>
                 <button type="button" id="importGarminBtnMenu" class="menu-item">
                     <span>📥</span> Importar desde Garmin
                 </button>
                 <button type="button" id="resetFromRepoBtn" class="menu-item">
-                    <span>🔄</span> Resetear (desde repositorio)
+                    <span>🔄</span> Resetear
                 </button>
                 <button type="button" id="uploadToRepoBtn" class="menu-item">
-                    <span>☁️</span> Subir al repositorio
+                    <span>🌐</span> Subir al repositorio
                 </button>
                 <button type="button" id="configTokenBtn" class="menu-item menu-item-sub">
-                    Configurar token GitHub
+                    <span>🔑</span> Token Github
                 </button>
                 <button type="button" id="forceUpdateBtn" class="menu-item">
                     <span>⬆️</span> Forzar actualización
@@ -793,7 +848,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.34"></script>
+    <script src="app.js?v=1.3.35"></script>
 </body>
 </html>
 

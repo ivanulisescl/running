@@ -123,9 +123,16 @@ header h1 {
 
 .header-row-6 {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     width: 100%;
+}
+
+.header-row-add {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 6px;
 }
 
 .fuerza-subnav {
@@ -283,6 +290,39 @@ header h1 {
     transition: background 0.3s ease, transform 0.2s ease;
     white-space: nowrap;
     width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+}
+
+.btn-header-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.header-actions .btn-header {
+    min-height: 44px;
+    justify-content: flex-start;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+}
+
+.header-actions .btn-header:hover {
+    background: var(--primary-dark);
+}
+
+.header-actions .btn-header.active {
+    box-shadow: inset 0 0 0 2px #fff;
 }
 
 .btn-header:hover {
@@ -292,8 +332,23 @@ header h1 {
 }
 
 .btn-header-main {
-    padding: 16px 32px;
-    font-size: 1.1em;
+    width: 72px;
+    height: 72px;
+    min-height: 72px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(53, 122, 189, 0.45);
+}
+
+.btn-header-main .btn-header-icon {
+    width: 34px;
+    height: 34px;
+    stroke-width: 2.4;
+}
+
+.btn-header-main:hover {
+    box-shadow: 0 10px 22px rgba(53, 122, 189, 0.55);
 }
 
 .btn-header-main.active {
@@ -984,6 +1039,7 @@ header h1 {
 }
 
 .planning-selected-bar {
+    scroll-margin-top: 12px;
     margin-top: 20px;
     margin-bottom: 16px;
     padding: 16px 18px;
@@ -2852,9 +2908,9 @@ header h1 {
     }
     
     .btn-header-main {
-        padding: 14px 24px;
-        font-size: 1em;
-        letter-spacing: 0.06em;
+        width: 72px;
+        height: 72px;
+        padding: 0;
     }
     
     .btn-options {

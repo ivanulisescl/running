@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.34'; // Versión actual de la app
+let currentAppVersion = '1.3.35'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -85,9 +85,8 @@ window.deleteEquipment = function(index) {
         updateEquipmentSelect();
     }
 };
-window.updateEquipment = function(index, field, value) {
-    updateEquipment(index, field, value);
-};
+// updateEquipment ya es global (function declaration). No envolverla: el wrapper
+// se llamaba a sí mismo y el cambio de estado no llegaba a guardarse.
 
 // Establecer fecha de hoy por defecto
 function setTodayDate() {
@@ -2292,13 +2291,15 @@ function setupSync() {
         });
     }
 
+    const onUploadToRepo = () => {
+        const menu = document.getElementById('menuDropdown');
+        if (menu) menu.style.display = 'none';
+        uploadToRepository();
+    };
     const uploadToRepoBtn = document.getElementById('uploadToRepoBtn');
-    if (uploadToRepoBtn) {
-        uploadToRepoBtn.addEventListener('click', () => {
-            document.getElementById('menuDropdown').style.display = 'none';
-            uploadToRepository();
-        });
-    }
+    if (uploadToRepoBtn) uploadToRepoBtn.addEventListener('click', onUploadToRepo);
+    const uploadToRepoHeaderBtn = document.getElementById('uploadToRepoHeaderBtn');
+    if (uploadToRepoHeaderBtn) uploadToRepoHeaderBtn.addEventListener('click', onUploadToRepo);
 
     const configTokenBtn = document.getElementById('configTokenBtn');
     if (configTokenBtn) {
@@ -3037,15 +3038,14 @@ function setupStatsFilters() {
             btn.classList.add('active');
             // Actualizar período actual
             currentStatsPeriod = btn.getAttribute('data-period');
-            // Actualizar estadísticas
-            updateStats();
+            // Solo cambian los 4 globos; las gráficas no dependen del período
+            updateStatsSummary();
         });
     });
 }
 
-// Actualizar estadísticas
-function updateStats() {
-    // Filtrar sesiones según el período seleccionado
+// Los 4 globos (sesiones, km, horas, ritmo) según el período seleccionado
+function updateStatsSummary() {
     const filteredSessions = filterSessionsByPeriod(currentStatsPeriod);
     
     const totalSessions = filteredSessions.length;
@@ -3080,7 +3080,12 @@ function updateStats() {
     document.getElementById('totalDistance').textContent = String(Math.round(totalDistance));
     document.getElementById('totalTime').textContent = String(totalHours);
     document.getElementById('avgPace').textContent = avgPace;
-    
+}
+
+// Actualizar estadísticas y gráficas (cuando cambian las sesiones)
+function updateStats() {
+    updateStatsSummary();
+
     // Selector de año (Distancia total por mes) es independiente del período
     refreshTotalDistanceYearOptions();
     refreshTotalElevationYearOptions();
@@ -3089,7 +3094,7 @@ function updateStats() {
     refreshPaceYearOptions();
 
     // Actualizar gráficas
-    updateCharts(filteredSessions);
+    updateCharts();
     // Si planificación está abierta, refrescar el marcado de entrenado
     const planningSection = document.getElementById('planningSection');
     if (planningSection && planningSection.style.display !== 'none') renderPlanning();
@@ -4214,7 +4219,23 @@ function renderPlanning() {
             const willOpen = !planningOpenBlocks.has(blockId);
             if (willOpen) planningOpenBlocks.add(blockId);
             else planningOpenBlocks.delete(blockId);
+            const scrollYBeforeClose = willOpen ? null : window.scrollY;
             applyBlockState(blockId, willOpen);
+            if (willOpen) {
+                const bar = container.querySelector('.planning-selected-bar');
+                if (bar) {
+                    requestAnimationFrame(() => {
+                        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        bar.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+                    });
+                }
+            } else if (scrollYBeforeClose != null) {
+                btn.blur();
+                const keep = () => window.scrollTo({ top: scrollYBeforeClose, behavior: 'auto' });
+                requestAnimationFrame(keep);
+                setTimeout(keep, 0);
+                setTimeout(keep, 60);
+            }
         });
     });
 
@@ -4393,7 +4414,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
 }
 
 // Actualizar todas las gráficas
-function updateCharts(filteredSessions) {
+function updateCharts() {
     updateTotalDistanceByYearChart();
     updateTotalDistanceYearChart();
     updateTotalElevationYearChart();
@@ -5028,10 +5049,9 @@ function updateTypeYearChart() {
             datasets: [{
                 data: data,
                 backgroundColor: [
-                    'rgba(255, 255, 255, 0.8)',
-                    'rgba(255, 255, 255, 0.6)',
-                    'rgba(255, 255, 255, 0.4)',
-                    'rgba(255, 255, 255, 0.2)'
+                    '#1B4F72', // Entrenamiento — azul de la app, más oscuro que el fondo
+                    '#117A65', // Series — verde
+                    '#E74C3C'  // Carrera — rojo de la app
                 ],
                 borderColor: 'rgba(255, 255, 255, 0.9)',
                 borderWidth: 2
@@ -5052,16 +5072,22 @@ function updateTypeYearChart() {
 
 // Paleta de colores para gráfico de lugares (pie)
 const LOCATIONS_CHART_COLORS = [
-    'rgba(255, 255, 255, 0.95)',
-    'rgba(255, 255, 255, 0.8)',
-    'rgba(255, 255, 255, 0.65)',
-    'rgba(200, 220, 255, 0.9)',
-    'rgba(220, 255, 220, 0.85)',
-    'rgba(255, 230, 200, 0.9)',
-    'rgba(255, 220, 255, 0.8)',
-    'rgba(220, 255, 255, 0.85)',
-    'rgba(255, 255, 200, 0.9)',
-    'rgba(230, 230, 255, 0.9)'
+    '#1B4F72', // azul
+    '#E74C3C', // rojo
+    '#117A65', // verde azulado
+    '#B7950B', // dorado
+    '#2C3E50', // carbón
+    '#1E8449', // verde
+    '#A04000', // terracota
+    '#5D6D7E', // pizarra
+    '#1A5276', // azul medio
+    '#922B21', // granate
+    '#0E6655', // verde oscuro
+    '#7E5109', // ocre
+    '#34495E', // grafito
+    '#C0392B', // rojo oscuro
+    '#1B4F4A', // petróleo
+    '#6E2C00'  // marrón
 ];
 
 // Gráfica de lugares (pie) por año
