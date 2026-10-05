@@ -642,11 +642,17 @@ header h1 {
     font-size: 0.9em;
 }
 
+#uploadToRepoHeaderBtn.is-uploading,
 #uploadToRepoHeaderBtn:disabled {
     opacity: 1;
     cursor: progress;
-    background: var(--primary-color);
+    background: #D97706;
     color: #fff;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.35);
+}
+
+#uploadToRepoHeaderBtn.is-uploading {
+    animation: upload-btn-pulse 0.9s ease-in-out infinite;
 }
 
 #uploadToRepoHeaderBtn .upload-arrow {
@@ -662,6 +668,11 @@ header h1 {
     0% { transform: translateY(2px); opacity: 0.35; }
     55% { transform: translateY(-4px); opacity: 1; }
     100% { transform: translateY(-4px); opacity: 0; }
+}
+
+@keyframes upload-btn-pulse {
+    0%, 100% { background: #D97706; }
+    50% { background: #F59E0B; }
 }
 
 .upload-toast {
@@ -710,6 +721,11 @@ header h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    #uploadToRepoHeaderBtn.is-uploading {
+        animation: none;
+        background: #D97706;
+    }
+
     #uploadToRepoHeaderBtn.is-uploading .upload-arrow {
         animation: none;
         opacity: 1;

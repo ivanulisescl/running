@@ -15,7 +15,7 @@ const GITHUB_TOKEN_STORAGE_KEY = 'runningGitHubToken';
 const GITHUB_REPO = 'ivanulisescl/running';
 let planningPlans = []; // Planificaciones por carrera
 let selectedPlanningPlanId = null; // ID del plan seleccionado
-let planningOpenBlocks = new Set(['planning']); // Bloques abiertos en la vista de planificación
+let planningOpenBlocks = new Set(); // Bloques abiertos en la vista de planificación
 const PLANNING_PLANS_STORAGE_KEY = 'runningPlanningPlans';
 const PLANNING_SELECTED_PLAN_STORAGE_KEY = 'runningPlanningSelectedPlanId';
 const WEIGHT_STORAGE_KEY = 'runningWeight';
@@ -227,6 +227,8 @@ function setupNavigationButtons() {
     }
     if (planningBtn && planningSection) {
         planningBtn.addEventListener('click', () => {
+            const willOpen = planningSection.style.display === 'none';
+            if (willOpen) planningOpenBlocks.clear();
             toggleSection('planningSection');
             setActiveNavButton(planningSection.style.display !== 'none' ? 'planningBtn' : null);
             if (planningSection.style.display !== 'none') renderPlanning();
@@ -4883,14 +4885,16 @@ const piePercentLabelsPlugin = {
             const x = props.x + Math.cos(angle) * radius;
             const y = props.y + Math.sin(angle) * radius;
             const text = `${pct}%`;
+            const sliceColor = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[index] : dataset.backgroundColor;
+            const labelColors = pieSliceLabelColors(sliceColor);
             ctx.save();
             ctx.font = '700 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.lineJoin = 'round';
             ctx.lineWidth = 3;
-            ctx.strokeStyle = 'rgba(20, 60, 110, 0.55)';
-            ctx.fillStyle = 'white';
+            ctx.strokeStyle = labelColors.stroke;
+            ctx.fillStyle = labelColors.fill;
             ctx.strokeText(text, x, y);
             ctx.fillText(text, x, y);
             ctx.restore();
@@ -5117,9 +5121,9 @@ function updateTypeYearChart() {
             datasets: [{
                 data: data,
                 backgroundColor: [
-                    '#1B4F72', // Entrenamiento — azul de la app, más oscuro que el fondo
-                    '#117A65', // Series — verde
-                    '#E74C3C'  // Carrera — rojo de la app
+                    '#F97316', // Entrenamiento — naranja
+                    '#F1C40F', // Series — amarillo
+                    '#FFFFFF'  // Carrera — blanco
                 ],
                 borderColor: 'rgba(255, 255, 255, 0.9)',
                 borderWidth: 2
@@ -5137,6 +5141,28 @@ function updateTypeYearChart() {
         }
     });
 }
+
+function pieSliceLabelColors(color) {
+    const hex = typeof color === 'string' ? color.trim() : '';
+    const match = /^#([0-9a-f]{6})$/i.exec(hex);
+    if (!match) return { fill: 'white', stroke: 'rgba(20, 60, 110, 0.55)' };
+    const n = parseInt(match[1], 16);
+    const r = (n >> 16) & 255;
+    const g = (n >> 8) & 255;
+    const b = n & 255;
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    if (luminance > 0.7) return { fill: '#1B3A4B', stroke: 'rgba(255, 255, 255, 0.92)' };
+    return { fill: 'white', stroke: 'rgba(20, 60, 110, 0.55)' };
+}
+
+function normalizeLocationName(name) {
+    return String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+const LOCATION_FIXED_COLORS = {
+    gijon: '#E74C3C',
+    colunga: '#87CEEB'
+};
 
 // Paleta de colores para gráfico de lugares (pie)
 const LOCATIONS_CHART_COLORS = [
@@ -5175,7 +5201,16 @@ function updateLocationsYearChart() {
 
     const labels = Object.keys(countsByLocation).sort((a, b) => countsByLocation[b] - countsByLocation[a]);
     const data = labels.map(l => countsByLocation[l]);
-    const colors = labels.map((_, i) => LOCATIONS_CHART_COLORS[i % LOCATIONS_CHART_COLORS.length]);
+    const reservedColors = new Set(Object.values(LOCATION_FIXED_COLORS).map(c => c.toLowerCase()));
+    const genericColors = LOCATIONS_CHART_COLORS.filter(c => !reservedColors.has(c.toLowerCase()));
+    let genericIndex = 0;
+    const colors = labels.map(label => {
+        const fixed = LOCATION_FIXED_COLORS[normalizeLocationName(label)];
+        if (fixed) return fixed;
+        const color = genericColors[genericIndex % genericColors.length];
+        genericIndex++;
+        return color;
+    });
 
     if (charts.locationsChart) charts.locationsChart.destroy();
 
