@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.37'; // Versión actual de la app
+let currentAppVersion = '1.3.38'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -4486,6 +4486,7 @@ function updatePlanningSummaryChart(raceName, labels, plannedKm, realizedKm, dif
 // Actualizar todas las gráficas
 function updateCharts() {
     updateTotalDistanceByYearChart();
+    updateTotalElevationByYearChart();
     updateTotalDistanceYearChart();
     updateTotalElevationYearChart();
     updateTypeYearChart();
@@ -4847,13 +4848,15 @@ const barValueLabelsPlugin = {
                 const raw = Number(dataset.data[index]);
                 if (!Number.isFinite(raw)) return;
                 const value = Math.round(raw);
+                if (pluginOptions && pluginOptions.hideZero && value === 0) return;
                 const { x, y } = bar.getProps(['x', 'y'], true);
+                const below = value < 0;
                 ctx.save();
                 ctx.fillStyle = 'white';
                 ctx.font = '700 12px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.textBaseline = 'bottom';
-                ctx.fillText(`${value}${suffix}`, x, y - 4);
+                ctx.textBaseline = below ? 'top' : 'bottom';
+                ctx.fillText(`${value}${suffix}`, x, below ? y + 4 : y - 4);
                 ctx.restore();
             });
         });
@@ -4954,12 +4957,90 @@ function updateTotalDistanceByYearChart() {
                 y: {
                     beginAtZero: true,
                     grace: '12%',
-                    ticks: { color: 'white' },
-                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                    display: false,
+                    ticks: { display: false },
+                    grid: { display: false },
+                    border: { display: false }
                 },
                 x: {
                     ticks: { color: 'white' },
-                    grid: { color: 'rgba(255, 255, 255, 0.2)' }
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Gráfica de barras: Desnivel total (+/-) por año (independiente del filtro de período)
+function updateTotalElevationByYearChart() {
+    const ctx = document.getElementById('totalElevationByYearChart');
+    if (!ctx) return;
+
+    const { years } = getAvailableStatsYears();
+    const labels = [...years].sort((a, b) => a - b);
+    const gainData = labels.map(() => 0);
+    const lossData = labels.map(() => 0);
+
+    (sessions || []).forEach(s => {
+        if (!s || !s.date) return;
+        const y = new Date(s.date + 'T00:00:00').getFullYear();
+        const idx = labels.indexOf(y);
+        if (idx < 0) return;
+        gainData[idx] += s.elevationGain || 0;
+        lossData[idx] += s.elevationLoss || 0;
+    });
+
+    if (charts.totalElevationByYearChart) {
+        charts.totalElevationByYearChart.destroy();
+    }
+
+    charts.totalElevationByYearChart = new Chart(ctx, {
+        type: 'bar',
+        plugins: [barValueLabelsPlugin],
+        data: {
+            labels: labels.map(String),
+            datasets: [{
+                label: 'Desnivel + (m)',
+                data: gainData,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: 'rgba(255, 255, 255, 0.9)',
+                borderWidth: 2
+            }, {
+                label: 'Desnivel - (m)',
+                data: lossData.map(v => -v),
+                backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                borderColor: 'rgb(239, 68, 68)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: { top: 20, bottom: 20 }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                barValueLabels: {
+                    suffix: ' m',
+                    hideZero: true
+                }
+            },
+            scales: {
+                y: {
+                    stacked: true,
+                    grace: '18%',
+                    display: false,
+                    ticks: { display: false },
+                    grid: { display: false },
+                    border: { display: false }
+                },
+                x: {
+                    stacked: true,
+                    ticks: { color: 'white', maxRotation: 45 },
+                    grid: { display: false }
                 }
             }
         }
@@ -5011,15 +5092,17 @@ function updateTotalElevationYearChart() {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    labels: { color: 'white' }
+                    display: false
                 }
             },
             scales: {
                 y: {
+                    stacked: true,
                     ticks: { color: 'white' },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 },
                 x: {
+                    stacked: true,
                     ticks: { color: 'white', maxRotation: 45 },
                     grid: { color: 'rgba(255, 255, 255, 0.2)' }
                 }
