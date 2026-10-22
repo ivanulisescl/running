@@ -1,7 +1,8 @@
 {
-  "version": "1.3.38",
-  "buildDate": "2026-10-13",
+  "version": "1.3.39",
+  "buildDate": "2026-10-22",
   "changelog": [
+    "Peso: margen inferior en la gráfica cuando el mínimo coincide con el eje",
     "Estadísticas: gráfica Desnivel total por año, con etiquetas y sin leyenda ni rejilla en las gráficas anuales",
     "Aviso de nueva versión solo si version.json es más reciente que la app",
     "Cabecera: iconos unificados a 24 px; menú anclado, estado de equipo y scroll de planificación; aviso al subir el JSON",

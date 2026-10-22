@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.38'; // Versión actual de la app
+let currentAppVersion = '1.3.39'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -403,8 +403,9 @@ function renderPesoChart() {
     const data = sorted.map(e => Number(e.kg));
     const dataMin = Math.min(...data);
     const dataMax = Math.max(...data);
-    const yMin = Math.floor(dataMin / 5) * 5;
+    let yMin = Math.floor(dataMin / 5) * 5;
     const yMax = Math.ceil(dataMax / 5) * 5;
+    if (dataMin - yMin < 0.05) yMin -= 5;
 
     const ctx = document.getElementById('pesoChart');
     if (!ctx) return;
