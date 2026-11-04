@@ -1,8 +1,8 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.42'; // Versión actual de la app
+let currentAppVersion = '1.3.43'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
-let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
+let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
 let historyTypeFilter = ''; // '' = todos, 'entrenamiento' | 'series' | 'carrera'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
@@ -204,20 +204,6 @@ function formatPlanningWeekLabel(plan, weekIndex) {
     return `Semana ${weekIndex} · ${range}`;
 }
 
-function formatPlanningDayLabel(plan, weekIndex, dayIndex) {
-    const schedule = normalizePlanningSchedule(plan.schedule, plan.weeks, plan.daysPerWeek)
-        || generateBaseSchedule(plan.weeks, plan.daysPerWeek, plan.raceDistanceKm);
-    const cell = schedule[weekIndex - 1]?.[dayIndex - 1] || { plannedKm: 0, type: 'entrenamiento' };
-    const km = Number(cell.plannedKm) || 0;
-    const type = normalizePlanningSessionType(cell.type);
-    const start = new Date(plan.startDate + 'T00:00:00');
-    const dayDate = addDays(start, (weekIndex - 1) * 7 + (dayIndex - 1));
-    const dateLabel = dayDate.toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short' });
-    const assigned = Number((plan.assignments || {})[planningKey(weekIndex, dayIndex)]);
-    const occupied = Number.isFinite(assigned) && assigned > 0 ? ' · ocupado' : '';
-    return `Día ${dayIndex} · ${dateLabel} · ${type} · ${km.toFixed(1)} km${occupied}`;
-}
-
 function refreshSessionFormPlanningUI(opts = {}) {
     const preserveSelection = !!opts.preserveSelection;
     const weekChanged = !!opts.weekChanged;
@@ -227,7 +213,6 @@ function refreshSessionFormPlanningUI(opts = {}) {
     const planSelect = document.getElementById('sessionPlanningPlan');
     const weekSelect = document.getElementById('sessionPlanningWeek');
     const daySelect = document.getElementById('sessionPlanningDay');
-    const hint = document.getElementById('sessionPlanningHint');
     if (!root || !fields || !checkbox || !planSelect || !weekSelect || !daySelect) return;
 
     const isEditing = editingSessionId !== null;
@@ -262,16 +247,7 @@ function refreshSessionFormPlanningUI(opts = {}) {
     }
 
     fields.style.display = checkbox.checked ? '' : 'none';
-    if (!checkbox.checked) {
-        if (hint) {
-            hint.textContent = inRange
-                ? 'Marca la casilla para asignar esta sesión a la planificación.'
-                : (dateIso
-                    ? 'La fecha está fuera del rango de la planificación seleccionada.'
-                    : 'Elige una fecha para proponer semana y día.');
-        }
-        return;
-    }
+    if (!checkbox.checked) return;
 
     let selectedWeek = 1;
     if (preserveSelection && Number.isFinite(prevWeek) && prevWeek >= 1 && prevWeek <= plan.weeks) {
@@ -302,23 +278,9 @@ function refreshSessionFormPlanningUI(opts = {}) {
     daySelect.innerHTML = Array.from({ length: plan.daysPerWeek }, (_, i) => {
         const d = i + 1;
         const selected = d === selectedDay ? 'selected' : '';
-        return `<option value="${d}" ${selected}>${escapeHtml(formatPlanningDayLabel(plan, selectedWeek, d))}</option>`;
+        return `<option value="${d}" ${selected}>Día ${d}</option>`;
     }).join('');
     daySelect.value = String(selectedDay);
-
-    if (hint) {
-        const w = Number(weekSelect.value);
-        const d = Number(daySelect.value);
-        const key = planningKey(w, d);
-        const occupied = Number((plan.assignments || {})[key]);
-        if (Number.isFinite(occupied) && occupied > 0) {
-            hint.textContent = 'Todos los días de esa semana ya tienen sesión: al guardar se reemplazará la asignación.';
-        } else if (inRange) {
-            hint.textContent = `Primer día libre de la semana: ${formatPlanningWeekLabel(plan, w)}, ${formatPlanningDayLabel(plan, w, d)}.`;
-        } else {
-            hint.textContent = 'La fecha está fuera del plan; puedes asignar igualmente a la semana/día elegidos.';
-        }
-    }
 }
 
 function assignSessionToPlanningFromForm(sessionId) {
@@ -1869,7 +1831,7 @@ function updateSubmitButton() {
             submitBtn.textContent = 'Guardar Cambios';
             submitBtn.classList.add('btn-editing');
         } else {
-            submitBtn.textContent = 'Guardar Sesión';
+            submitBtn.textContent = 'Guardar';
             submitBtn.classList.remove('btn-editing');
         }
     }
@@ -2021,6 +1983,8 @@ function renderMarcas() {
         const timeInMinutes = session.timeInMinutes != null
             ? Number(session.timeInMinutes)
             : (typeof session.time === 'string' ? timeToMinutes(session.time) : Number(session.time));
+        const elevationGain = Math.round(Number(session.elevationGain) || 0);
+        const elevationLoss = Math.round(Number(session.elevationLoss) || 0);
         const paceText = (() => {
             const dist = Number(session.distance) || 0;
             const mins = Number(timeInMinutes) || 0;
@@ -2057,6 +2021,14 @@ function renderMarcas() {
                             <span class="marca-card-stat-label">Distancia:</span>
                             <span class="marca-card-stat-value"><strong>${session.distance}</strong> km</span>
                         </div>
+                        <div class="marca-card-stat marca-card-elevation">
+                            <span class="marca-card-stat-label">Desnivel:</span>
+                            <span class="marca-card-stat-value">
+                                <strong>+${elevationGain} m</strong>
+                                <span>/</span>
+                                <strong>-${elevationLoss} m</strong>
+                            </span>
+                        </div>
                         <div class="marca-card-stat">
                             <span class="marca-card-stat-label">Tiempo:</span>
                             <span class="marca-card-stat-value"><strong>${timeDisplay}</strong></span>
@@ -2089,6 +2061,14 @@ function renderMarcas() {
                     <div class="marca-card-stat marca-card-km">
                         <span class="marca-card-stat-label">Distancia:</span>
                         <span class="marca-card-stat-value"><strong>${session.distance}</strong> km</span>
+                    </div>
+                    <div class="marca-card-stat marca-card-elevation">
+                        <span class="marca-card-stat-label">Desnivel:</span>
+                        <span class="marca-card-stat-value">
+                            <strong>+${elevationGain} m</strong>
+                            <span>/</span>
+                            <strong>-${elevationLoss} m</strong>
+                        </span>
                     </div>
                     <div class="marca-card-stat">
                         <span class="marca-card-stat-label">Tiempo:</span>
