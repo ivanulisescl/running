@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.39">
+    <link rel="stylesheet" href="styles.css?v=1.3.40">
     <style>
         .header-actions .btn-header {
             display: inline-flex;
@@ -255,7 +255,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.39</span>
+                <span id="currentVersion">v1.3.40</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-2">
@@ -388,6 +388,30 @@
                     <div class="form-group">
                         <label for="notes">Notas</label>
                         <textarea id="notes" rows="2" placeholder="Notas adicionales (opcional)"></textarea>
+                    </div>
+
+                    <div id="sessionPlanningAssign" class="session-planning-assign">
+                        <label class="session-planning-check">
+                            <input type="checkbox" id="addToPlanning" checked>
+                            <span>Añadir a planificación</span>
+                        </label>
+                        <div id="sessionPlanningFields" class="session-planning-fields">
+                            <div class="form-group">
+                                <label for="sessionPlanningPlan">Planificación</label>
+                                <select id="sessionPlanningPlan"></select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="sessionPlanningWeek">Semana</label>
+                                    <select id="sessionPlanningWeek"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sessionPlanningDay">Día</label>
+                                    <select id="sessionPlanningDay"></select>
+                                </div>
+                            </div>
+                            <p id="sessionPlanningHint" class="session-planning-hint"></p>
+                        </div>
                     </div>
                     
                     <div class="form-actions">
@@ -1040,7 +1064,7 @@
 
     </div>
 
-    <script src="app.js?v=1.3.39"></script>
+    <script src="app.js?v=1.3.40"></script>
 </body>
 </html>
 

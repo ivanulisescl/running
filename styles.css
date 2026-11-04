@@ -805,6 +805,52 @@ header h1 {
     width: 100%;
 }
 
+.session-planning-assign {
+    margin: 8px 0 20px;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--card-background);
+}
+
+.session-planning-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin: 0;
+}
+
+.session-planning-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    min-height: 18px;
+    margin: 0;
+    accent-color: var(--primary-color, #2563eb);
+    cursor: pointer;
+}
+
+.session-planning-fields {
+    margin-top: 14px;
+}
+
+.session-planning-fields .form-group {
+    margin-bottom: 12px;
+}
+
+.session-planning-fields .form-row {
+    margin-bottom: 8px;
+}
+
+.session-planning-hint {
+    margin: 0;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
 .section-intro {
     color: var(--text-secondary);
     font-size: 0.95em;

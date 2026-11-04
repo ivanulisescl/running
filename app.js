@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.39'; // Versión actual de la app
+let currentAppVersion = '1.3.40'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     persistSiteStorage();
     loadGitHubToken();
     setupForm();
+    setupSessionFormPlanning();
     setupNewSessionButton();
     setupNavigationButtons();
     setupStatsFilters();
@@ -110,6 +111,290 @@ function setupForm() {
             cancelForm();
         });
     }
+}
+
+function setupSessionFormPlanning() {
+    const root = document.getElementById('sessionPlanningAssign');
+    if (!root || root.__planningFormBound) return;
+    root.__planningFormBound = true;
+
+    const checkbox = document.getElementById('addToPlanning');
+    const planSelect = document.getElementById('sessionPlanningPlan');
+    const weekSelect = document.getElementById('sessionPlanningWeek');
+    const daySelect = document.getElementById('sessionPlanningDay');
+    const dateInput = document.getElementById('date');
+    const typeSelect = document.getElementById('type');
+
+    const refresh = (opts = {}) => refreshSessionFormPlanningUI(opts);
+
+    if (checkbox) {
+        checkbox.addEventListener('change', () => refresh({ preserveSelection: true }));
+    }
+    if (planSelect) {
+        planSelect.addEventListener('change', () => {
+            const planId = Number(planSelect.value);
+            if (Number.isFinite(planId) && planId > 0) {
+                selectedPlanningPlanId = planId;
+                savePlanningPlans();
+            }
+            refresh({ preserveSelection: false });
+        });
+    }
+    if (weekSelect) {
+        weekSelect.addEventListener('change', () => refresh({ preserveSelection: true, weekChanged: true }));
+    }
+    if (daySelect) {
+        daySelect.addEventListener('change', () => refresh({ preserveSelection: true }));
+    }
+    if (dateInput) {
+        dateInput.addEventListener('change', () => refresh({ preserveSelection: false }));
+    }
+    if (typeSelect) {
+        typeSelect.addEventListener('change', () => refresh({ preserveSelection: true }));
+    }
+
+    refresh({ preserveSelection: false });
+}
+
+function getPlanningWeekIndexForDate(plan, dateIso) {
+    if (!plan || !dateIso) return null;
+    const start = new Date(plan.startDate + 'T00:00:00');
+    const date = new Date(String(dateIso).slice(0, 10) + 'T00:00:00');
+    if (Number.isNaN(start.getTime()) || Number.isNaN(date.getTime())) return null;
+    const diffDays = Math.floor((date - start) / (24 * 60 * 60 * 1000));
+    if (diffDays < 0) return null;
+    const weekIndex = Math.floor(diffDays / 7) + 1;
+    if (weekIndex < 1 || weekIndex > plan.weeks) return null;
+    return weekIndex;
+}
+
+function getPlanningDayIndexForDate(plan, dateIso) {
+    if (!plan || !dateIso) return null;
+    const date = new Date(String(dateIso).slice(0, 10) + 'T00:00:00');
+    if (Number.isNaN(date.getTime())) return null;
+    const monday = startOfWeekMonday(date);
+    const diffDays = Math.floor((date - monday) / (24 * 60 * 60 * 1000)); // 0=lun … 6=dom
+    const dayIndex = diffDays + 1;
+    if (dayIndex < 1 || dayIndex > plan.daysPerWeek) return null;
+    return dayIndex;
+}
+
+function isPlanningSlotFree(plan, week, day) {
+    if (!plan) return false;
+    const key = planningKey(week, day);
+    const sid = Number((plan.assignments || {})[key]);
+    return !(Number.isFinite(sid) && sid > 0);
+}
+
+function proposePlanningSlot(plan, dateIso, sessionType) {
+    if (!plan) return null;
+    const schedule = normalizePlanningSchedule(plan.schedule, plan.weeks, plan.daysPerWeek)
+        || generateBaseSchedule(plan.weeks, plan.daysPerWeek, plan.raceDistanceKm);
+    const assignments = plan.assignments || {};
+    const type = normalizePlanningSessionType(sessionType);
+    const preferredWeek = getPlanningWeekIndexForDate(plan, dateIso);
+    const preferredDay = getPlanningDayIndexForDate(plan, dateIso);
+
+    const isFree = (w, d) => isPlanningSlotFree(plan, w, d);
+
+    const scoreSlot = (w, d) => {
+        const cell = schedule[w - 1]?.[d - 1] || { plannedKm: 0, type: 'entrenamiento' };
+        let score = 0;
+        if (preferredWeek && w === preferredWeek) score += 100;
+        else if (preferredWeek) score -= Math.abs(w - preferredWeek) * 10;
+        if (preferredDay && d === preferredDay) score += 40;
+        if (isFree(w, d)) score += 50;
+        else score -= 80;
+        if (normalizePlanningSessionType(cell.type) === type) score += 25;
+        if ((Number(cell.plannedKm) || 0) > 0) score += 5;
+        return score;
+    };
+
+    let best = null;
+    let bestScore = -Infinity;
+    for (let w = 1; w <= plan.weeks; w++) {
+        for (let d = 1; d <= plan.daysPerWeek; d++) {
+            const score = scoreSlot(w, d);
+            if (score > bestScore) {
+                bestScore = score;
+                best = { week: w, day: d, free: isFree(w, d) };
+            }
+        }
+    }
+
+    // Carrera del plan: si el tipo es carrera y la fecha coincide con raceDate, proponer RACE
+    if (type === 'carrera' && plan.raceDate && String(dateIso).slice(0, 10) === plan.raceDate) {
+        const raceSid = Number(assignments[PLANNING_RACE_KEY]);
+        const raceFree = !(Number.isFinite(raceSid) && raceSid > 0);
+        if (raceFree || !best?.free) {
+            return { week: null, day: null, race: true, free: raceFree };
+        }
+    }
+
+    return best;
+}
+
+function formatPlanningWeekLabel(plan, weekIndex) {
+    const start = new Date(plan.startDate + 'T00:00:00');
+    const weekStart = addDays(start, (weekIndex - 1) * 7);
+    const weekEnd = addDays(weekStart, 6);
+    const range = `${weekStart.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} – ${weekEnd.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}`;
+    return `Semana ${weekIndex} · ${range}`;
+}
+
+function formatPlanningDayLabel(plan, weekIndex, dayIndex) {
+    const schedule = normalizePlanningSchedule(plan.schedule, plan.weeks, plan.daysPerWeek)
+        || generateBaseSchedule(plan.weeks, plan.daysPerWeek, plan.raceDistanceKm);
+    const cell = schedule[weekIndex - 1]?.[dayIndex - 1] || { plannedKm: 0, type: 'entrenamiento' };
+    const km = Number(cell.plannedKm) || 0;
+    const type = normalizePlanningSessionType(cell.type);
+    const start = new Date(plan.startDate + 'T00:00:00');
+    const dayDate = addDays(start, (weekIndex - 1) * 7 + (dayIndex - 1));
+    const dateLabel = dayDate.toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short' });
+    const assigned = Number((plan.assignments || {})[planningKey(weekIndex, dayIndex)]);
+    const occupied = Number.isFinite(assigned) && assigned > 0 ? ' · ocupado' : '';
+    return `Día ${dayIndex} · ${dateLabel} · ${type} · ${km.toFixed(1)} km${occupied}`;
+}
+
+function refreshSessionFormPlanningUI(opts = {}) {
+    const preserveSelection = !!opts.preserveSelection;
+    const weekChanged = !!opts.weekChanged;
+    const root = document.getElementById('sessionPlanningAssign');
+    const fields = document.getElementById('sessionPlanningFields');
+    const checkbox = document.getElementById('addToPlanning');
+    const planSelect = document.getElementById('sessionPlanningPlan');
+    const weekSelect = document.getElementById('sessionPlanningWeek');
+    const daySelect = document.getElementById('sessionPlanningDay');
+    const hint = document.getElementById('sessionPlanningHint');
+    if (!root || !fields || !checkbox || !planSelect || !weekSelect || !daySelect) return;
+
+    const isEditing = editingSessionId !== null;
+    const plans = (planningPlans || []).slice().sort((a, b) => a.raceDate.localeCompare(b.raceDate));
+
+    if (isEditing || !plans.length) {
+        root.style.display = 'none';
+        checkbox.checked = false;
+        return;
+    }
+
+    root.style.display = '';
+    const prevPlanId = preserveSelection ? Number(planSelect.value) : null;
+    const prevWeek = preserveSelection ? Number(weekSelect.value) : null;
+    const prevDay = preserveSelection ? Number(daySelect.value) : null;
+
+    planSelect.innerHTML = plans.map(p => {
+        const selected = (prevPlanId && p.id === prevPlanId) || (!prevPlanId && p.id === selectedPlanningPlanId) ? 'selected' : '';
+        const label = `${p.raceName} · ${p.startDate} → ${p.raceDate}`;
+        return `<option value="${p.id}" ${selected}>${escapeHtml(label)}</option>`;
+    }).join('');
+
+    let plan = plans.find(p => p.id === Number(planSelect.value)) || getSelectedPlanningPlan() || plans[0];
+    if (plan && Number(planSelect.value) !== plan.id) planSelect.value = String(plan.id);
+
+    const dateIso = document.getElementById('date')?.value || '';
+    const sessionType = document.getElementById('type')?.value || 'entrenamiento';
+    const proposal = proposePlanningSlot(plan, dateIso, sessionType);
+
+    const inRange = !!getPlanningWeekIndexForDate(plan, dateIso);
+    if (!preserveSelection) {
+        checkbox.checked = inRange;
+    }
+
+    fields.style.display = checkbox.checked ? '' : 'none';
+    if (!checkbox.checked) {
+        if (hint) {
+            hint.textContent = inRange
+                ? 'Marca la casilla para asignar esta sesión a la planificación.'
+                : (dateIso
+                    ? 'La fecha está fuera del rango de la planificación seleccionada.'
+                    : 'Elige una fecha para proponer semana y día.');
+        }
+        return;
+    }
+
+    let selectedWeek = 1;
+    if (preserveSelection && Number.isFinite(prevWeek) && prevWeek >= 1 && prevWeek <= plan.weeks) {
+        selectedWeek = prevWeek;
+    } else if (proposal && !proposal.race && proposal.week) {
+        selectedWeek = proposal.week;
+    } else {
+        selectedWeek = getPlanningWeekIndexForDate(plan, dateIso) || 1;
+    }
+
+    weekSelect.innerHTML = Array.from({ length: plan.weeks }, (_, i) => {
+        const w = i + 1;
+        const selected = w === selectedWeek ? 'selected' : '';
+        return `<option value="${w}" ${selected}>${escapeHtml(formatPlanningWeekLabel(plan, w))}</option>`;
+    }).join('');
+    weekSelect.value = String(selectedWeek);
+    let selectedDay = 1;
+    if (preserveSelection && !weekChanged && Number.isFinite(prevDay) && prevDay >= 1 && prevDay <= plan.daysPerWeek) {
+        selectedDay = prevDay;
+    } else if (!weekChanged && proposal && !proposal.race && proposal.week === selectedWeek && proposal.day) {
+        selectedDay = proposal.day;
+    } else {
+        const byDate = getPlanningDayIndexForDate(plan, dateIso);
+        selectedDay = (byDate && byDate <= plan.daysPerWeek) ? byDate : 1;
+        // Si el día por fecha está ocupado, preferir el primer hueco libre de la semana
+        if (!isPlanningSlotFree(plan, selectedWeek, selectedDay)) {
+            for (let d = 1; d <= plan.daysPerWeek; d++) {
+                if (isPlanningSlotFree(plan, selectedWeek, d)) {
+                    selectedDay = d;
+                    break;
+                }
+            }
+        }
+    }
+
+    daySelect.innerHTML = Array.from({ length: plan.daysPerWeek }, (_, i) => {
+        const d = i + 1;
+        const selected = d === selectedDay ? 'selected' : '';
+        return `<option value="${d}" ${selected}>${escapeHtml(formatPlanningDayLabel(plan, selectedWeek, d))}</option>`;
+    }).join('');
+    daySelect.value = String(selectedDay);
+
+    if (hint) {
+        const w = Number(weekSelect.value);
+        const d = Number(daySelect.value);
+        const key = planningKey(w, d);
+        const occupied = Number((plan.assignments || {})[key]);
+        if (Number.isFinite(occupied) && occupied > 0) {
+            hint.textContent = 'Ese día ya tiene una sesión: al guardar se reemplazará la asignación.';
+        } else if (inRange) {
+            hint.textContent = `Propuesta según la fecha: ${formatPlanningWeekLabel(plan, w)}, ${formatPlanningDayLabel(plan, w, d)}.`;
+        } else {
+            hint.textContent = 'La fecha está fuera del plan; puedes asignar igualmente a la semana/día elegidos.';
+        }
+    }
+}
+
+function assignSessionToPlanningFromForm(sessionId) {
+    const checkbox = document.getElementById('addToPlanning');
+    if (!checkbox || !checkbox.checked || editingSessionId !== null) return false;
+
+    const planId = Number(document.getElementById('sessionPlanningPlan')?.value);
+    const week = Number(document.getElementById('sessionPlanningWeek')?.value);
+    const day = Number(document.getElementById('sessionPlanningDay')?.value);
+    const plan = (planningPlans || []).find(p => p.id === planId);
+    if (!plan || !Number.isFinite(sessionId) || sessionId <= 0) return false;
+    if (!Number.isFinite(week) || week < 1 || week > plan.weeks) return false;
+    if (!Number.isFinite(day) || day < 1 || day > plan.daysPerWeek) return false;
+
+    const key = planningKey(week, day);
+    plan.assignments = plan.assignments || {};
+
+    // Quitar la sesión si ya estaba en otro hueco del mismo plan
+    Object.keys(plan.assignments).forEach(k => {
+        if (Number(plan.assignments[k]) === sessionId) delete plan.assignments[k];
+    });
+
+    plan.assignments[key] = sessionId;
+    selectedPlanningPlanId = plan.id;
+    savePlanningPlans();
+    if (typeof renderPlanning === 'function') {
+        try { renderPlanning(); } catch (_) { /* vista puede no estar montada */ }
+    }
+    return true;
 }
 
 // Secciones que se muestran/ocultan con los botones del header
@@ -184,6 +469,9 @@ function setupNewSessionButton() {
         if (equipoField) equipoField.value = selectedEquipment;
         toggleSection('sessionFormSection');
         setActiveNavButton(sessionFormSection.style.display !== 'none' ? 'newSessionBtn' : null);
+        if (sessionFormSection.style.display !== 'none') {
+            refreshSessionFormPlanningUI({ preserveSelection: false });
+        }
     });
 }
 
@@ -1437,6 +1725,7 @@ function showSessionForm() {
         hideAllMainSections();
         sessionFormSection.style.display = 'block';
         setActiveNavButton('newSessionBtn');
+        refreshSessionFormPlanningUI({ preserveSelection: false });
     }
 }
 
@@ -1580,6 +1869,7 @@ function addSession() {
 
         sessions.push(session);
         saveSessions();
+        assignSessionToPlanningFromForm(session.id);
         renderSessions();
         renderEquipmentList();
         updateStats();
@@ -1613,6 +1903,7 @@ function resetForm() {
     }
     editingSessionId = null;
     updateSubmitButton();
+    refreshSessionFormPlanningUI({ preserveSelection: false });
     // Ocultar formulario después de guardar
     hideSessionForm();
 }
@@ -1670,6 +1961,7 @@ function editSession(id) {
     updateSubmitButton();
     
     showSessionForm();
+    refreshSessionFormPlanningUI({ preserveSelection: false });
 }
 
 // Eliminar sesión
