@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.40'; // Versión actual de la app
+let currentAppVersion = '1.3.41'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'all'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -168,17 +168,6 @@ function getPlanningWeekIndexForDate(plan, dateIso) {
     return weekIndex;
 }
 
-function getPlanningDayIndexForDate(plan, dateIso) {
-    if (!plan || !dateIso) return null;
-    const date = new Date(String(dateIso).slice(0, 10) + 'T00:00:00');
-    if (Number.isNaN(date.getTime())) return null;
-    const monday = startOfWeekMonday(date);
-    const diffDays = Math.floor((date - monday) / (24 * 60 * 60 * 1000)); // 0=lun … 6=dom
-    const dayIndex = diffDays + 1;
-    if (dayIndex < 1 || dayIndex > plan.daysPerWeek) return null;
-    return dayIndex;
-}
-
 function isPlanningSlotFree(plan, week, day) {
     if (!plan) return false;
     const key = planningKey(week, day);
@@ -186,52 +175,25 @@ function isPlanningSlotFree(plan, week, day) {
     return !(Number.isFinite(sid) && sid > 0);
 }
 
-function proposePlanningSlot(plan, dateIso, sessionType) {
+/** Primer día libre de una semana del plan (1..daysPerWeek), o null si todos están ocupados. */
+function firstFreePlanningDayInWeek(plan, weekIndex) {
+    if (!plan || !weekIndex) return null;
+    for (let d = 1; d <= plan.daysPerWeek; d++) {
+        if (isPlanningSlotFree(plan, weekIndex, d)) return d;
+    }
+    return null;
+}
+
+/**
+ * Propone semana (según la fecha de la sesión) y el primer día de esa semana
+ * que aún no tenga un entrenamiento asignado.
+ */
+function proposePlanningSlot(plan, dateIso) {
     if (!plan) return null;
-    const schedule = normalizePlanningSchedule(plan.schedule, plan.weeks, plan.daysPerWeek)
-        || generateBaseSchedule(plan.weeks, plan.daysPerWeek, plan.raceDistanceKm);
-    const assignments = plan.assignments || {};
-    const type = normalizePlanningSessionType(sessionType);
-    const preferredWeek = getPlanningWeekIndexForDate(plan, dateIso);
-    const preferredDay = getPlanningDayIndexForDate(plan, dateIso);
-
-    const isFree = (w, d) => isPlanningSlotFree(plan, w, d);
-
-    const scoreSlot = (w, d) => {
-        const cell = schedule[w - 1]?.[d - 1] || { plannedKm: 0, type: 'entrenamiento' };
-        let score = 0;
-        if (preferredWeek && w === preferredWeek) score += 100;
-        else if (preferredWeek) score -= Math.abs(w - preferredWeek) * 10;
-        if (preferredDay && d === preferredDay) score += 40;
-        if (isFree(w, d)) score += 50;
-        else score -= 80;
-        if (normalizePlanningSessionType(cell.type) === type) score += 25;
-        if ((Number(cell.plannedKm) || 0) > 0) score += 5;
-        return score;
-    };
-
-    let best = null;
-    let bestScore = -Infinity;
-    for (let w = 1; w <= plan.weeks; w++) {
-        for (let d = 1; d <= plan.daysPerWeek; d++) {
-            const score = scoreSlot(w, d);
-            if (score > bestScore) {
-                bestScore = score;
-                best = { week: w, day: d, free: isFree(w, d) };
-            }
-        }
-    }
-
-    // Carrera del plan: si el tipo es carrera y la fecha coincide con raceDate, proponer RACE
-    if (type === 'carrera' && plan.raceDate && String(dateIso).slice(0, 10) === plan.raceDate) {
-        const raceSid = Number(assignments[PLANNING_RACE_KEY]);
-        const raceFree = !(Number.isFinite(raceSid) && raceSid > 0);
-        if (raceFree || !best?.free) {
-            return { week: null, day: null, race: true, free: raceFree };
-        }
-    }
-
-    return best;
+    const week = getPlanningWeekIndexForDate(plan, dateIso);
+    if (!week) return null;
+    const day = firstFreePlanningDayInWeek(plan, week);
+    return { week, day, free: day !== null };
 }
 
 function formatPlanningWeekLabel(plan, weekIndex) {
@@ -292,8 +254,7 @@ function refreshSessionFormPlanningUI(opts = {}) {
     if (plan && Number(planSelect.value) !== plan.id) planSelect.value = String(plan.id);
 
     const dateIso = document.getElementById('date')?.value || '';
-    const sessionType = document.getElementById('type')?.value || 'entrenamiento';
-    const proposal = proposePlanningSlot(plan, dateIso, sessionType);
+    const proposal = proposePlanningSlot(plan, dateIso);
 
     const inRange = !!getPlanningWeekIndexForDate(plan, dateIso);
     if (!preserveSelection) {
@@ -315,7 +276,7 @@ function refreshSessionFormPlanningUI(opts = {}) {
     let selectedWeek = 1;
     if (preserveSelection && Number.isFinite(prevWeek) && prevWeek >= 1 && prevWeek <= plan.weeks) {
         selectedWeek = prevWeek;
-    } else if (proposal && !proposal.race && proposal.week) {
+    } else if (proposal && proposal.week) {
         selectedWeek = proposal.week;
     } else {
         selectedWeek = getPlanningWeekIndexForDate(plan, dateIso) || 1;
@@ -327,23 +288,15 @@ function refreshSessionFormPlanningUI(opts = {}) {
         return `<option value="${w}" ${selected}>${escapeHtml(formatPlanningWeekLabel(plan, w))}</option>`;
     }).join('');
     weekSelect.value = String(selectedWeek);
+
+    // Día: primer hueco libre de la semana (o el que el usuario ya eligió)
     let selectedDay = 1;
     if (preserveSelection && !weekChanged && Number.isFinite(prevDay) && prevDay >= 1 && prevDay <= plan.daysPerWeek) {
         selectedDay = prevDay;
-    } else if (!weekChanged && proposal && !proposal.race && proposal.week === selectedWeek && proposal.day) {
+    } else if (!weekChanged && proposal && proposal.week === selectedWeek && proposal.day) {
         selectedDay = proposal.day;
     } else {
-        const byDate = getPlanningDayIndexForDate(plan, dateIso);
-        selectedDay = (byDate && byDate <= plan.daysPerWeek) ? byDate : 1;
-        // Si el día por fecha está ocupado, preferir el primer hueco libre de la semana
-        if (!isPlanningSlotFree(plan, selectedWeek, selectedDay)) {
-            for (let d = 1; d <= plan.daysPerWeek; d++) {
-                if (isPlanningSlotFree(plan, selectedWeek, d)) {
-                    selectedDay = d;
-                    break;
-                }
-            }
-        }
+        selectedDay = firstFreePlanningDayInWeek(plan, selectedWeek) || 1;
     }
 
     daySelect.innerHTML = Array.from({ length: plan.daysPerWeek }, (_, i) => {
@@ -359,9 +312,9 @@ function refreshSessionFormPlanningUI(opts = {}) {
         const key = planningKey(w, d);
         const occupied = Number((plan.assignments || {})[key]);
         if (Number.isFinite(occupied) && occupied > 0) {
-            hint.textContent = 'Ese día ya tiene una sesión: al guardar se reemplazará la asignación.';
+            hint.textContent = 'Todos los días de esa semana ya tienen sesión: al guardar se reemplazará la asignación.';
         } else if (inRange) {
-            hint.textContent = `Propuesta según la fecha: ${formatPlanningWeekLabel(plan, w)}, ${formatPlanningDayLabel(plan, w, d)}.`;
+            hint.textContent = `Primer día libre de la semana: ${formatPlanningWeekLabel(plan, w)}, ${formatPlanningDayLabel(plan, w, d)}.`;
         } else {
             hint.textContent = 'La fecha está fuera del plan; puedes asignar igualmente a la semana/día elegidos.';
         }
