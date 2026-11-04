@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.44'; // Versión actual de la app
+let currentAppVersion = '1.3.45'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEquipmentSection();
     setupMarcaForm();
     setupRecordForm();
-    setupClearButton();
     setupHistoryViewToggle();
     setupHistoryTypeFilter();
     setupMenu();
@@ -196,12 +195,8 @@ function proposePlanningSlot(plan, dateIso) {
     return { week, day, free: day !== null };
 }
 
-function formatPlanningWeekLabel(plan, weekIndex) {
-    const start = new Date(plan.startDate + 'T00:00:00');
-    const weekStart = addDays(start, (weekIndex - 1) * 7);
-    const weekEnd = addDays(weekStart, 6);
-    const range = `${weekStart.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} – ${weekEnd.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}`;
-    return `Semana ${weekIndex} · ${range}`;
+function formatPlanningWeekLabel(weekIndex) {
+    return `Semana ${weekIndex}`;
 }
 
 function refreshSessionFormPlanningUI(opts = {}) {
@@ -231,7 +226,7 @@ function refreshSessionFormPlanningUI(opts = {}) {
 
     planSelect.innerHTML = plans.map(p => {
         const selected = (prevPlanId && p.id === prevPlanId) || (!prevPlanId && p.id === selectedPlanningPlanId) ? 'selected' : '';
-        const label = `${p.raceName} · ${p.startDate} → ${p.raceDate}`;
+        const label = p.raceName;
         return `<option value="${p.id}" ${selected}>${escapeHtml(label)}</option>`;
     }).join('');
 
@@ -261,7 +256,7 @@ function refreshSessionFormPlanningUI(opts = {}) {
     weekSelect.innerHTML = Array.from({ length: plan.weeks }, (_, i) => {
         const w = i + 1;
         const selected = w === selectedWeek ? 'selected' : '';
-        return `<option value="${w}" ${selected}>${escapeHtml(formatPlanningWeekLabel(plan, w))}</option>`;
+        return `<option value="${w}" ${selected}>${escapeHtml(formatPlanningWeekLabel(w))}</option>`;
     }).join('');
     weekSelect.value = String(selectedWeek);
 
@@ -1895,20 +1890,6 @@ function deleteSession(id) {
     }
 }
 
-// Configurar botón de limpiar todo
-function setupClearButton() {
-    const clearBtn = document.getElementById('clearAll');
-    if (clearBtn) clearBtn.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que quieres eliminar TODAS las sesiones? Esta acción no se puede deshacer.')) {
-            sessions = [];
-            saveSessions();
-            renderSessions();
-            renderEquipmentList();
-            updateStats();
-        }
-    });
-}
-
 function setupHistoryViewToggle() {
     const btnDetailed = document.getElementById('historyViewDetailed');
     const btnCompact = document.getElementById('historyViewCompact');
@@ -3196,6 +3177,14 @@ function renderSessions() {
         ? sortedSessions.filter(s => normalizeType(s.type) === historyTypeFilter)
         : sortedSessions;
     const isCompact = historyViewMode === 'compact';
+    const typeLabels = {
+        entrenamiento: 'Entrenamiento',
+        series: 'Series',
+        carrera: 'Carrera',
+        rodaje: 'Entrenamiento',
+        'tirada-larga': 'Entrenamiento',
+        'ritmo-carrera': 'Carrera'
+    };
 
     if (filteredSessions.length === 0) {
         container.innerHTML = sessions.length === 0
@@ -3207,12 +3196,33 @@ function renderSessions() {
     container.innerHTML = filteredSessions.map(session => {
         const formattedDate = formatDate(session.date);
         const location = getSessionLocation(session);
+        const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.time);
+        const elevationGain = Math.round(Number(session.elevationGain) || 0);
+        const elevationLoss = Math.round(Number(session.elevationLoss) || 0);
+        const normalizedSessionType = normalizeType(session.type);
+        const sessionTypeClass = ` session-type-${normalizedSessionType}`;
+        const isSeries = normalizedSessionType === 'series';
+        const compactObservation = isSeries
+            ? String(session.notes || '').trim()
+            : '';
 
         if (isCompact) {
             return `
                 <div class="session-item session-item-compact">
-                    <span class="session-compact-date">${formattedDate}</span>
-                    <span class="session-compact-km">${session.distance} km</span>
+                    <div class="session-compact-row">
+                        <span class="session-compact-date">${formattedDate}</span>
+                        <span class="session-compact-km">${session.distance} km</span>
+                    </div>
+                    <div class="session-compact-info">
+                        <div class="session-compact-info-left">
+                            <span class="session-compact-type${sessionTypeClass}">${escapeHtml(typeLabels[session.type] || session.type)}</span>
+                            ${compactObservation ? `<span class="session-compact-observation">${escapeHtml(compactObservation)}</span>` : ''}
+                        </div>
+                        <div class="session-compact-info-right">
+                            <span class="session-compact-time">${timeDisplay}</span>
+                            <span class="session-compact-elevation">+${elevationGain} m / -${elevationLoss} m</span>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -3222,16 +3232,6 @@ function renderSessions() {
         const paceMin = Math.floor(paceMinPerKm);
         const paceSec = Math.round((paceMinPerKm - paceMin) * 60);
         const pace = `${paceMin}:${String(paceSec).padStart(2, '0')}`;
-        const timeDisplay = typeof session.time === 'string' ? session.time : minutesToTime(session.time);
-        const typeLabels = {
-            entrenamiento: 'Entrenamiento',
-            series: 'Series',
-            carrera: 'Carrera',
-            rodaje: 'Entrenamiento',
-            'tirada-larga': 'Entrenamiento',
-            'ritmo-carrera': 'Carrera'
-        };
-
         return `
             <div class="session-item">
                 <div class="session-header">
@@ -3239,7 +3239,7 @@ function renderSessions() {
                         <span class="session-date">${formattedDate}</span>
                         ${location ? `<span class="session-location">📍 ${escapeHtml(location)}</span>` : ''}
                     </div>
-                    <span class="session-type">${typeLabels[session.type] || session.type}</span>
+                    <span class="session-type${sessionTypeClass}">${typeLabels[session.type] || session.type}</span>
                 </div>
                 <div class="session-details">
                     <div class="session-detail">
@@ -3716,7 +3716,7 @@ function setupPlanningSection() {
                 .slice()
                 .sort((a, b) => a.raceDate.localeCompare(b.raceDate))
                 .map(p => {
-                    const label = `${p.raceName} · ${p.startDate} → ${p.raceDate}`;
+                    const label = p.raceName;
                     const selectedAttr = (p.id === selectedPlanningPlanId) ? 'selected' : '';
                     return `<option value="${p.id}" ${selectedAttr}>${escapeHtml(label)}</option>`;
                 })
@@ -4066,7 +4066,7 @@ function renderPlanning() {
                     .slice()
                     .sort((a, b) => a.raceDate.localeCompare(b.raceDate))
                     .map(p => {
-                        const label = `${p.raceName} · ${p.startDate} → ${p.raceDate}`;
+                        const label = p.raceName;
                         const selectedAttr = (p.id === selectedPlanningPlanId) ? 'selected' : '';
                         return `<option value="${p.id}" ${selectedAttr}>${escapeHtml(label)}</option>`;
                     })

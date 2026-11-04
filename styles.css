@@ -2715,10 +2715,55 @@ header h1 {
 
 .session-item-compact {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 10px 15px;
+}
+
+.session-compact-row {
+    display: flex;
+    align-items: baseline;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 15px;
+    width: 100%;
+}
+
+.session-compact-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+}
+
+.session-compact-info-left,
+.session-compact-info-right {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.session-compact-info-left {
+    min-width: 0;
+    align-items: center;
+}
+
+.session-compact-info-right {
+    flex: none;
+    align-items: flex-end;
+}
+
+.session-compact-observation {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    color: var(--danger-color);
+    font-size: 0.95em;
+    font-weight: 700;
 }
 
 .session-item-compact:hover {
@@ -2732,9 +2777,28 @@ header h1 {
 }
 
 .session-compact-km {
+    font-weight: 800;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    white-space: nowrap;
+}
+
+.session-compact-type {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 0.9em;
     font-weight: 700;
+    white-space: nowrap;
+}
+
+.session-compact-time,
+.session-compact-elevation {
+    font-weight: 400;
     color: var(--text-primary);
     font-size: 0.95em;
+    white-space: nowrap;
 }
 
 .session-actions-inline {
@@ -2789,6 +2853,18 @@ header h1 {
     font-size: 0.85em;
     text-transform: capitalize;
     white-space: nowrap;
+}
+
+.session-type-series {
+    background: var(--danger-color);
+}
+
+.session-type-entrenamiento {
+    background: var(--accent-green);
+}
+
+.session-type-carrera {
+    background: #f59e0b;
 }
 
 .session-details {
@@ -2885,6 +2961,20 @@ header h1 {
     background: #C0392B;
 }
 
+.session-actions .edit-btn,
+.session-actions .delete-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.session-actions .edit-btn:hover,
+.session-actions .delete-btn:hover {
+    background: var(--background);
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+}
+
 .btn-editing {
     background: var(--secondary-color) !important;
 }
@@ -2929,10 +3019,6 @@ header h1 {
         min-width: 0;
         padding: 6px 8px;
         font-size: 0.85em;
-    }
-    
-    #clearAll {
-        flex: none;
     }
     
     .stats-filters {
