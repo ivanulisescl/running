@@ -1795,6 +1795,19 @@ header h1 {
     color: var(--danger-color);
 }
 
+.marca-card-elevation {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.marca-elevation-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
 .marca-card-datos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -3226,6 +3239,11 @@ header h1 {
 
     .marca-card-km strong {
         font-size: 1.45em;
+    }
+
+    .marca-card-stat.marca-card-elevation {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .marca-card-stats .marca-card-stat:nth-child(2) strong,

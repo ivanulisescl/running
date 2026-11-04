@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.43'; // Versión actual de la app
+let currentAppVersion = '1.3.44'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2022,10 +2022,12 @@ function renderMarcas() {
                             <span class="marca-card-stat-value"><strong>${session.distance}</strong> km</span>
                         </div>
                         <div class="marca-card-stat marca-card-elevation">
-                            <span class="marca-card-stat-label">Desnivel:</span>
-                            <span class="marca-card-stat-value">
+                            <span class="marca-elevation-row">
+                                <span class="marca-card-stat-label">Desnivel +:</span>
                                 <strong>+${elevationGain} m</strong>
-                                <span>/</span>
+                            </span>
+                            <span class="marca-elevation-row">
+                                <span class="marca-card-stat-label">Desnivel -:</span>
                                 <strong>-${elevationLoss} m</strong>
                             </span>
                         </div>
@@ -2063,10 +2065,12 @@ function renderMarcas() {
                         <span class="marca-card-stat-value"><strong>${session.distance}</strong> km</span>
                     </div>
                     <div class="marca-card-stat marca-card-elevation">
-                        <span class="marca-card-stat-label">Desnivel:</span>
-                        <span class="marca-card-stat-value">
+                        <span class="marca-elevation-row">
+                            <span class="marca-card-stat-label">Desnivel +:</span>
                             <strong>+${elevationGain} m</strong>
-                            <span>/</span>
+                        </span>
+                        <span class="marca-elevation-row">
+                            <span class="marca-card-stat-label">Desnivel -:</span>
                             <strong>-${elevationLoss} m</strong>
                         </span>
                     </div>
