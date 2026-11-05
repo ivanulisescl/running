@@ -1,7 +1,8 @@
 {
-  "version": "1.3.45",
-  "buildDate": "2026-11-04",
+  "version": "1.3.46",
+  "buildDate": "2026-11-05",
   "changelog": [
+    "Historial: la vista compacta es la predeterminada",
     "Historial: vista compacta ampliada, píldoras por tipo y controles simplificados",
     "Carreras: desniveles positivo y negativo en filas separadas",
     "Carreras: desniveles positivo y negativo en las fichas; mejoras en formulario y estadísticas",

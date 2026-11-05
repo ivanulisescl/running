@@ -1,9 +1,9 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.45'; // Versión actual de la app
+let currentAppVersion = '1.3.46'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
-let historyViewMode = 'detailed'; // 'detailed' | 'compact' para el historial de sesiones
+let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
 let historyTypeFilter = ''; // '' = todos, 'entrenamiento' | 'series' | 'carrera'
 let charts = {}; // Objeto para almacenar las instancias de las gráficas
 let equipmentList = []; // Lista de equipos disponibles
@@ -3239,7 +3239,10 @@ function renderSessions() {
                         <span class="session-date">${formattedDate}</span>
                         ${location ? `<span class="session-location">📍 ${escapeHtml(location)}</span>` : ''}
                     </div>
-                    <span class="session-type${sessionTypeClass}">${typeLabels[session.type] || session.type}</span>
+                    <div class="session-type-wrap">
+                        <span class="session-type${sessionTypeClass}">${typeLabels[session.type] || session.type}</span>
+                        ${compactObservation ? `<span class="session-detail-observation">${escapeHtml(compactObservation)}</span>` : ''}
+                    </div>
                 </div>
                 <div class="session-details">
                     <div class="session-detail">
@@ -3271,7 +3274,7 @@ function renderSessions() {
                     </div>
                     ` : ''}
                 </div>
-                ${session.notes ? `
+                ${session.notes && !isSeries ? `
                 <div class="session-notes-row">
                     <span class="session-notes">${escapeHtml(session.notes)}</span>
                 </div>` : ''}
