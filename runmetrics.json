@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.46",
-  "exportedAt": "2026-11-05T18:54:23.891Z",
+  "exportedAt": "2026-11-08T11:17:42.896Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -5266,6 +5266,20 @@
       "elevationLoss": 2,
       "equipo": "Brooks Ghost Trail",
       "createdAt": "2026-11-05T18:53:38.037Z"
+    },
+    {
+      "id": 1794136469429,
+      "date": "2026-11-08",
+      "distance": 11.45,
+      "time": "00:59:15",
+      "timeInMinutes": 59.25,
+      "type": "carrera",
+      "localizacion": "Pola de Siero",
+      "notes": "IV Trail Siero 2026",
+      "elevationGain": 300,
+      "elevationLoss": 300,
+      "equipo": "Brooks Ghost Trail",
+      "createdAt": "2026-11-08T11:14:29.429Z"
     }
   ],
   "carreras": [
@@ -6276,7 +6290,8 @@
           "W8D2": 1793384705183,
           "W8D3": 1793540741519,
           "W9D1": 1793730071016,
-          "W9D2": 1793904818037
+          "W9D2": 1793904818037,
+          "W9D3": 1794136469429
         }
       },
       {
@@ -6413,7 +6428,7 @@
       "estado": "Activo",
       "desde": "2026-09-19",
       "limiteKm": 800,
-      "numActividades": 4
+      "numActividades": 5
     }
   ],
   "weight": [
