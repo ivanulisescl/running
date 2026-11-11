@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.46",
-  "exportedAt": "2026-11-09T16:48:42.932Z",
+  "exportedAt": "2026-11-11T11:17:49.704Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -6364,6 +6364,130 @@
             },
             {
               "plannedKm": 11,
+              "type": "entrenamiento"
+            }
+          ]
+        ],
+        "assignments": {}
+      },
+      {
+        "id": 1794395849026,
+        "raceName": "XII Trail Gijón 2027",
+        "weeks": 8,
+        "daysPerWeek": 3,
+        "startDate": "2026-12-28",
+        "raceDate": "2027-02-19",
+        "raceDistanceKm": 11.5,
+        "schedule": [
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "series"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "series"
+            },
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6,
+              "type": "series"
+            },
+            {
+              "plannedKm": 9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 6.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 6.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 9,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7,
+              "type": "series"
+            },
+            {
+              "plannedKm": 10,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 7.5,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 7.5,
+              "type": "series"
+            },
+            {
+              "plannedKm": 11,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 12,
+              "type": "entrenamiento"
+            }
+          ],
+          [
+            {
+              "plannedKm": 8,
+              "type": "entrenamiento"
+            },
+            {
+              "plannedKm": 8,
+              "type": "series"
+            },
+            {
+              "plannedKm": 12,
               "type": "entrenamiento"
             }
           ]
