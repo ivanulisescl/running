@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.46",
-  "exportedAt": "2026-11-11T11:17:49.704Z",
+  "exportedAt": "2026-11-12T18:59:42.208Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -5280,6 +5280,20 @@
       "elevationLoss": 300,
       "equipo": "Brooks Ghost Trail",
       "createdAt": "2026-11-08T11:14:29.429Z"
+    },
+    {
+      "id": 1794509971405,
+      "date": "2026-11-12",
+      "distance": 7.01,
+      "time": "00:44:31",
+      "timeInMinutes": 44.516666666666666,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 29,
+      "elevationLoss": 19,
+      "equipo": "Brooks Glycerine 23 Azules",
+      "createdAt": "2026-11-12T18:59:31.405Z"
     }
   ],
   "carreras": [
@@ -6369,130 +6383,6 @@
           ]
         ],
         "assignments": {}
-      },
-      {
-        "id": 1794395849026,
-        "raceName": "XII Trail Gijón 2027",
-        "weeks": 8,
-        "daysPerWeek": 3,
-        "startDate": "2026-12-28",
-        "raceDate": "2027-02-19",
-        "raceDistanceKm": 11.5,
-        "schedule": [
-          [
-            {
-              "plannedKm": 6,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 6,
-              "type": "series"
-            },
-            {
-              "plannedKm": 8,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 6,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 6,
-              "type": "series"
-            },
-            {
-              "plannedKm": 8,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 6,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 6,
-              "type": "series"
-            },
-            {
-              "plannedKm": 9,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 6.5,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 6.5,
-              "type": "series"
-            },
-            {
-              "plannedKm": 9,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 7,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 7,
-              "type": "series"
-            },
-            {
-              "plannedKm": 10,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 7.5,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 7.5,
-              "type": "series"
-            },
-            {
-              "plannedKm": 11,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 8,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 8,
-              "type": "series"
-            },
-            {
-              "plannedKm": 12,
-              "type": "entrenamiento"
-            }
-          ],
-          [
-            {
-              "plannedKm": 8,
-              "type": "entrenamiento"
-            },
-            {
-              "plannedKm": 8,
-              "type": "series"
-            },
-            {
-              "plannedKm": 12,
-              "type": "entrenamiento"
-            }
-          ]
-        ],
-        "assignments": {}
       }
     ],
     "selectedPlanId": 1793870499101
@@ -6536,7 +6426,7 @@
       "estado": "Activo por defecto",
       "desde": "2026-04-06",
       "limiteKm": 800,
-      "numActividades": 54
+      "numActividades": 55
     },
     {
       "name": "Brooks Ghost Trail",
