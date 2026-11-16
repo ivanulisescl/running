@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.47'; // Versión actual de la app
+let currentAppVersion = '1.3.48'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2319,75 +2319,21 @@ async function uploadCarreraPhotos(fileList) {
 
 let carreraGalleryAudio = null;
 
-function playCarreraGalleryTone(ctx, dest, freq, start, duration, type, peak) {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(peak, start + 0.06);
-    gain.gain.linearRampToValueAtTime(0, start + duration);
-    osc.connect(gain);
-    gain.connect(dest);
-    osc.start(start);
-    osc.stop(start + duration + 0.02);
-}
-
-function scheduleCarreraGalleryLoop() {
-    const audio = carreraGalleryAudio;
-    if (!audio || !audio.playing) return;
-    const ctx = audio.ctx;
-    const beat = 0.52;
-    const bar = beat * 4;
-    const start = ctx.currentTime + 0.05;
-    const chords = [
-        { bass: 130.81, triad: [164.81, 196.00, 261.63], melody: [329.63, 392.00, 329.63, 261.63] },
-        { bass: 110.00, triad: [164.81, 220.00, 261.63], melody: [440.00, 392.00, 329.63, 392.00] },
-        { bass: 87.31, triad: [174.61, 220.00, 261.63], melody: [349.23, 440.00, 392.00, 349.23] },
-        { bass: 98.00, triad: [196.00, 246.94, 293.66], melody: [392.00, 493.88, 392.00, 329.63] }
-    ];
-    chords.forEach((chord, index) => {
-        const at = start + index * bar;
-        playCarreraGalleryTone(ctx, audio.master, chord.bass, at, bar * 0.96, 'sine', 0.16);
-        chord.triad.forEach(freq => playCarreraGalleryTone(ctx, audio.master, freq, at, bar * 0.96, 'triangle', 0.045));
-        chord.melody.forEach((freq, note) => playCarreraGalleryTone(ctx, audio.master, freq, at + note * beat, beat * 0.85, 'sine', 0.09));
-    });
-    audio.timer = setTimeout(scheduleCarreraGalleryLoop, (chords.length * bar - 0.15) * 1000);
-}
-
 function startCarreraGalleryMusic() {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
     if (!carreraGalleryAudio) {
-        const ctx = new AudioCtx();
-        const master = ctx.createGain();
-        master.gain.value = 0;
-        master.connect(ctx.destination);
-        carreraGalleryAudio = { ctx, master, timer: null, playing: false };
+        carreraGalleryAudio = new Audio('audio/galeria.m4a');
+        carreraGalleryAudio.loop = true;
+        carreraGalleryAudio.preload = 'auto';
     }
-    const { ctx, master } = carreraGalleryAudio;
-    if (ctx.state === 'suspended') ctx.resume();
-    if (carreraGalleryAudio.playing) return;
-    carreraGalleryAudio.playing = true;
-    const now = ctx.currentTime;
-    master.gain.cancelScheduledValues(now);
-    master.gain.setValueAtTime(master.gain.value, now);
-    master.gain.linearRampToValueAtTime(0.9, now + 0.45);
-    scheduleCarreraGalleryLoop();
+    carreraGalleryAudio.currentTime = 0;
+    const pending = carreraGalleryAudio.play();
+    if (pending && pending.catch) pending.catch(() => {});
 }
 
 function stopCarreraGalleryMusic() {
-    const audio = carreraGalleryAudio;
-    if (!audio || !audio.playing) return;
-    audio.playing = false;
-    if (audio.timer) {
-        clearTimeout(audio.timer);
-        audio.timer = null;
-    }
-    const now = audio.ctx.currentTime;
-    audio.master.gain.cancelScheduledValues(now);
-    audio.master.gain.setValueAtTime(audio.master.gain.value, now);
-    audio.master.gain.linearRampToValueAtTime(0, now + 0.35);
+    if (!carreraGalleryAudio) return;
+    carreraGalleryAudio.pause();
+    carreraGalleryAudio.currentTime = 0;
 }
 
 function openCarreraPhotos(sessionId) {
