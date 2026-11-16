@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.50'; // Versión actual de la app
+let currentAppVersion = '1.3.51'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2182,7 +2182,7 @@ let carreraPhotoNames = [];
 let carreraPhotoIndex = 0;
 let carreraPhotoSessionId = null;
 const carreraPhotoPreviewUrls = new Map();
-const CARRERA_VIDEO_MAX_BYTES = 20 * 1024 * 1024;
+const CARRERA_VIDEO_MAX_BYTES = 50 * 1024 * 1024;
 
 function ensureCarreraMarca(sessionId) {
     let marca = getMarcaBySessionId(sessionId);
@@ -2325,7 +2325,7 @@ async function uploadCarreraPhotos(fileList) {
             const file = files[i];
             const isVideo = isCarreraVideoFile(file);
             if (isVideo && file.size > CARRERA_VIDEO_MAX_BYTES) {
-                throw new Error('El vídeo supera 20 MB. Elige uno más corto.');
+                throw new Error('El vídeo supera 50 MB. Elige uno más corto.');
             }
             let blob = file;
             let extension = 'jpg';
