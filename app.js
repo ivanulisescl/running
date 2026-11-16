@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.52'; // Versión actual de la app
+let currentAppVersion = '1.3.53'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1988,9 +1988,10 @@ function renderMarcas() {
         const hasGallery = galleryNames.length > 0;
         const galleryAttrs = hasGallery ? '' : ' disabled';
         const mediaCount = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-        const galleryLabel = hasGallery
-            ? `${mediaCount(galleryImages, 'imagen', 'imágenes')} y ${mediaCount(galleryVideos, 'vídeo', 'vídeos')}`
-            : 'Sin imágenes';
+        const galleryParts = [];
+        if (galleryImages > 0) galleryParts.push(mediaCount(galleryImages, 'imagen', 'imágenes'));
+        if (galleryVideos > 0) galleryParts.push(mediaCount(galleryVideos, 'vídeo', 'vídeos'));
+        const galleryLabel = galleryParts.length ? galleryParts.join(' y ') : 'Sin imágenes';
         if (marca) {
             const puestoGeneralStr = marca.puestoGeneral != null
                 ? (puestoPct != null ? `${marca.puestoGeneral} (${puestoPct}%)` : String(marca.puestoGeneral))

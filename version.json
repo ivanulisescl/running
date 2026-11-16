@@ -1,7 +1,8 @@
 {
-  "version": "1.3.52",
+  "version": "1.3.53",
   "buildDate": "2026-11-16",
   "changelog": [
+    "Galería: el botón omite el recuento cuando es 0",
     "Galería: el botón muestra el recuento y queda inactivo si no hay imágenes",
     "Galería: el límite de los vídeos pasa a 50 MB",
     "Galería: flechas por encima del menú en el móvil y subida de vídeos",
