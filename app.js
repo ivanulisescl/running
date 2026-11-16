@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.53'; // Versión actual de la app
+let currentAppVersion = '1.3.54'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2381,6 +2381,7 @@ async function uploadCarreraPhotos(fileList) {
 }
 
 let carreraGalleryAudio = null;
+let carreraGalleryMusicActive = false;
 
 function startCarreraGalleryMusic() {
     if (!carreraGalleryAudio) {
@@ -2393,10 +2394,35 @@ function startCarreraGalleryMusic() {
     if (pending && pending.catch) pending.catch(() => {});
 }
 
+function pauseCarreraGalleryMusic() {
+    if (!carreraGalleryAudio) return;
+    carreraGalleryAudio.pause();
+}
+
+function resumeCarreraGalleryMusic() {
+    if (!carreraGalleryAudio) {
+        startCarreraGalleryMusic();
+        return;
+    }
+    if (!carreraGalleryAudio.paused) return;
+    const pending = carreraGalleryAudio.play();
+    if (pending && pending.catch) pending.catch(() => {});
+}
+
 function stopCarreraGalleryMusic() {
+    carreraGalleryMusicActive = false;
     if (!carreraGalleryAudio) return;
     carreraGalleryAudio.pause();
     carreraGalleryAudio.currentTime = 0;
+}
+
+function syncCarreraGalleryMusic(showingVideo) {
+    if (!carreraGalleryMusicActive) return;
+    if (showingVideo) {
+        pauseCarreraGalleryMusic();
+        return;
+    }
+    resumeCarreraGalleryMusic();
 }
 
 function openCarreraPhotos(sessionId) {
@@ -2407,10 +2433,10 @@ function openCarreraPhotos(sessionId) {
     carreraPhotoNames = getCarreraPhotoNames(sessionId);
     carreraPhotoUrls = carreraPhotoNames.map(name => getCarreraPhotoUrl(sessionId, name));
     carreraPhotoIndex = 0;
+    if (wasClosed) carreraGalleryMusicActive = true;
     overlay.hidden = false;
     document.body.classList.add('carrera-photos-open');
     renderCarreraPhotoSlide();
-    if (wasClosed) startCarreraGalleryMusic();
 }
 
 function closeCarreraPhotos() {
@@ -2450,6 +2476,7 @@ function renderCarreraPhotoSlide() {
             video.pause();
             video.hidden = true;
         }
+        syncCarreraGalleryMusic(false);
         return;
     }
     const url = carreraPhotoUrls[carreraPhotoIndex];
@@ -2479,6 +2506,7 @@ function renderCarreraPhotoSlide() {
     const single = carreraPhotoUrls.length < 2;
     if (prev) prev.hidden = single;
     if (next) next.hidden = single;
+    syncCarreraGalleryMusic(Boolean(isVideo && video));
 }
 
 function stepCarreraPhoto(delta) {
