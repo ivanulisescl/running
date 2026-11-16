@@ -1,7 +1,8 @@
 {
-  "version": "1.3.48",
+  "version": "1.3.49",
   "buildDate": "2026-11-16",
   "changelog": [
+    "Carreras: al añadir fotos ya se suben y se muestra el progreso",
     "Galería: suena la pieza propia al abrir las fotos",
     "Carreras: galería de fotos, carga al repositorio y música al abrirla",
     "Historial: la vista compacta es la predeterminada",

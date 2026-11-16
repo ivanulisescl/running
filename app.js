@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.48'; // Versión actual de la app
+let currentAppVersion = '1.3.49'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2278,19 +2278,32 @@ function setCarreraPhotosStatus(text) {
     if (status) status.textContent = text || '';
 }
 
+function isCarreraPhotoFile(file) {
+    if (!file) return false;
+    if (file.type && file.type.startsWith('image/')) return true;
+    return /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name || '');
+}
+
 async function uploadCarreraPhotos(fileList) {
     const sessionId = carreraPhotoSessionId;
-    const files = Array.from(fileList || []).filter(file => file && file.type.startsWith('image/'));
-    if (!sessionId || !files.length) return;
+    const files = Array.from(fileList || []).filter(isCarreraPhotoFile);
+    if (!sessionId) return;
+    if (!files.length) {
+        setCarreraPhotosStatus('Elige una imagen (JPG o PNG).');
+        return;
+    }
     const addBtn = document.getElementById('carreraPhotosAdd');
+    const actions = addBtn && addBtn.parentElement;
     if (addBtn) addBtn.disabled = true;
+    if (actions) actions.classList.add('is-busy');
     try {
         const marca = ensureCarreraMarca(sessionId);
         for (let i = 0; i < files.length; i++) {
-            setCarreraPhotosStatus(`Subiendo ${i + 1} de ${files.length}…`);
+            setCarreraPhotosStatus(`Preparando ${i + 1} de ${files.length}…`);
             const blob = await compressCarreraPhoto(files[i]);
             const name = nextCarreraPhotoName(marca.photos);
             const base64 = await blobToBase64(blob);
+            setCarreraPhotosStatus(`Subiendo ${i + 1} de ${files.length}…`);
             await putGitHubFile(
                 `carrera-photos/${sessionId}/${name}`,
                 base64,
@@ -2314,6 +2327,7 @@ async function uploadCarreraPhotos(fileList) {
         setCarreraPhotosStatus(err.message || 'No se pudieron guardar las fotos');
     } finally {
         if (addBtn) addBtn.disabled = false;
+        if (actions) actions.classList.remove('is-busy');
     }
 }
 
@@ -2406,7 +2420,7 @@ function setupCarreraPhotosOverlay() {
             if (!addBtn.disabled) fileInput.click();
         });
         fileInput.addEventListener('change', () => {
-            const files = fileInput.files;
+            const files = Array.from(fileInput.files || []);
             fileInput.value = '';
             uploadCarreraPhotos(files);
         });
