@@ -1,7 +1,8 @@
 {
-  "version": "1.3.46",
-  "buildDate": "2026-11-05",
+  "version": "1.3.47",
+  "buildDate": "2026-11-16",
   "changelog": [
+    "Carreras: galería de fotos, carga al repositorio y música al abrirla",
     "Historial: la vista compacta es la predeterminada",
     "Historial: vista compacta ampliada, píldoras por tipo y controles simplificados",
     "Carreras: desniveles positivo y negativo en filas separadas",

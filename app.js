@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.46'; // Versión actual de la app
+let currentAppVersion = '1.3.47'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2021,7 +2021,11 @@ function renderMarcas() {
                             <span class="marca-card-stat-value"><strong>${paceText}</strong><span class="marca-card-stat-unit">/km</span></span>
                         </div>
                     </div>
+                    <div class="marca-card-photos-row">
+                        <button type="button" class="marca-card-photos" data-session-id="${session.id}" aria-label="Galería" title="Galería"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg><span>Galería</span></button>
+                    </div>
                     <div class="marca-card-datos">
+                        <p class="marca-card-datos-title">Clasificación</p>
                         <div class="marca-card-dato"><span class="marca-dato-label">Participantes:</span><span>${marca.numParticipantes ?? '—'}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Puesto general:</span><span>${puestoGeneralStr}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Categoría:</span><span>${escapeHtml(marca.categoria || '—')}</span></div>
@@ -2029,7 +2033,9 @@ function renderMarcas() {
                         <div class="marca-card-dato"><span class="marca-dato-label">Puesto categoría:</span><span>${puestoCategoriaStr}</span></div>
                         <div class="marca-card-dato"><span class="marca-dato-label">Equipo:</span><span>${escapeHtml(equipoDisplay)}</span></div>
                     </div>
-                    <button type="button" class="btn btn-small btn-edit-marca" data-session-id="${session.id}">Editar</button>
+                    <div class="marca-card-actions">
+                        <button type="button" class="btn btn-small btn-edit-marca" data-session-id="${session.id}">Editar</button>
+                    </div>
                 </div>
             `;
         }
@@ -2064,15 +2070,23 @@ function renderMarcas() {
                         <span class="marca-card-stat-value"><strong>${paceText}</strong><span class="marca-card-stat-unit">/km</span></span>
                     </div>
                 </div>
+                <div class="marca-card-photos-row">
+                    <button type="button" class="marca-card-photos" data-session-id="${session.id}" aria-label="Galería" title="Galería"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg><span>Galería</span></button>
+                </div>
                 <div class="marca-card-datos">
                     <div class="marca-card-dato"><span class="marca-dato-label">Equipo:</span><span>${escapeHtml((session.equipo || '').trim() || '—')}</span></div>
                 </div>
-                <button type="button" class="btn btn-primary btn-small btn-add-marca" data-session-id="${session.id}">Añadir marca</button>
+                <div class="marca-card-actions">
+                    <button type="button" class="btn btn-primary btn-small btn-add-marca" data-session-id="${session.id}">Añadir marca</button>
+                </div>
             </div>
         `;
     }).join('');
     container.querySelectorAll('.btn-add-marca, .btn-edit-marca').forEach(btn => {
         btn.addEventListener('click', () => openMarcaForm(btn.getAttribute('data-session-id')));
+    });
+    container.querySelectorAll('.marca-card-photos').forEach(btn => {
+        btn.addEventListener('click', () => openCarreraPhotos(btn.getAttribute('data-session-id')));
     });
 }
 
@@ -2094,6 +2108,7 @@ function openMarcaForm(sessionId) {
         document.getElementById('marcaSessionId').value = sessionId;
     }
     container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function setupMarcaForm() {
@@ -2132,6 +2147,338 @@ function setupMarcaForm() {
             container.style.display = 'none';
         });
     }
+    const photosBtn = document.getElementById('marcaPhotosBtn');
+    if (photosBtn) {
+        photosBtn.addEventListener('click', () => {
+            const sessionId = document.getElementById('marcaSessionId').value;
+            openCarreraPhotos(sessionId);
+        });
+    }
+    setupCarreraPhotosOverlay();
+}
+
+function getCarreraPhotoNames(sessionId) {
+    const marca = getMarcaBySessionId(sessionId);
+    if (!marca || !Array.isArray(marca.photos)) return [];
+    return marca.photos
+        .map(name => String(name || '').trim())
+        .filter(name => name && !name.includes('/') && !name.includes('\\') && !name.includes('..'));
+}
+
+function getCarreraPhotoUrl(sessionId, fileName) {
+    const preview = carreraPhotoPreviewUrls.get(`${sessionId}|${fileName}`);
+    if (preview) return preview;
+    const relative = `carrera-photos/${encodeURIComponent(String(sessionId))}/${encodeURIComponent(fileName)}`;
+    try {
+        const base = getEquipmentPhotoBaseForAssets();
+        return new URL(relative, base || undefined).href;
+    } catch (_) {
+        return relative;
+    }
+}
+
+let carreraPhotoUrls = [];
+let carreraPhotoIndex = 0;
+let carreraPhotoSessionId = null;
+const carreraPhotoPreviewUrls = new Map();
+
+function ensureCarreraMarca(sessionId) {
+    let marca = getMarcaBySessionId(sessionId);
+    if (!marca) {
+        const session = (sessions || []).find(s => String(s.id) === String(sessionId));
+        marca = { id: session ? session.id : sessionId, photos: [] };
+        marcas.push(marca);
+    }
+    if (!Array.isArray(marca.photos)) marca.photos = [];
+    return marca;
+}
+
+function nextCarreraPhotoName(names) {
+    let max = 0;
+    names.forEach(name => {
+        const match = /^(\d+)\./.exec(String(name));
+        if (match) max = Math.max(max, Number(match[1]));
+    });
+    return `${String(max + 1).padStart(2, '0')}.jpg`;
+}
+
+function compressCarreraPhoto(file) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            const maxSide = 1600;
+            const scale = Math.min(1, maxSide / Math.max(img.width || 1, img.height || 1));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round((img.width || 1) * scale));
+            canvas.height = Math.max(1, Math.round((img.height || 1) * scale));
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+            canvas.toBlob(blob => {
+                if (!blob) reject(new Error('No se pudo preparar la foto'));
+                else resolve(blob);
+            }, 'image/jpeg', 0.82);
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error('No se pudo leer la foto'));
+        };
+        img.src = url;
+    });
+}
+
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const data = String(reader.result || '');
+            resolve(data.slice(data.indexOf(',') + 1));
+        };
+        reader.onerror = () => reject(reader.error || new Error('No se pudo leer la foto'));
+        reader.readAsDataURL(blob);
+    });
+}
+
+async function putGitHubFile(path, base64, message) {
+    let token = await loadGitHubToken();
+    if (!token) {
+        token = prompt('Introduce tu GitHub Personal Access Token (permiso repo):');
+        if (!token || !token.trim()) throw new Error('Hace falta el token de GitHub para guardar las fotos.');
+        token = token.trim();
+        await saveGitHubToken(token);
+    }
+    const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+    const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${encodedPath}`;
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json'
+    };
+    let sha = null;
+    const getRes = await fetch(apiUrl, { headers });
+    if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+    } else if (getRes.status !== 404) {
+        const errData = await getRes.json().catch(() => ({}));
+        throw new Error(errData.message || `Error ${getRes.status} al preparar la foto`);
+    }
+    const body = { message, content: base64 };
+    if (sha) body.sha = sha;
+    const putRes = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
+    if (!putRes.ok) {
+        const errData = await putRes.json().catch(() => ({}));
+        throw new Error(errData.message || `Error ${putRes.status} al guardar la foto`);
+    }
+}
+
+function setCarreraPhotosStatus(text) {
+    const status = document.getElementById('carreraPhotosStatus');
+    if (status) status.textContent = text || '';
+}
+
+async function uploadCarreraPhotos(fileList) {
+    const sessionId = carreraPhotoSessionId;
+    const files = Array.from(fileList || []).filter(file => file && file.type.startsWith('image/'));
+    if (!sessionId || !files.length) return;
+    const addBtn = document.getElementById('carreraPhotosAdd');
+    if (addBtn) addBtn.disabled = true;
+    try {
+        const marca = ensureCarreraMarca(sessionId);
+        for (let i = 0; i < files.length; i++) {
+            setCarreraPhotosStatus(`Subiendo ${i + 1} de ${files.length}…`);
+            const blob = await compressCarreraPhoto(files[i]);
+            const name = nextCarreraPhotoName(marca.photos);
+            const base64 = await blobToBase64(blob);
+            await putGitHubFile(
+                `carrera-photos/${sessionId}/${name}`,
+                base64,
+                `Foto de carrera ${sessionId} (${name})`
+            );
+            marca.photos.push(name);
+            carreraPhotoPreviewUrls.set(`${sessionId}|${name}`, URL.createObjectURL(blob));
+            saveMarcas();
+        }
+        setCarreraPhotosStatus('Actualizando la lista de fotos…');
+        const payload = buildRunmetricsPayload();
+        const jsonBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+        await putGitHubFile(
+            RUNMETRICS_FILENAME,
+            jsonBase64,
+            `Actualizar ${RUNMETRICS_FILENAME} (${new Date().toISOString().slice(0, 10)})`
+        );
+        openCarreraPhotos(sessionId);
+        setCarreraPhotosStatus('Fotos guardadas. En la web publicada pueden tardar un minuto en verse.');
+    } catch (err) {
+        setCarreraPhotosStatus(err.message || 'No se pudieron guardar las fotos');
+    } finally {
+        if (addBtn) addBtn.disabled = false;
+    }
+}
+
+let carreraGalleryAudio = null;
+
+function playCarreraGalleryTone(ctx, dest, freq, start, duration, type, peak) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, start);
+    gain.gain.linearRampToValueAtTime(peak, start + 0.06);
+    gain.gain.linearRampToValueAtTime(0, start + duration);
+    osc.connect(gain);
+    gain.connect(dest);
+    osc.start(start);
+    osc.stop(start + duration + 0.02);
+}
+
+function scheduleCarreraGalleryLoop() {
+    const audio = carreraGalleryAudio;
+    if (!audio || !audio.playing) return;
+    const ctx = audio.ctx;
+    const beat = 0.52;
+    const bar = beat * 4;
+    const start = ctx.currentTime + 0.05;
+    const chords = [
+        { bass: 130.81, triad: [164.81, 196.00, 261.63], melody: [329.63, 392.00, 329.63, 261.63] },
+        { bass: 110.00, triad: [164.81, 220.00, 261.63], melody: [440.00, 392.00, 329.63, 392.00] },
+        { bass: 87.31, triad: [174.61, 220.00, 261.63], melody: [349.23, 440.00, 392.00, 349.23] },
+        { bass: 98.00, triad: [196.00, 246.94, 293.66], melody: [392.00, 493.88, 392.00, 329.63] }
+    ];
+    chords.forEach((chord, index) => {
+        const at = start + index * bar;
+        playCarreraGalleryTone(ctx, audio.master, chord.bass, at, bar * 0.96, 'sine', 0.16);
+        chord.triad.forEach(freq => playCarreraGalleryTone(ctx, audio.master, freq, at, bar * 0.96, 'triangle', 0.045));
+        chord.melody.forEach((freq, note) => playCarreraGalleryTone(ctx, audio.master, freq, at + note * beat, beat * 0.85, 'sine', 0.09));
+    });
+    audio.timer = setTimeout(scheduleCarreraGalleryLoop, (chords.length * bar - 0.15) * 1000);
+}
+
+function startCarreraGalleryMusic() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!carreraGalleryAudio) {
+        const ctx = new AudioCtx();
+        const master = ctx.createGain();
+        master.gain.value = 0;
+        master.connect(ctx.destination);
+        carreraGalleryAudio = { ctx, master, timer: null, playing: false };
+    }
+    const { ctx, master } = carreraGalleryAudio;
+    if (ctx.state === 'suspended') ctx.resume();
+    if (carreraGalleryAudio.playing) return;
+    carreraGalleryAudio.playing = true;
+    const now = ctx.currentTime;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(master.gain.value, now);
+    master.gain.linearRampToValueAtTime(0.9, now + 0.45);
+    scheduleCarreraGalleryLoop();
+}
+
+function stopCarreraGalleryMusic() {
+    const audio = carreraGalleryAudio;
+    if (!audio || !audio.playing) return;
+    audio.playing = false;
+    if (audio.timer) {
+        clearTimeout(audio.timer);
+        audio.timer = null;
+    }
+    const now = audio.ctx.currentTime;
+    audio.master.gain.cancelScheduledValues(now);
+    audio.master.gain.setValueAtTime(audio.master.gain.value, now);
+    audio.master.gain.linearRampToValueAtTime(0, now + 0.35);
+}
+
+function openCarreraPhotos(sessionId) {
+    const overlay = document.getElementById('carreraPhotosOverlay');
+    if (!overlay || !sessionId) return;
+    const wasClosed = overlay.hidden;
+    carreraPhotoSessionId = sessionId;
+    carreraPhotoUrls = getCarreraPhotoNames(sessionId).map(name => getCarreraPhotoUrl(sessionId, name));
+    carreraPhotoIndex = 0;
+    overlay.hidden = false;
+    document.body.classList.add('carrera-photos-open');
+    renderCarreraPhotoSlide();
+    if (wasClosed) startCarreraGalleryMusic();
+}
+
+function closeCarreraPhotos() {
+    stopCarreraGalleryMusic();
+    const overlay = document.getElementById('carreraPhotosOverlay');
+    const img = document.getElementById('carreraPhotosImg');
+    if (overlay) overlay.hidden = true;
+    if (img) img.removeAttribute('src');
+    document.body.classList.remove('carrera-photos-open');
+    carreraPhotoUrls = [];
+    carreraPhotoIndex = 0;
+    carreraPhotoSessionId = null;
+    setCarreraPhotosStatus('');
+}
+
+function renderCarreraPhotoSlide() {
+    const empty = document.getElementById('carreraPhotosEmpty');
+    const viewer = document.getElementById('carreraPhotosViewer');
+    const counter = document.getElementById('carreraPhotosCounter');
+    const img = document.getElementById('carreraPhotosImg');
+    const prev = document.getElementById('carreraPhotosPrev');
+    const next = document.getElementById('carreraPhotosNext');
+    const hasPhotos = carreraPhotoUrls.length > 0;
+    if (empty) empty.hidden = hasPhotos;
+    if (viewer) viewer.hidden = !hasPhotos;
+    if (counter) counter.hidden = !hasPhotos;
+    if (!hasPhotos || !img) return;
+    img.alt = `Foto ${carreraPhotoIndex + 1} de ${carreraPhotoUrls.length}`;
+    img.src = carreraPhotoUrls[carreraPhotoIndex];
+    if (counter) counter.textContent = `${carreraPhotoIndex + 1} / ${carreraPhotoUrls.length}`;
+    const single = carreraPhotoUrls.length < 2;
+    if (prev) prev.hidden = single;
+    if (next) next.hidden = single;
+}
+
+function stepCarreraPhoto(delta) {
+    if (carreraPhotoUrls.length < 2) return;
+    carreraPhotoIndex = (carreraPhotoIndex + delta + carreraPhotoUrls.length) % carreraPhotoUrls.length;
+    renderCarreraPhotoSlide();
+}
+
+function setupCarreraPhotosOverlay() {
+    const overlay = document.getElementById('carreraPhotosOverlay');
+    if (!overlay || overlay.dataset.bound === '1') return;
+    overlay.dataset.bound = '1';
+    const closeBtn = document.getElementById('carreraPhotosClose');
+    const prev = document.getElementById('carreraPhotosPrev');
+    const next = document.getElementById('carreraPhotosNext');
+    const img = document.getElementById('carreraPhotosImg');
+    const addBtn = document.getElementById('carreraPhotosAdd');
+    const fileInput = document.getElementById('carreraPhotosInput');
+    if (closeBtn) closeBtn.addEventListener('click', closeCarreraPhotos);
+    if (prev) prev.addEventListener('click', () => stepCarreraPhoto(-1));
+    if (next) next.addEventListener('click', () => stepCarreraPhoto(1));
+    if (addBtn && fileInput) {
+        addBtn.addEventListener('click', () => {
+            if (!addBtn.disabled) fileInput.click();
+        });
+        fileInput.addEventListener('change', () => {
+            const files = fileInput.files;
+            fileInput.value = '';
+            uploadCarreraPhotos(files);
+        });
+    }
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closeCarreraPhotos();
+    });
+    if (img) {
+        img.addEventListener('error', () => {
+            img.alt = 'No se pudo cargar la foto';
+        });
+    }
+    document.addEventListener('keydown', (event) => {
+        if (overlay.hidden) return;
+        if (event.key === 'Escape') closeCarreraPhotos();
+        if (event.key === 'ArrowLeft') stepCarreraPhoto(-1);
+        if (event.key === 'ArrowRight') stepCarreraPhoto(1);
+    });
 }
 
 // Traer runmetrics.json del repositorio y reemplazar datos locales (botón Resetear)

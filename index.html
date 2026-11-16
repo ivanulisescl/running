@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.46">
+    <link rel="stylesheet" href="styles.css?v=1.3.47">
     <style>
         .header-actions .btn-header {
             display: inline-flex;
@@ -255,7 +255,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.46</span>
+                <span id="currentVersion">v1.3.47</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-2">
@@ -1021,6 +1021,9 @@
                             </div>
                         </div>
                         <div class="form-actions">
+                            <button type="button" id="marcaPhotosBtn" class="btn marca-photos-btn" aria-label="Ver fotos de la carrera" title="Ver fotos">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg>
+                            </button>
                             <button type="button" id="marcaFormCancel" class="btn btn-secondary">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
@@ -1072,7 +1075,28 @@
 
     </div>
 
-    <script src="app.js?v=1.3.46"></script>
+    <div id="carreraPhotosOverlay" class="carrera-photos-overlay" hidden>
+        <div class="carrera-photos-dialog" role="dialog" aria-modal="true" aria-labelledby="carreraPhotosTitle">
+            <div class="carrera-photos-header">
+                <h3 id="carreraPhotosTitle">Fotos</h3>
+                <button type="button" id="carreraPhotosClose" class="carrera-photos-close" aria-label="Cerrar">×</button>
+            </div>
+            <p id="carreraPhotosEmpty" class="carrera-photos-empty" hidden>Sin fotos de esta carrera.</p>
+            <div id="carreraPhotosViewer" class="carrera-photos-viewer" hidden>
+                <button type="button" id="carreraPhotosPrev" class="carrera-photos-nav" aria-label="Foto anterior">‹</button>
+                <img id="carreraPhotosImg" alt="">
+                <button type="button" id="carreraPhotosNext" class="carrera-photos-nav" aria-label="Foto siguiente">›</button>
+            </div>
+            <p id="carreraPhotosCounter" class="carrera-photos-counter" hidden></p>
+            <div class="carrera-photos-actions">
+                <button type="button" id="carreraPhotosAdd" class="btn btn-primary">Añadir fotos</button>
+                <input type="file" id="carreraPhotosInput" accept="image/*" multiple hidden>
+            </div>
+            <p id="carreraPhotosStatus" class="carrera-photos-status"></p>
+        </div>
+    </div>
+
+    <script src="app.js?v=1.3.47"></script>
 </body>
 </html>
 
