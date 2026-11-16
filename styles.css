@@ -1885,11 +1885,15 @@ header h1 {
 .marca-card-photos {
     width: 100%;
     min-width: 0;
-    height: 40px;
+    height: auto;
+    min-height: 40px;
+    padding: 8px 16px;
     gap: 8px;
     border-radius: 999px;
     font-size: 0.95em;
     font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
 }
 
 #marcaPhotosBtn.btn svg,
@@ -1903,6 +1907,15 @@ header h1 {
 .marca-card-photos:hover {
     background: var(--primary-color);
     color: #fff;
+}
+
+.marca-card-photos:disabled,
+.marca-card-photos:disabled:hover {
+    opacity: 0.45;
+    cursor: not-allowed;
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+    background: var(--background);
 }
 
 .marca-card-actions {

@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.51'; // Versión actual de la app
+let currentAppVersion = '1.3.52'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -1982,6 +1982,15 @@ function renderMarcas() {
         const puestoCatPct = (marca && marca.participantesCategoria > 0 && marca.puestoCategoria != null)
             ? Math.round((marca.puestoCategoria / marca.participantesCategoria) * 100)
             : null;
+        const galleryNames = getCarreraPhotoNames(session.id);
+        const galleryVideos = galleryNames.filter(isCarreraVideoName).length;
+        const galleryImages = galleryNames.length - galleryVideos;
+        const hasGallery = galleryNames.length > 0;
+        const galleryAttrs = hasGallery ? '' : ' disabled';
+        const mediaCount = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+        const galleryLabel = hasGallery
+            ? `${mediaCount(galleryImages, 'imagen', 'imágenes')} y ${mediaCount(galleryVideos, 'vídeo', 'vídeos')}`
+            : 'Sin imágenes';
         if (marca) {
             const puestoGeneralStr = marca.puestoGeneral != null
                 ? (puestoPct != null ? `${marca.puestoGeneral} (${puestoPct}%)` : String(marca.puestoGeneral))
@@ -2022,7 +2031,7 @@ function renderMarcas() {
                         </div>
                     </div>
                     <div class="marca-card-photos-row">
-                        <button type="button" class="marca-card-photos" data-session-id="${session.id}" aria-label="Galería" title="Galería"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg><span>Galería</span></button>
+                        <button type="button" class="marca-card-photos" data-session-id="${session.id}" aria-label="${galleryLabel}" title="${galleryLabel}"${galleryAttrs}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg><span>${galleryLabel}</span></button>
                     </div>
                     <div class="marca-card-datos">
                         <p class="marca-card-datos-title">Clasificación</p>
@@ -2071,7 +2080,7 @@ function renderMarcas() {
                     </div>
                 </div>
                 <div class="marca-card-photos-row">
-                    <button type="button" class="marca-card-photos" data-session-id="${session.id}" aria-label="Galería" title="Galería"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg><span>Galería</span></button>
+                    <button type="button" class="marca-card-photos" data-session-id="${session.id}" aria-label="${galleryLabel}" title="${galleryLabel}"${galleryAttrs}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6"/><path d="m14 14-2-2-5 5"/></svg><span>${galleryLabel}</span></button>
                 </div>
                 <div class="marca-card-datos">
                     <div class="marca-card-dato"><span class="marca-dato-label">Equipo:</span><span>${escapeHtml((session.equipo || '').trim() || '—')}</span></div>
@@ -2086,7 +2095,10 @@ function renderMarcas() {
         btn.addEventListener('click', () => openMarcaForm(btn.getAttribute('data-session-id')));
     });
     container.querySelectorAll('.marca-card-photos').forEach(btn => {
-        btn.addEventListener('click', () => openCarreraPhotos(btn.getAttribute('data-session-id')));
+        btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            openCarreraPhotos(btn.getAttribute('data-session-id'));
+        });
     });
 }
 
@@ -2357,6 +2369,7 @@ async function uploadCarreraPhotos(fileList) {
             `Actualizar ${RUNMETRICS_FILENAME} (${new Date().toISOString().slice(0, 10)})`
         );
         openCarreraPhotos(sessionId);
+        renderMarcas();
         setCarreraPhotosStatus('Guardado. En la web publicada puede tardar un minuto en verse.');
     } catch (err) {
         setCarreraPhotosStatus(err.message || 'No se pudo guardar');
