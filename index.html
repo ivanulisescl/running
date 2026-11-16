@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#4A90E2">
     <title>RunMetrics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=1.3.49">
+    <link rel="stylesheet" href="styles.css?v=1.3.50">
     <style>
         .header-actions .btn-header {
             display: inline-flex;
@@ -255,7 +255,7 @@
             </div>
             <p class="subtitle">Datos, evolución y control</p>
             <div class="version-info">
-                <span id="currentVersion">v1.3.49</span>
+                <span id="currentVersion">v1.3.50</span>
             </div>
             <div class="header-actions">
                 <div class="header-row-2">
@@ -1078,25 +1078,26 @@
     <div id="carreraPhotosOverlay" class="carrera-photos-overlay" hidden>
         <div class="carrera-photos-dialog" role="dialog" aria-modal="true" aria-labelledby="carreraPhotosTitle">
             <div class="carrera-photos-header">
-                <h3 id="carreraPhotosTitle">Fotos</h3>
+                <h3 id="carreraPhotosTitle">Galería</h3>
                 <button type="button" id="carreraPhotosClose" class="carrera-photos-close" aria-label="Cerrar">×</button>
             </div>
-            <p id="carreraPhotosEmpty" class="carrera-photos-empty" hidden>Sin fotos de esta carrera.</p>
+            <p id="carreraPhotosEmpty" class="carrera-photos-empty" hidden>Sin fotos ni vídeos de esta carrera.</p>
             <div id="carreraPhotosViewer" class="carrera-photos-viewer" hidden>
-                <button type="button" id="carreraPhotosPrev" class="carrera-photos-nav" aria-label="Foto anterior">‹</button>
                 <img id="carreraPhotosImg" alt="">
-                <button type="button" id="carreraPhotosNext" class="carrera-photos-nav" aria-label="Foto siguiente">›</button>
+                <video id="carreraPhotosVideo" playsinline controls hidden></video>
+                <button type="button" id="carreraPhotosPrev" class="carrera-photos-nav" aria-label="Anterior">‹</button>
+                <button type="button" id="carreraPhotosNext" class="carrera-photos-nav" aria-label="Siguiente">›</button>
             </div>
             <p id="carreraPhotosCounter" class="carrera-photos-counter" hidden></p>
             <div class="carrera-photos-actions">
-                <button type="button" id="carreraPhotosAdd" class="btn btn-primary">Añadir fotos</button>
-                <input type="file" id="carreraPhotosInput" accept="image/*,.heic,.heif" multiple>
+                <button type="button" id="carreraPhotosAdd" class="btn btn-primary">Añadir fotos o vídeos</button>
+                <input type="file" id="carreraPhotosInput" accept="image/*,video/*,.heic,.heif,.mp4,.mov,.webm,.m4v" multiple>
             </div>
             <p id="carreraPhotosStatus" class="carrera-photos-status"></p>
         </div>
     </div>
 
-    <script src="app.js?v=1.3.49"></script>
+    <script src="app.js?v=1.3.50"></script>
 </body>
 </html>
 

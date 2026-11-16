@@ -1,6 +1,6 @@
 // Estado de la aplicación
 let sessions = [];
-let currentAppVersion = '1.3.49'; // Versión actual de la app
+let currentAppVersion = '1.3.50'; // Versión actual de la app
 let editingSessionId = null; // ID de la sesión que se está editando (null si no hay ninguna)
 let currentStatsPeriod = 'year'; // Período actual para las estadísticas: 'all', 'week', 'month', 'year'
 let historyViewMode = 'compact'; // 'detailed' | 'compact' para el historial de sesiones
@@ -2178,9 +2178,11 @@ function getCarreraPhotoUrl(sessionId, fileName) {
 }
 
 let carreraPhotoUrls = [];
+let carreraPhotoNames = [];
 let carreraPhotoIndex = 0;
 let carreraPhotoSessionId = null;
 const carreraPhotoPreviewUrls = new Map();
+const CARRERA_VIDEO_MAX_BYTES = 20 * 1024 * 1024;
 
 function ensureCarreraMarca(sessionId) {
     let marca = getMarcaBySessionId(sessionId);
@@ -2193,13 +2195,24 @@ function ensureCarreraMarca(sessionId) {
     return marca;
 }
 
-function nextCarreraPhotoName(names) {
+function nextCarreraMediaName(names, extension) {
     let max = 0;
     names.forEach(name => {
         const match = /^(\d+)\./.exec(String(name));
         if (match) max = Math.max(max, Number(match[1]));
     });
-    return `${String(max + 1).padStart(2, '0')}.jpg`;
+    const ext = String(extension || 'jpg').replace(/^\./, '').toLowerCase();
+    return `${String(max + 1).padStart(2, '0')}.${ext}`;
+}
+
+function isCarreraVideoName(name) {
+    return /\.(mp4|webm|mov|m4v)$/i.test(String(name || ''));
+}
+
+function isCarreraVideoFile(file) {
+    if (!file) return false;
+    if (file.type && file.type.startsWith('video/')) return true;
+    return isCarreraVideoName(file.name);
 }
 
 function compressCarreraPhoto(file) {
@@ -2284,12 +2297,22 @@ function isCarreraPhotoFile(file) {
     return /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name || '');
 }
 
+function isCarreraMediaFile(file) {
+    return isCarreraPhotoFile(file) || isCarreraVideoFile(file);
+}
+
+function carreraVideoExtension(file) {
+    const match = /\.([a-z0-9]+)$/i.exec(file && file.name || '');
+    const ext = match ? match[1].toLowerCase() : 'mp4';
+    return ext === 'm4v' ? 'mp4' : ext;
+}
+
 async function uploadCarreraPhotos(fileList) {
     const sessionId = carreraPhotoSessionId;
-    const files = Array.from(fileList || []).filter(isCarreraPhotoFile);
+    const files = Array.from(fileList || []).filter(isCarreraMediaFile);
     if (!sessionId) return;
     if (!files.length) {
-        setCarreraPhotosStatus('Elige una imagen (JPG o PNG).');
+        setCarreraPhotosStatus('Elige una foto o un vídeo.');
         return;
     }
     const addBtn = document.getElementById('carreraPhotosAdd');
@@ -2299,21 +2322,33 @@ async function uploadCarreraPhotos(fileList) {
     try {
         const marca = ensureCarreraMarca(sessionId);
         for (let i = 0; i < files.length; i++) {
-            setCarreraPhotosStatus(`Preparando ${i + 1} de ${files.length}…`);
-            const blob = await compressCarreraPhoto(files[i]);
-            const name = nextCarreraPhotoName(marca.photos);
+            const file = files[i];
+            const isVideo = isCarreraVideoFile(file);
+            if (isVideo && file.size > CARRERA_VIDEO_MAX_BYTES) {
+                throw new Error('El vídeo supera 20 MB. Elige uno más corto.');
+            }
+            let blob = file;
+            let extension = 'jpg';
+            if (isVideo) {
+                extension = carreraVideoExtension(file);
+                setCarreraPhotosStatus(`Subiendo ${i + 1} de ${files.length}…`);
+            } else {
+                setCarreraPhotosStatus(`Preparando ${i + 1} de ${files.length}…`);
+                blob = await compressCarreraPhoto(file);
+                setCarreraPhotosStatus(`Subiendo ${i + 1} de ${files.length}…`);
+            }
+            const name = nextCarreraMediaName(marca.photos, extension);
             const base64 = await blobToBase64(blob);
-            setCarreraPhotosStatus(`Subiendo ${i + 1} de ${files.length}…`);
             await putGitHubFile(
                 `carrera-photos/${sessionId}/${name}`,
                 base64,
-                `Foto de carrera ${sessionId} (${name})`
+                `${isVideo ? 'Vídeo' : 'Foto'} de carrera ${sessionId} (${name})`
             );
             marca.photos.push(name);
             carreraPhotoPreviewUrls.set(`${sessionId}|${name}`, URL.createObjectURL(blob));
             saveMarcas();
         }
-        setCarreraPhotosStatus('Actualizando la lista de fotos…');
+        setCarreraPhotosStatus('Actualizando la lista…');
         const payload = buildRunmetricsPayload();
         const jsonBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
         await putGitHubFile(
@@ -2322,9 +2357,9 @@ async function uploadCarreraPhotos(fileList) {
             `Actualizar ${RUNMETRICS_FILENAME} (${new Date().toISOString().slice(0, 10)})`
         );
         openCarreraPhotos(sessionId);
-        setCarreraPhotosStatus('Fotos guardadas. En la web publicada pueden tardar un minuto en verse.');
+        setCarreraPhotosStatus('Guardado. En la web publicada puede tardar un minuto en verse.');
     } catch (err) {
-        setCarreraPhotosStatus(err.message || 'No se pudieron guardar las fotos');
+        setCarreraPhotosStatus(err.message || 'No se pudo guardar');
     } finally {
         if (addBtn) addBtn.disabled = false;
         if (actions) actions.classList.remove('is-busy');
@@ -2355,7 +2390,8 @@ function openCarreraPhotos(sessionId) {
     if (!overlay || !sessionId) return;
     const wasClosed = overlay.hidden;
     carreraPhotoSessionId = sessionId;
-    carreraPhotoUrls = getCarreraPhotoNames(sessionId).map(name => getCarreraPhotoUrl(sessionId, name));
+    carreraPhotoNames = getCarreraPhotoNames(sessionId);
+    carreraPhotoUrls = carreraPhotoNames.map(name => getCarreraPhotoUrl(sessionId, name));
     carreraPhotoIndex = 0;
     overlay.hidden = false;
     document.body.classList.add('carrera-photos-open');
@@ -2367,10 +2403,17 @@ function closeCarreraPhotos() {
     stopCarreraGalleryMusic();
     const overlay = document.getElementById('carreraPhotosOverlay');
     const img = document.getElementById('carreraPhotosImg');
+    const video = document.getElementById('carreraPhotosVideo');
     if (overlay) overlay.hidden = true;
     if (img) img.removeAttribute('src');
+    if (video) {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+    }
     document.body.classList.remove('carrera-photos-open');
     carreraPhotoUrls = [];
+    carreraPhotoNames = [];
     carreraPhotoIndex = 0;
     carreraPhotoSessionId = null;
     setCarreraPhotosStatus('');
@@ -2381,15 +2424,43 @@ function renderCarreraPhotoSlide() {
     const viewer = document.getElementById('carreraPhotosViewer');
     const counter = document.getElementById('carreraPhotosCounter');
     const img = document.getElementById('carreraPhotosImg');
+    const video = document.getElementById('carreraPhotosVideo');
     const prev = document.getElementById('carreraPhotosPrev');
     const next = document.getElementById('carreraPhotosNext');
     const hasPhotos = carreraPhotoUrls.length > 0;
     if (empty) empty.hidden = hasPhotos;
     if (viewer) viewer.hidden = !hasPhotos;
     if (counter) counter.hidden = !hasPhotos;
-    if (!hasPhotos || !img) return;
-    img.alt = `Foto ${carreraPhotoIndex + 1} de ${carreraPhotoUrls.length}`;
-    img.src = carreraPhotoUrls[carreraPhotoIndex];
+    if (!hasPhotos) {
+        if (video) {
+            video.pause();
+            video.hidden = true;
+        }
+        return;
+    }
+    const url = carreraPhotoUrls[carreraPhotoIndex];
+    const isVideo = isCarreraVideoName(carreraPhotoNames[carreraPhotoIndex]);
+    if (isVideo && video) {
+        if (img) {
+            img.hidden = true;
+            img.removeAttribute('src');
+        }
+        video.hidden = false;
+        if (video.getAttribute('src') !== url) {
+            video.src = url;
+        }
+        video.alt = '';
+    } else if (img) {
+        if (video) {
+            video.pause();
+            video.hidden = true;
+            video.removeAttribute('src');
+            video.load();
+        }
+        img.hidden = false;
+        img.alt = `Elemento ${carreraPhotoIndex + 1} de ${carreraPhotoUrls.length}`;
+        img.src = url;
+    }
     if (counter) counter.textContent = `${carreraPhotoIndex + 1} / ${carreraPhotoUrls.length}`;
     const single = carreraPhotoUrls.length < 2;
     if (prev) prev.hidden = single;
@@ -2402,6 +2473,34 @@ function stepCarreraPhoto(delta) {
     renderCarreraPhotoSlide();
 }
 
+function bindCarreraPhotoNav(button, delta) {
+    if (!button) return;
+    let fromPointer = false;
+    let startX = 0;
+    let startY = 0;
+    button.addEventListener('pointerdown', (event) => {
+        startX = event.clientX;
+        startY = event.clientY;
+    });
+    button.addEventListener('pointerup', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (Math.abs(event.clientX - startX) > 16 || Math.abs(event.clientY - startY) > 16) return;
+        fromPointer = true;
+        event.preventDefault();
+        event.stopPropagation();
+        stepCarreraPhoto(delta);
+    });
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (fromPointer) {
+            fromPointer = false;
+            return;
+        }
+        stepCarreraPhoto(delta);
+    });
+}
+
 function setupCarreraPhotosOverlay() {
     const overlay = document.getElementById('carreraPhotosOverlay');
     if (!overlay || overlay.dataset.bound === '1') return;
@@ -2410,11 +2509,31 @@ function setupCarreraPhotosOverlay() {
     const prev = document.getElementById('carreraPhotosPrev');
     const next = document.getElementById('carreraPhotosNext');
     const img = document.getElementById('carreraPhotosImg');
+    const viewer = document.getElementById('carreraPhotosViewer');
     const addBtn = document.getElementById('carreraPhotosAdd');
     const fileInput = document.getElementById('carreraPhotosInput');
     if (closeBtn) closeBtn.addEventListener('click', closeCarreraPhotos);
-    if (prev) prev.addEventListener('click', () => stepCarreraPhoto(-1));
-    if (next) next.addEventListener('click', () => stepCarreraPhoto(1));
+    bindCarreraPhotoNav(prev, -1);
+    bindCarreraPhotoNav(next, 1);
+    if (viewer) {
+        let swipeX = null;
+        let swipeY = null;
+        viewer.addEventListener('touchstart', (event) => {
+            if (event.touches.length !== 1) return;
+            swipeX = event.touches[0].clientX;
+            swipeY = event.touches[0].clientY;
+        }, { passive: true });
+        viewer.addEventListener('touchend', (event) => {
+            if (swipeX == null || !event.changedTouches.length) return;
+            const touch = event.changedTouches[0];
+            const dx = touch.clientX - swipeX;
+            const dy = touch.clientY - swipeY;
+            swipeX = null;
+            swipeY = null;
+            if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+            stepCarreraPhoto(dx < 0 ? 1 : -1);
+        }, { passive: true });
+    }
     if (addBtn && fileInput) {
         addBtn.addEventListener('click', () => {
             if (!addBtn.disabled) fileInput.click();
@@ -2430,7 +2549,7 @@ function setupCarreraPhotosOverlay() {
     });
     if (img) {
         img.addEventListener('error', () => {
-            img.alt = 'No se pudo cargar la foto';
+            img.alt = 'No se pudo cargar';
         });
     }
     document.addEventListener('keydown', (event) => {
