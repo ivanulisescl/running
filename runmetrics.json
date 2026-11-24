@@ -1,7 +1,7 @@
 {
   "app": "RunMetrics",
   "version": "1.3.54",
-  "exportedAt": "2026-11-23T11:55:57.051Z",
+  "exportedAt": "2026-11-24T19:53:32.101Z",
   "sessions": [
     {
       "date": "2026-02-04",
@@ -5350,6 +5350,20 @@
       "elevationLoss": 199,
       "equipo": "Brooks Glycerine 23 Azules",
       "createdAt": "2026-11-21T12:39:51.942Z"
+    },
+    {
+      "id": 1795549975026,
+      "date": "2026-11-24",
+      "distance": 7.01,
+      "time": "00:40:24",
+      "timeInMinutes": 40.4,
+      "type": "entrenamiento",
+      "localizacion": "Gijón",
+      "notes": "",
+      "elevationGain": 168,
+      "elevationLoss": 147,
+      "equipo": "Brooks Glycerine 23 Azules",
+      "createdAt": "2026-11-24T19:52:55.026Z"
     }
   ],
   "carreras": [
@@ -6501,7 +6515,8 @@
         "assignments": {
           "W1D1": 1794940135388,
           "W1D2": 1795116194706,
-          "W1D3": 1795264791942
+          "W1D3": 1795264791942,
+          "W2D1": 1795549975026
         }
       }
     ],
@@ -6546,7 +6561,7 @@
       "estado": "Activo por defecto",
       "desde": "2026-04-06",
       "limiteKm": 800,
-      "numActividades": 59
+      "numActividades": 60
     },
     {
       "name": "Brooks Ghost Trail",
